@@ -44,7 +44,7 @@ public class CommandHandler {
 
 	}
 	
-	private static boolean isBotOP(User user) {
+	public static boolean isBotOP(User user) {
 		if (user.isVerified()) {
 			for (String s: Settings.botops) {
 				if (s.equalsIgnoreCase(user.getNick())) {

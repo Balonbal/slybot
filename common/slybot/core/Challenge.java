@@ -32,7 +32,6 @@ public class Challenge {
 		while (System.currentTimeMillis() < timeOut) {
 			try {
 				Thread.sleep(1000);
-				System.out.println("time left: " + (timeOut - System.currentTimeMillis()));
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

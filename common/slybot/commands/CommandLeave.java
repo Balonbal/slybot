@@ -13,6 +13,12 @@ public class CommandLeave extends Command {
 
 	@Override
 	public void run(SlyBot bot, User user, Channel channel, String[] params) {
+		if (params[0] == "-s") {
+			if (CommandHandler.isBotOP(user)) {
+				channel.send().message("SlyBot is shutting down forcibly.");
+				System.exit(0); //TODO Create close method
+			}
+		}
 		channel.send().part("told by operator to leave");
 	}
 
