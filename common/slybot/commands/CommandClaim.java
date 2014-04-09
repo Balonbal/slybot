@@ -11,7 +11,7 @@ import slybot.lib.Settings;
 public class CommandClaim extends Command {
 
 	public CommandClaim() {
-		super("claim", false, true);
+		super("claim", false, true, false);
 	}
 
 	@Override
@@ -44,6 +44,11 @@ public class CommandClaim extends Command {
 		} else {
 			user.send().message("Error! Bot already claimed by " + Settings.owner + ".");
 		}
+	}
+
+	@Override
+	public User challenge(SlyBot bot, User usera, User userb, Channel channel, String[] params) {
+		return null;
 	}
 
 }

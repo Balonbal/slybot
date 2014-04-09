@@ -8,7 +8,7 @@ import slybot.SlyBot;
 public class CommandLeave extends Command {
 
 	public CommandLeave() {
-		super("leave", true, false);
+		super("leave", true, false, false);
 	}
 
 	@Override
@@ -21,6 +21,11 @@ public class CommandLeave extends Command {
 		return new String[] {
 				"Used to make the bot leave the channel, can only be issued by OPs"
 		};
+	}
+
+	@Override
+	public User challenge(SlyBot bot, User usera, User userb, Channel channel, String[] params) {
+		return null;
 	}
 
 }

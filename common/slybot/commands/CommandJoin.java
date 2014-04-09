@@ -8,7 +8,7 @@ import slybot.SlyBot;
 public class CommandJoin extends Command {
 
 	public CommandJoin() {
-		super("join", false, true);
+		super("join", false, true, false);
 	}
 
 	@Override
@@ -28,6 +28,11 @@ public class CommandJoin extends Command {
 				"SYNTAX: JOIN <channel>",
 				"Example: join #test"
 		};
+	}
+
+	@Override
+	public User challenge(SlyBot bot, User usera, User userb, Channel channel, String[] params) {
+		return null;
 	}
 
 }

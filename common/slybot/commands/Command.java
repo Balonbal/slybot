@@ -9,19 +9,23 @@ public abstract class Command {
 	
 	boolean requiresOP;
 	boolean PMCommand;
-	String command;
+	boolean isChallenge;
+	public String command;
 	
 	public Command(String command) {
-		this(command, false, false);
+		this(command, false, false, false);
 	}
 	
-	public Command(String command, boolean needsop, boolean pmcommand) {
+	public Command(String command, boolean needsop, boolean pmcommand, boolean isChallenge) {
 		this.command = command;
 		this.requiresOP = needsop;
+		this.isChallenge = isChallenge;
 	}
 	
 	public abstract String[] help();
 	
 	public abstract void run(SlyBot bot, User user, Channel channel, String[] params);
+	
+	public abstract User challenge(SlyBot bot, User usera, User userb, Channel channel, String[] params);
 
 }

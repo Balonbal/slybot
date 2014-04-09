@@ -6,19 +6,21 @@ import java.util.Scanner;
 import org.pircbotx.Configuration;
 import org.pircbotx.exception.IrcException;
 
+import slybot.core.ChallengeManager;
 import slybot.core.SlyConfiguration;
 import slybot.lib.Settings;
 
 public class Main {
 	
 	static SlyConfiguration sc;
-	
+	static ChallengeManager cm;
 	static SlyBot slybot;
 	
 	public static void main(String[] args) {
 		
 		sc = new SlyConfiguration();
 		sc.initialize();
+		cm = new ChallengeManager();
 		
 		//Set up local variables for network and channel
 		String network;
@@ -71,6 +73,10 @@ public class Main {
 	
 	public static SlyConfiguration getConfig() {
 		return sc;
+	}
+	
+	public static ChallengeManager getChallengeManager() {
+		return cm;
 	}
 
 }
