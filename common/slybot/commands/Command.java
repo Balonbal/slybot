@@ -25,7 +25,4 @@ public abstract class Command {
 	public abstract String[] help();
 	
 	public abstract void run(SlyBot bot, User user, Channel channel, String[] params);
-	
-	public abstract User challenge(SlyBot bot, User usera, User userb, Channel channel, String[] params);
-
 }

@@ -26,11 +26,4 @@ public class CommandAccept extends Command {
 		Main.getChallengeManager().tryAccept(user);
 	}
 
-	@Override
-	public User challenge(SlyBot bot, User usera, User userb, Channel channel,
-			String[] params) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

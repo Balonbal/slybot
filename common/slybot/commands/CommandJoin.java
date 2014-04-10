@@ -30,9 +30,4 @@ public class CommandJoin extends Command {
 		};
 	}
 
-	@Override
-	public User challenge(SlyBot bot, User usera, User userb, Channel channel, String[] params) {
-		return null;
-	}
-
 }

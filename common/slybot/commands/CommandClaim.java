@@ -3,7 +3,6 @@ package slybot.commands;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
-import slybot.Main;
 import slybot.SlyBot;
 import slybot.core.SlyConfiguration;
 import slybot.lib.Settings;
@@ -23,7 +22,7 @@ public class CommandClaim extends Command {
 	@Override
 	public void run(SlyBot bot, User user, Channel channel, String[] params) {
 		
-		//if the command is sent in a chennel, disregard it
+		//if the command is sent in a channel, disregard it
 		if (channel != null) {
 			return;
 		}
@@ -44,11 +43,6 @@ public class CommandClaim extends Command {
 		} else {
 			user.send().message("Error! Bot already claimed by " + Settings.owner + ".");
 		}
-	}
-
-	@Override
-	public User challenge(SlyBot bot, User usera, User userb, Channel channel, String[] params) {
-		return null;
 	}
 
 }

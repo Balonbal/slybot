@@ -25,6 +25,9 @@ public class SlyListener implements Listener {
 					CommandHandler.processCommand((SlyBot) e.getBot(), e.getUser(), e.getChannel(), message, isOP(e));
 				}
 			}
+			
+			//try next turn TODO consider if this needs a command
+			Main.getChallengeManager().doNextTurn(e.getUser(), message.split(" "));
 		//check for PMs
 		} else if (arg0 instanceof PrivateMessageEvent) {
 			PrivateMessageEvent e = (PrivateMessageEvent) arg0;

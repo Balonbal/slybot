@@ -12,5 +12,10 @@ public class SlyBot extends PircBotX {
 	public void quit() {
 		this.sendRaw().rawLine("part");
 	}
+	
+	public void shutdown() {
+		this.stopBotReconnect();
+		this.sendRaw().rawLine("quit");
+	}
 
 }

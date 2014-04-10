@@ -3,6 +3,7 @@ package slybot.commands;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
+import slybot.Main;
 import slybot.SlyBot;
 
 public class CommandLeave extends Command {
@@ -13,12 +14,16 @@ public class CommandLeave extends Command {
 
 	@Override
 	public void run(SlyBot bot, User user, Channel channel, String[] params) {
-		if (params[0] == "-s") {
+		if (params[0].equals("-s")) {
+			//Check for botOP NOTE: this is not channel-op
 			if (CommandHandler.isBotOP(user)) {
-				channel.send().message("SlyBot is shutting down forcibly.");
-				System.exit(0); //TODO Create close method
+				channel.send().message("SlyBot is shutting down.");
+				//Shutdown the bot
+				Main.getBot().shutdown();
 			}
 		}
+		
+		//Else leave the channel
 		channel.send().part("told by operator to leave");
 	}
 
@@ -27,11 +32,6 @@ public class CommandLeave extends Command {
 		return new String[] {
 				"Used to make the bot leave the channel, can only be issued by OPs"
 		};
-	}
-
-	@Override
-	public User challenge(SlyBot bot, User usera, User userb, Channel channel, String[] params) {
-		return null;
 	}
 
 }

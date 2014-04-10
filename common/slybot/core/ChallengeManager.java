@@ -2,12 +2,13 @@ package slybot.core;
 
 import java.util.ArrayList;
 
-import org.pircbotx.Channel;
 import org.pircbotx.User;
 
-import slybot.commands.Command;
+import slybot.challenges.Challenge;
+import slybot.challenges.MultiTurnChallenge;
 
 public class ChallengeManager {
+	
 	
 	private ArrayList<Challenge> chal;
 	
@@ -15,15 +16,14 @@ public class ChallengeManager {
 		chal = new ArrayList<Challenge>();
 	}
 	
-	public void addChallenge(Channel channel, User user,String userb, Command cmd, String[] params) {
+	public void addChallenge(Challenge c) {
 		for (int i = 0; i < chal.size(); i++) {
-			if (chal.get(i).host.getNick().equalsIgnoreCase(user.getNick())) {
+			if (chal.get(i).getHost().getNick().equalsIgnoreCase(c.getHost().getNick())) {
 				return;
 			}
 			
 		}
-		Challenge c = new Challenge(channel, user, userb, cmd, params);
-		channel.send().message(" Oh snap, " + c.host.getNick() + " challenged " + c.challengedUser + " to a duel of " + c.command.command +". Use the \"accept\" command to accept the challenge");
+		c.getChannel().send().message(" Oh snap, " + c.getHost().getNick() + " challenged " + c.getChallengedUser() + " to a duel of " + c.getDescription()+". Use the \"accept\" command to accept the challenge");
 		chal.add(c);
 		chal.get(chal.size()-1).timeOut();
 	}
@@ -42,10 +42,11 @@ public class ChallengeManager {
 		}
 	}
 	
-	public void cleanup() {
-		for (int i = 0; i < chal.size(); i++) {
-			if (chal.get(i).completed) {
-				chal.remove(i);
+	public void doNextTurn(User u, String[] params) {
+		for (int i=0;i < chal.size(); i++) {
+			if (chal.get(i) instanceof MultiTurnChallenge) {
+				MultiTurnChallenge c = (MultiTurnChallenge) chal.get(i);
+				c.doTurn(u, params);
 			}
 		}
 	}
