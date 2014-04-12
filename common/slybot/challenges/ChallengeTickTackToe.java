@@ -98,7 +98,6 @@ public class ChallengeTickTackToe extends MultiTurnChallenge {
 	
 	public String getResults() {
 		
-		System.out.println("cp a ");
 		for (int i = 0; i < board.length; i++) {
 			//Check the board vertically
 			if (board[i][0].equals(board[i][1]) && board[i][1].equals(board[i][2]) && board[i][0] != "null") {

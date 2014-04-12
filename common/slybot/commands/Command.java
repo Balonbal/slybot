@@ -7,19 +7,20 @@ import slybot.SlyBot;
 
 public abstract class Command {
 	
-	boolean requiresOP;
-	boolean PMCommand;
-	boolean isChallenge;
+	public boolean requiresOP;
+	public boolean PMCommand;
+	public boolean isChannelCommand;
 	public String command;
 	
 	public Command(String command) {
-		this(command, false, false, false);
+		this(command, false, false, true);
 	}
 	
-	public Command(String command, boolean needsop, boolean pmcommand, boolean isChallenge) {
+	public Command(String command, boolean needsop, boolean pmcommand, boolean isChannelCommand) {
 		this.command = command;
 		this.requiresOP = needsop;
-		this.isChallenge = isChallenge;
+		this.PMCommand = pmcommand;
+		this.isChannelCommand = isChannelCommand;
 	}
 	
 	public abstract String[] help();

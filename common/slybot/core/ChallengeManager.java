@@ -23,7 +23,7 @@ public class ChallengeManager {
 			}
 			
 		}
-		c.getChannel().send().message(" Oh snap, " + c.getHost().getNick() + " challenged " + c.getChallengedUser() + " to a duel of " + c.getDescription()+". Use the \"accept\" command to accept the challenge");
+		c.getChannel().send().message("Oh snap, " + c.getHost().getNick() + " challenged " + c.getChallengedUser() + " to a duel of " + c.getDescription()+". Use the \"accept\" command to accept the challenge");
 		chal.add(c);
 		chal.get(chal.size()-1).timeOut();
 	}
@@ -44,7 +44,6 @@ public class ChallengeManager {
 	
 	public void doNextTurn(User u, String[] params) {
 		for (int i=0;i < chal.size(); i++) {
-			System.out.println(chal.get(i).getHost().getNick() + " : " + chal.get(i).getChallengedUser());
 			if (chal.get(i) instanceof MultiTurnChallenge) {
 				MultiTurnChallenge c = (MultiTurnChallenge) chal.get(i);
 				c.doTurn(u, params);

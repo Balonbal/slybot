@@ -19,8 +19,7 @@ public class ChallengeRTD extends Challenge {
 		int min = 0;
 		long num = 0;
 		Random r = new Random();
-		
-		System.out.println(params.length);
+
 		
 		switch (params.length) {
 		case 1:

@@ -5,7 +5,7 @@ import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 
-import slybot.commands.CommandHandler;
+import slybot.core.CommandHandler;
 import slybot.lib.Reference;
 
 public class SlyListener implements Listener {

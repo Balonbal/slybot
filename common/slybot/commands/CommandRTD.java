@@ -3,7 +3,6 @@ package slybot.commands;
 import java.util.Random;
 
 import org.pircbotx.Channel;
-import org.pircbotx.Colors;
 import org.pircbotx.User;
 
 import slybot.SlyBot;

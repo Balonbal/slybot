@@ -25,7 +25,7 @@ public class SlyConfiguration {
 		try {
 			load();
 		} catch(FileNotFoundException e) {
-			System.out.println(" No settings found. Using from default.");
+			System.out.println("No settings found. Using from default.");
 		}
 		
 	}
@@ -65,7 +65,7 @@ public class SlyConfiguration {
 			if (cfg.contains(s)) {
 				//Skin string to start with our option
 				String setting = cfg.substring(cfg.indexOf(s));
-				//And end at the next ";;"
+				//And end at the next ";"
 				setting = setting.substring(0, setting.indexOf(";"));
 
 				//Update the current setting to the loaded value
@@ -104,8 +104,6 @@ public class SlyConfiguration {
 
 	private static void saveSettings() {
 		File settings = new File("configuration.config");
-
-		System.out.println("Using " + settings.getAbsolutePath() + " as settings");
 
 		if (!settings.exists()) {
 			try {
@@ -151,8 +149,26 @@ public class SlyConfiguration {
 			saveSettings();
 			updateSettings();
 		}
+		
+		public static void appendSetting(String key, String addValue) {
 
-		public String getSetting(String key) {
+			String s = "";
+			//Check if the key exists, if so; remove it
+			if (configuration.containsKey(key)) {
+				
+				s = configuration.get(key) + "," + addValue;
+				configuration.remove(key);
+			}
+			
+			//Put in the new value
+			configuration.put(key, s);
+
+			//And save the settings
+			saveSettings();
+			updateSettings();
+		}
+
+		public static String getSetting(String key) {
 			return configuration.get(key);
 		}
 
