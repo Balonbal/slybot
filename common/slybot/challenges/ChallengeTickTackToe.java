@@ -17,7 +17,7 @@ public class ChallengeTickTackToe extends MultiTurnChallenge {
 	String challengeIcon;
 
 	public ChallengeTickTackToe(Channel chan, User initializer, String challenged, String[] parameters, int timeOutInSeconds) {
-		super(chan, initializer, challenged, "TickTackToe" , parameters, timeOutInSeconds, Reference.TTT_NEXT_TURN_TIMEOUT);
+		super(chan, initializer, challenged, "TicTacToe" , parameters, timeOutInSeconds, Reference.TTT_NEXT_TURN_TIMEOUT);
 		board = new String[][] { 
 				{ "null", "null", "null" },
 				{ "null", "null", "null" },
@@ -40,7 +40,7 @@ public class ChallengeTickTackToe extends MultiTurnChallenge {
 	
 	@Override
 	public void initialize() {
-		getChannel().send().message(getHost().getNick() + " and " + getChallengedUser() + " decide to settle their disputes by an epic game of Tick Tack Toe!");
+		getChannel().send().message(getHost().getNick() + " and " + getChallengedUser() + " decide to settle their disputes by an epic game of Tic-Tac-Toe!");
 		getChannel().send().message(getHost().getNick() + " will be playing as " + hostIcon);
 		getChannel().send().message(getChallengedUser()+ " will be playing as " + challengeIcon);
 		printBoard();
@@ -52,7 +52,6 @@ public class ChallengeTickTackToe extends MultiTurnChallenge {
 		if (board[y][x] == "null") {
 			//put the icon in the board
 			board[y][x] = (hostTurn?hostIcon:challengeIcon);
-			System.out.println("true");
 			return true;
 		}
 		return false;
@@ -73,19 +72,14 @@ public class ChallengeTickTackToe extends MultiTurnChallenge {
 			}
 		}
 		
-		System.out.println("cp -a " + x + "," + y);
-		
 		if (updateBoard(x,y)) {
 			printBoard();
 			
-			System.out.println("cp abba");
 			//Get the results from this move
 			String s = getResults();
-			System.out.println("cp a ");
 			if (!s.equalsIgnoreCase("null")) {
 				end(s);
 			} else {
-			System.out.println("cp b");
 			hostTurn = !hostTurn;
 			
 			getChannel().send().message((hostTurn ? getHost().getNick() : getChallengedUser()) + ": your turn!");
@@ -96,9 +90,9 @@ public class ChallengeTickTackToe extends MultiTurnChallenge {
 	}
 	
 	public void printBoard() {
-		System.out.println("printing board");
-		for (String[] s: board) {
-			getChannel().send().message((s[0].equals("null") ? "_" : s[0]) + "|" + (s[1].equals("null") ? "_" : s[1]) + "|" + (s[2].equals("null") ? "_" : s[2]));
+		getChannel().send().message("  0 1 2");
+		for (int i = 0; i < board.length; i++) {
+			getChannel().send().message(i + " " + (board[i][0].equals("null") ? "_" : board[i][0]) + "|" + (board[i][1].equals("null") ? "_" : board[i][1]) + "|" + (board[i][2].equals("null") ? "_" : board[i][2]));
 		}
 	}
 	
@@ -135,7 +129,6 @@ public class ChallengeTickTackToe extends MultiTurnChallenge {
 		if (full) {
 			return "full";
 		}
-		System.out.println("cp a ");
 		return "null";
 	}
 
@@ -147,7 +140,7 @@ public class ChallengeTickTackToe extends MultiTurnChallenge {
 
 	@Override
 	public String getDescription() {
-		return "Tick Tack Toe";
+		return "Tic-Tac-Toe";
 	}
 	
 	@Override

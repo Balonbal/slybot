@@ -18,7 +18,7 @@ public class ChallengeManager {
 	
 	public void addChallenge(Challenge c) {
 		for (int i = 0; i < chal.size(); i++) {
-			if (chal.get(i).getHost().getNick().equalsIgnoreCase(c.getHost().getNick())) {
+			if (chal.get(i).getHost().getNick().equalsIgnoreCase(c.getHost().getNick()) || chal.get(i).getChallengedUser().equalsIgnoreCase(c.getChallengedUser())) {
 				return;
 			}
 			
@@ -44,6 +44,7 @@ public class ChallengeManager {
 	
 	public void doNextTurn(User u, String[] params) {
 		for (int i=0;i < chal.size(); i++) {
+			System.out.println(chal.get(i).getHost().getNick() + " : " + chal.get(i).getChallengedUser());
 			if (chal.get(i) instanceof MultiTurnChallenge) {
 				MultiTurnChallenge c = (MultiTurnChallenge) chal.get(i);
 				c.doTurn(u, params);

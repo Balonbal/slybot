@@ -1,10 +1,12 @@
 package slybot.lib;
 
+import slybot.Main;
+
 public class Reference {
 	
 	public static final String[] PREFIXES = {
-		"SlyBot: ",
-		"SlyBot ",
+		Main.getNick() + ": ",
+		Main.getNick() + " ",
 		"."
 	};
 	

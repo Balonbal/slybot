@@ -15,6 +15,7 @@ public class Main {
 	static SlyConfiguration sc;
 	static ChallengeManager cm;
 	static SlyBot slybot;
+	static String nick;
 	
 	public static void main(String[] args) {
 		
@@ -27,9 +28,10 @@ public class Main {
 		String channel;
 		
 		//Check if VM-arguments are enough to connect
-		if (args.length >= 2) {
+		if (args.length >= 3) {
 			network = args[0];
 			channel = args[1];
+			nick = args[2];
 		} else {
 			//if not, ask for user input
 			Scanner s = new Scanner(System.in);
@@ -37,11 +39,13 @@ public class Main {
 			network = s.nextLine();
 			System.out.print("Please select a channel to join: ");
 			channel = s.nextLine();
+			System.out.print("Enter a nick for the bot: ");
+			nick = s.nextLine();
 			s.close(); //and close the input
 		}
 		
 		Configuration config = new Configuration.Builder()
-		.setName("SlyBot") //Set the nick of the bot.
+		.setName(nick) //Set the nick of the bot.
         .setAutoNickChange(true) //Automatically change nick when the current one is in use
         .setCapEnabled(true) //Enable CAP features
         .addListener(new SlyListener()) //This class is a listener, so add it to the bots known listeners
@@ -65,6 +69,10 @@ public class Main {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public static String getNick() {
+		return nick;
 	}
 	
 	public static SlyBot getBot() {

@@ -17,7 +17,6 @@ public abstract class MultiTurnChallenge extends Challenge {
 	}
 	
 	public void proccessTurn(User u, String[] params) {
-		System.out.println("doing turn for " + u.getNick() + ": " + params[0] + ", " + params[1]);
 		//reset the clock
 		if (doTurn(u, params)) {
 			this.timeOut = System.currentTimeMillis() + nextTurnTimeout*1000;
