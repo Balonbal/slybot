@@ -12,6 +12,7 @@ import slybot.commands.CommandJoin;
 import slybot.commands.CommandLeave;
 import slybot.commands.CommandOps;
 import slybot.commands.CommandRTD;
+import slybot.commands.CommandSetPass;
 import slybot.lib.Settings;
 
 public class CommandHandler {
@@ -24,7 +25,8 @@ public class CommandHandler {
 			new CommandRTD(),
 			new CommandChallenge(),
 			new CommandAccept(),
-			new CommandOps()
+			new CommandOps(),
+			new CommandSetPass()
 	};
 	
 	public static void processCommand(SlyBot bot, User user, Channel channel, String message, boolean isOP) {

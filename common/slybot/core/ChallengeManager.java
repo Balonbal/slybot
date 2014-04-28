@@ -37,8 +37,10 @@ public class ChallengeManager {
 	}
 	
 	public void tryAccept(User u) {
+		System.out.println(chal.size());
 		for (Challenge c: chal) {
 			c.tryAccept(u);
+			System.out.println(u.getNick() + " : " + c.getChallengedUser());
 		}
 	}
 	

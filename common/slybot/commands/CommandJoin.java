@@ -8,7 +8,7 @@ import slybot.SlyBot;
 public class CommandJoin extends Command {
 
 	public CommandJoin() {
-		super("join", false, true, false);
+		super("join", true, true, false);
 	}
 
 	@Override

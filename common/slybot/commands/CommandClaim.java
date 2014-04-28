@@ -27,7 +27,7 @@ public class CommandClaim extends Command {
 			return;
 		}
 		
-		if (Settings.owner.equals("null")) {
+		if (Settings.owner.equals("")) {
 			//check if the user is verified with nickserv
 			if (user.isVerified()) {
 				//update config accordingly

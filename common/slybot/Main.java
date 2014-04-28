@@ -24,25 +24,41 @@ public class Main {
 		cm = new ChallengeManager();
 		
 		//Set up local variables for network and channel
-		String network;
-		String channel;
+		String network = null;
+		String channel = null;
+		String nickPass = null;
 		
 		//Check if VM-arguments are enough to connect
-		if (args.length >= 3) {
-			network = args[0];
-			channel = args[1];
+		switch (args.length) {
+		case 4:
+			nickPass = args[3];
+		case 3:
 			nick = args[2];
-		} else {
-			//if not, ask for user input
-			Scanner s = new Scanner(System.in);
-			System.out.print("Please select a network: ");
-			network = s.nextLine();
-			System.out.print("Please select a channel to join: ");
-			channel = s.nextLine();
-			System.out.print("Enter a nick for the bot: ");
-			nick = s.nextLine();
-			s.close(); //and close the input
+		case 2:
+			channel = args[1];
+		case 1:
+			network = args[0];
+			
 		}
+		//if not, ask for user input on the missing variables
+			Scanner s = new Scanner(System.in);
+			switch (args.length) {
+			case 0:
+				System.out.print("Please select a network: ");
+				network = s.nextLine();
+			case 1:
+				System.out.print("Please select a channel to join: ");
+				channel = s.nextLine();
+			case 2:
+				System.out.print("Enter a nick for the bot: ");
+				nick = s.nextLine();
+			case 3:
+				System.out.print("Enter the password for nickserv (leave blank for none): ");
+				nickPass = s.nextLine();
+			}
+			
+			
+			s.close(); //and close the input
 		
 		Configuration config = new Configuration.Builder()
 		.setName(nick) //Set the nick of the bot.
@@ -51,6 +67,7 @@ public class Main {
         .addListener(new SlyListener()) //This class is a listener, so add it to the bots known listeners
         .setServerHostname(network)
         .addAutoJoinChannel(channel)
+        .setNickservPassword(nickPass)
         .buildConfiguration();
 
 		//create the bot with the defined config

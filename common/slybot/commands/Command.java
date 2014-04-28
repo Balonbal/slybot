@@ -23,6 +23,16 @@ public abstract class Command {
 		this.isChannelCommand = isChannelCommand;
 	}
 	
+	public void sendHelp(User u, Channel c, String[] params) {
+		for (String s: help()) {
+			if (c == null) {
+				u.send().message(s);
+			} else {
+				c.send().message(s);
+			}
+		}
+	}
+	
 	public abstract String[] help();
 	
 	public abstract void run(SlyBot bot, User user, Channel channel, String[] params);
