@@ -32,6 +32,9 @@ public class Youtube {
 			if (url.contains("&")) {
 				url = url.substring(0, url.indexOf("&"));
 			}
+			if (url.contains(" ")) {
+				url = url.substring(0, url.indexOf(" "));
+			}
 		}
 		Random r = new Random();
 		System.out.println("Fetching file from https://gdata.youtube.com/feeds/api/videos/" + url);
