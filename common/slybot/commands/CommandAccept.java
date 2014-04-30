@@ -9,7 +9,7 @@ import slybot.SlyBot;
 public class CommandAccept extends Command {
 
 	public CommandAccept() {
-		super("accept", false, false, false);
+		super("accept", false, false, true);
 		// TODO Auto-generated constructor stub
 	}
 

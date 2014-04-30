@@ -97,9 +97,9 @@ public class SlyConfiguration {
 
 		//Add all our settings to the configuration map
 
-		addSetting("owner", "null");
-		addSetting("botops", "null");
-		addSetting("operatorpass", "null");
+		addSetting("owner", "");
+		addSetting("botops", "");
+		addSetting("operatorpass", "");
 	}
 
 	private static void saveSettings() {

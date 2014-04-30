@@ -13,7 +13,7 @@ import slybot.lib.Reference;
 public class CommandChallenge extends Command {
 
 	public CommandChallenge() {
-		super("challenge", false, false, false);
+		super("challenge", false, false, true);
 	}
 
 	@Override
