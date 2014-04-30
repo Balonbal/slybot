@@ -53,7 +53,9 @@ public abstract class Challenge {
 			if (playah.getNick().equalsIgnoreCase(getChallengedUser())) {
 				User u = run((SlyBot) getHost().getBot(), getHost(), playah, getChannel(), params);
 				completed = true;
+				//Stop the challenge
 				end(u.getNick());
+				Main.getChallengeManager().removeChallenge(this);
 			}
 		}
 	}

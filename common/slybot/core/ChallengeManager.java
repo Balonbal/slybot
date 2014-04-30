@@ -18,7 +18,8 @@ public class ChallengeManager {
 	
 	public void addChallenge(Challenge c) {
 		for (int i = 0; i < chal.size(); i++) {
-			if (chal.get(i).getHost().getNick().equalsIgnoreCase(c.getHost().getNick()) || chal.get(i).getChallengedUser().equalsIgnoreCase(c.getChallengedUser())) {
+			//Do not add challenges to users that already have one going in the SAME channel
+			if ((chal.get(i).getHost().getNick().equalsIgnoreCase(c.getHost().getNick()) || chal.get(i).getChallengedUser().equalsIgnoreCase(c.getChallengedUser())) && chal.get(i).getChannel().getChannelId().equals(c.getChannel().getChannelId())) {
 				return;
 			}
 			
