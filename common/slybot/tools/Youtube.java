@@ -27,7 +27,13 @@ public class Youtube {
 		//Check if it's an URL or just the code
 		if (url.startsWith("http://") || url.startsWith("https://")) {
 			//Get the video code
-			url = url.substring(url.indexOf("v=")+2);
+			if (url.startsWith("http://youtu.be")) {
+				url = url.substring(url.indexOf("http://youtu.be")  + 16);
+			} else if (url.startsWith("https://youtu.be")) {
+				url = url.substring(url.indexOf("https://youtu.be" + 17));
+			} else {
+				url = url.substring(url.indexOf("v=")+2);
+			}
 			//Remove any extra parameters
 			if (url.contains("&")) {
 				url = url.substring(0, url.indexOf("&"));

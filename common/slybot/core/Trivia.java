@@ -43,6 +43,7 @@ class Question {
 	String category;
 	String question;
 	String answer;
+	String[]
 	
 	public Question(String category, String question, String answer) {
 		this.category = category;

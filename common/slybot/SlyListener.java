@@ -7,6 +7,7 @@ import org.pircbotx.hooks.events.PrivateMessageEvent;
 
 import slybot.core.CommandHandler;
 import slybot.lib.Reference;
+import slybot.lib.Strings;
 import slybot.tools.Youtube;
 
 public class SlyListener implements Listener {
@@ -31,12 +32,14 @@ public class SlyListener implements Listener {
 			//try next turn TODO consider if this needs a command
 			Main.getChallengeManager().doNextTurn(e.getUser(), message.split(" "));
 			
-			//TODO Consider adding the http version of youtube
-			if (message.contains("https://www.youtube.com")) {
-				System.out.println("checking youtube url");
-				Youtube y = new Youtube(message.substring(message.indexOf("https://www.youtube.com")));
-				y.printInfo(e.getChannel());
-				y.deleteFile();
+			for (String s: Strings.youtubes) {
+				if (message.toLowerCase().contains(s.toLowerCase())) {
+					//Extract the youtube link
+					Youtube y = new Youtube(message.substring(message.toLowerCase().indexOf(s)));
+					//Print the information and delete the file
+					y.printInfo(e.getChannel());
+					y.deleteFile();
+				}
 			}
 		//check for PMs
 		} else if (arg0 instanceof PrivateMessageEvent) {
