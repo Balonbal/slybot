@@ -1,8 +1,7 @@
-package slybot.core;
+package slybot.trivia;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Trivia {
 	
@@ -35,36 +34,5 @@ public class Trivia {
 	
 	private void loadTrivia() {
 		
-	}
-}
-
-class Question {
-	
-	String category;
-	String question;
-	String answer;
-	String[]
-	
-	public Question(String category, String question, String answer) {
-		this.category = category;
-		this.question = question;
-		this.answer = answer;
-	}
-	
-	public String getCategory() {
-		return category;
-	}
-	
-	public String getQuestion() {
-		return question;
-	}
-	
-	public String getHint(int num) {
-		Random r = new Random();
-		//Loop through the answer and generate a random visible character to the answer
-		for (int i = 0; i < answer.replaceAll(" ", "").length(); i+=3) {
-			//TODO finish this
-		}
-		return null;
 	}
 }
