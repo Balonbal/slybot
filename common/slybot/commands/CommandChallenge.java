@@ -1,6 +1,7 @@
 package slybot.commands;
 
 import org.pircbotx.Channel;
+import org.pircbotx.Colors;
 import org.pircbotx.User;
 
 import slybot.Main;
@@ -18,7 +19,12 @@ public class CommandChallenge extends Command {
 
 	@Override
 	public String[] help() {
-		return null;
+		return new String[] {
+				"Used to start a challenge in one of the available games",
+				"SYNTAX: " + Colors.BOLD + "CHALLENGE <user> <challenge>" + Colors.NORMAL,
+				"Example: " + Colors.BOLD + "CHALLENGE sly ttt" + Colors.NORMAL,
+				"Use " + Colors.BOLD + "CHALLENGE LIST" + Colors.NORMAL + " to get a list of available challenges"
+		};
 	}
 
 	@Override

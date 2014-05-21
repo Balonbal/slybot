@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.pircbotx.Channel;
 import org.pircbotx.User;
+import org.pircbotx.Colors;
 
 import slybot.SlyBot;
 
@@ -15,8 +16,12 @@ public class CommandRTD extends Command {
 
 	@Override
 	public String[] help() {
-		// TODO Auto-generated method stub
-		return null;
+		return new String[] {
+				"Used to roll a dice.",
+				"Syntax: " + Colors.BOLD + "RTD [HIGHEST]" + Colors.NORMAL,
+				"OR " + Colors.BOLD + "RTD [LOWEST] [HIGHEST]" + Colors.NORMAL + " if you want more control",
+				"Defaults to " + Colors.BOLD + "RTD 0 100" + Colors.NORMAL
+		};
 	}
 
 	@Override

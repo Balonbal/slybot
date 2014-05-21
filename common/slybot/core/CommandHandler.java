@@ -8,6 +8,7 @@ import slybot.commands.Command;
 import slybot.commands.CommandAccept;
 import slybot.commands.CommandChallenge;
 import slybot.commands.CommandClaim;
+import slybot.commands.CommandHelp;
 import slybot.commands.CommandJoin;
 import slybot.commands.CommandLeave;
 import slybot.commands.CommandOps;
@@ -26,7 +27,8 @@ public class CommandHandler {
 			new CommandChallenge(),
 			new CommandAccept(),
 			new CommandOps(),
-			new CommandSetPass()
+			new CommandSetPass(),
+			new CommandHelp()
 	};
 	
 	public static void processCommand(SlyBot bot, User user, Channel channel, String message, boolean isOP) {

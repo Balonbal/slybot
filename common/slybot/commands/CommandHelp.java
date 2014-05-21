@@ -1,6 +1,7 @@
 package slybot.commands;
 
 import org.pircbotx.Channel;
+import org.pircbotx.Colors;
 import org.pircbotx.User;
 
 import slybot.SlyBot;
@@ -14,19 +15,30 @@ public class CommandHelp extends Command {
 
 	@Override
 	public String[] help() {
-		return null;
+		return new String[] {
+				"Used to clearify the use of a command.",
+				"SYNTAX: " + Colors.BOLD + "HELP <command>" + Colors.NORMAL,
+				"Example: HELP RTD"
+		};
 	}
 
 	@Override
 	public void run(SlyBot bot, User user, Channel channel, String[] params) {
-		if (params.length > 0) {
+		String[] response = null;
+	    if (params.length > 0) {
 			if (CommandHandler.getCommand(params[0]) != null) {
-				
+				//TODO May cause nullpointers
+				response = CommandHandler.getCommand(params[0]).help();
 			}
 		}
-		//if  sent on PM
-		if (channel == null) {
-			
+		
+		for (String s: response) {
+			//if  sent on PM
+			if (channel == null) {
+				user.send().message(s);
+			} else {
+				channel.send().message(s);
+			}
 		}
 	}
 

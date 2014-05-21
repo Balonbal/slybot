@@ -19,7 +19,7 @@ public class ChallengeManager {
 	public void addChallenge(Challenge c) {
 		for (int i = 0; i < chal.size(); i++) {
 			//Do not add challenges to users that already have one going in the SAME channel
-			if ((chal.get(i).getHost().getNick().equalsIgnoreCase(c.getHost().getNick()) || chal.get(i).getChallengedUser().equalsIgnoreCase(c.getChallengedUser())) && chal.get(i).getChannel().getChannelId().equals(c.getChannel().getChannelId())) {
+			if ((chal.get(i).getHost().getNick().equalsIgnoreCase(c.getHost().getNick()) || chal.get(i).getChallengedUser().equalsIgnoreCase(c.getChallengedUser())) && chal.get(i).getChannel().getName().equals(c.getChannel().getName())) {
 				return;
 			}
 			
@@ -38,10 +38,8 @@ public class ChallengeManager {
 	}
 	
 	public void tryAccept(User u) {
-		System.out.println(chal.size());
 		for (Challenge c: chal) {
 			c.tryAccept(u);
-			System.out.println(u.getNick() + " : " + c.getChallengedUser());
 		}
 	}
 	
@@ -49,7 +47,7 @@ public class ChallengeManager {
 		for (int i=0;i < chal.size(); i++) {
 			if (chal.get(i) instanceof MultiTurnChallenge) {
 				MultiTurnChallenge c = (MultiTurnChallenge) chal.get(i);
-				c.doTurn(u, params);
+				c.proccessTurn(u, params);
 			}
 		}
 	}

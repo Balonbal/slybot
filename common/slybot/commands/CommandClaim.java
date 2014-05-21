@@ -3,8 +3,8 @@ package slybot.commands;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
+import slybot.Main;
 import slybot.SlyBot;
-import slybot.core.SlyConfiguration;
 import slybot.lib.Settings;
 
 public class CommandClaim extends Command {
@@ -15,8 +15,9 @@ public class CommandClaim extends Command {
 
 	@Override
 	public String[] help() {
-		// TODO Auto-generated method stub
-		return null;
+		return new String[] {
+				"Used to initialy gain control over the bot. You only need to do this once."
+		};
 	}
 
 	@Override
@@ -31,8 +32,8 @@ public class CommandClaim extends Command {
 			//check if the user is verified with nickserv
 			if (user.isVerified()) {
 				//update config accordingly
-				SlyConfiguration.changeSetting("owner", user.getNick());
-				SlyConfiguration.changeSetting("botops", user.getNick());
+				Main.getConfig().changeSetting("owner", user.getNick());
+				Main.getConfig().changeSetting("botops", user.getNick());
 				user.send().message("Successfully claimed bot.");
 			} else {
 				user.send().message("Please register your nick before claiming this bot");

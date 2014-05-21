@@ -32,6 +32,7 @@ public abstract class Challenge {
 		while (System.currentTimeMillis() < timeOut) {
 			try {
 				//Sleep for a second
+				System.out.println(timeOut - System.currentTimeMillis());
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();

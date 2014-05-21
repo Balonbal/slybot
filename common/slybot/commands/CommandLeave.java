@@ -1,6 +1,7 @@
 package slybot.commands;
 
 import org.pircbotx.Channel;
+import org.pircbotx.Colors;
 import org.pircbotx.User;
 
 import slybot.Main;
@@ -36,6 +37,7 @@ public class CommandLeave extends Command {
 	public String[] help() {
 		return new String[] {
 				"Used to make the bot leave the channel, can only be issued by OPs",
+				"SYNTAX: " + Colors.BOLD + "LEAVE [-s]",
 				"-s        Shut down the bot"
 		};
 	}

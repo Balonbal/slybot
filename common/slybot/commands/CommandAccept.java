@@ -15,8 +15,9 @@ public class CommandAccept extends Command {
 
 	@Override
 	public String[] help() {
-		// TODO Auto-generated method stub
-		return null;
+		return new String[] {
+				"Used to accept a challenge initiated by another user"
+		};
 	}
 
 	@Override

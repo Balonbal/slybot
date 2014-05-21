@@ -9,12 +9,18 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Set;
 
-import slybot.lib.Settings;
-
-public class SlyConfiguration {
+public abstract class SlyConfiguration {
 
 	public static HashMap<String, String> configuration;
-
+	public File file;
+	
+	public SlyConfiguration(String filePath) {
+		this(new File(filePath));
+	}
+	
+	public SlyConfiguration(File f) {
+		file = f;
+	}
 	public void initialize() {
 		configuration = new HashMap<String, String>();
 
@@ -25,21 +31,14 @@ public class SlyConfiguration {
 		try {
 			load();
 		} catch(FileNotFoundException e) {
-			System.out.println("No settings found. Using from default.");
+			System.out.println("No settings found. Creating default.");
 		}
 		
 	}
 	
-	public static void updateSettings() {
-		//Set all the settings TODO Improve this
-		Settings.owner = configuration.get("owner");
-		Settings.botops = (configuration.get("botops").contains(",") ? configuration.get("botops").split(",") : new String[] { configuration.get("botops") });
-		Settings.operatorpass = configuration.get("operatorpass");
-	}
+	public abstract void updateSettings();
 
 	private void load() throws FileNotFoundException {
-		File file = new File("configuration.config");
-
 		//Check if the file already exists, if not throw exception
 		if (!file.isFile()) {
 			throw new FileNotFoundException();
@@ -93,21 +92,13 @@ public class SlyConfiguration {
 		saveSettings();
 	}
 
-	private void createSettings() {
+	public abstract void createSettings();
 
-		//Add all our settings to the configuration map
+	private void saveSettings() {
 
-		addSetting("owner", "");
-		addSetting("botops", "");
-		addSetting("operatorpass", "");
-	}
-
-	private static void saveSettings() {
-		File settings = new File("configuration.config");
-
-		if (!settings.exists()) {
+		if (!file.exists()) {
 			try {
-				settings.createNewFile();
+				file.createNewFile();
 				} catch (Exception e) {
 					System.out.println("ERROR CREATING SAVEFILE!");
 				}
@@ -115,7 +106,7 @@ public class SlyConfiguration {
 
 			try {
 				//Open the file in a buffered writer
-				FileWriter filestream = new FileWriter(settings);
+				FileWriter filestream = new FileWriter(file);
 				BufferedWriter out = new BufferedWriter(filestream);
 			
 				Set<String> set = configuration.keySet();
@@ -136,7 +127,7 @@ public class SlyConfiguration {
 			configuration.put(key, defaultVal);
 		}
 
-		public static void changeSetting(String key, String newValue) {
+		public void changeSetting(String key, String newValue) {
 
 			//Check if the key exists, if so; remove it
 			if (configuration.containsKey(key) && !configuration.get(key).equals(newValue)) {
@@ -150,13 +141,13 @@ public class SlyConfiguration {
 			updateSettings();
 		}
 		
-		public static void appendSetting(String key, String addValue) {
+		public void appendSetting(String key, String splitter, String addValue) {
 
 			String s = "";
 			//Check if the key exists, if so; remove it
 			if (configuration.containsKey(key)) {
 				
-				s = configuration.get(key) + "," + addValue;
+				s = (configuration.get(key).equals("") ? addValue : configuration.get(key) + splitter + addValue);
 				configuration.remove(key);
 			}
 			
