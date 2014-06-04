@@ -15,6 +15,7 @@ import slybot.lib.Settings;
 
 public class Main {
 	
+	static SlyListener listener;
 	static SlyConfiguration sc;
 	static ChallengeManager cm;
 	static SlyBot slybot;
@@ -22,6 +23,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
+		listener = new SlyListener();
 		sc = new BotConfig();
 		sc.initialize();
 		cm = new ChallengeManager();
@@ -108,7 +110,7 @@ public class Main {
 			.setName(nick) //Set the nick of the bot.
 			.setAutoNickChange(true) //Automatically change nick when the current one is in use
 			.setCapEnabled(true) //Enable CAP features
-			.addListener(new SlyListener()) //This class is a listener, so add it to the bots known listeners
+			.addListener(listener) //This class is a listener, so add it to the bots known listeners
 			.setServerHostname(network);
 		
 		if (nickPass != null && !nickPass.equals("")) {
@@ -137,6 +139,10 @@ public class Main {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public static SlyListener getListener() {
+		return listener;
 	}
 	
 	public static String getNick() {

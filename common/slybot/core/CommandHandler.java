@@ -3,6 +3,7 @@ package slybot.core;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
+import slybot.Main;
 import slybot.SlyBot;
 import slybot.commands.Command;
 import slybot.commands.CommandAccept;
@@ -17,19 +18,6 @@ import slybot.commands.CommandSetPass;
 import slybot.lib.Settings;
 
 public class CommandHandler {
-	
-	//Add the available commands
-	private static Command[] commands = {
-			new CommandLeave(),
-			new CommandJoin(),
-			new CommandClaim(),
-			new CommandRTD(),
-			new CommandChallenge(),
-			new CommandAccept(),
-			new CommandOps(),
-			new CommandSetPass(),
-			new CommandHelp()
-	};
 	
 	public static void processCommand(SlyBot bot, User user, Channel channel, String message, boolean isOP) {
 		String cmd;
@@ -48,7 +36,7 @@ public class CommandHandler {
 		
 		System.out.println("Trying command \"" + cmd + "\" with " + params.length + " parameters from user \"" + user.getNick() + "\", " + (isOP? "Operator":""));
 		
-		for (Command command: commands) {
+		for (Command command: Main.getListener().getCommands()) {
 			if (cmd.equalsIgnoreCase(command.command)) {
 				//If the command requires op, check for OP
 				if (!(command.requiresOP && !isOP) || isBotOP(user)) {
@@ -76,7 +64,7 @@ public class CommandHandler {
 	}
 	
 	public static Command getCommand(String cmd) {
-		for (Command c: commands) {
+		for (Command c: Main.getListener().getCommands()) {
 			if (c.command.equalsIgnoreCase(cmd)) {
 				return c;
 			}

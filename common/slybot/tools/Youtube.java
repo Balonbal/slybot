@@ -127,10 +127,10 @@ public class Youtube {
 	    		Element eElement = (Element) nNode;
 	   	     
 	    		//Get the stats from the xml document
-    			items.put("title", eElement.getElementsByTagName("media:title").item(0).getTextContent());
-    			items.put("views", eElement.getElementsByTagName("yt:statistics").item(0).getAttributes().getNamedItem("viewCount").getTextContent());
-    			items.put("creator", eElement.getElementsByTagName("author").item(0).getChildNodes().item(0).getTextContent());
-    			items.put("duration", eElement.getElementsByTagName("yt:duration").item(0).getAttributes().item(0).getTextContent());
+    			items.put("title", eElement.getElementsByTagName("media:title").item(0).getChildNodes().item(0).getNodeValue());
+    			items.put("views", eElement.getElementsByTagName("yt:statistics").item(0).getAttributes().getNamedItem("viewCount").getNodeValue());
+    			items.put("creator", eElement.getElementsByTagName("author").item(0).getChildNodes().item(0).getChildNodes().item(0).getNodeValue());
+    			items.put("duration", eElement.getElementsByTagName("yt:duration").item(0).getAttributes().item(0).getNodeValue());
 	    	}
 	        } catch (Exception e) {
 	        	e.printStackTrace();

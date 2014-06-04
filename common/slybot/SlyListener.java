@@ -1,22 +1,56 @@
 package slybot;
 
+import java.util.ArrayList;
+import java.util.Set;
+
+import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
+import org.reflections.Reflections;
 
+import slybot.commands.Command;
 import slybot.core.CommandHandler;
 import slybot.lib.Reference;
 import slybot.lib.Strings;
 import slybot.tools.Youtube;
 
-public class SlyListener implements Listener {
+public class SlyListener implements Listener<PircBotX> {
+	
+	private ArrayList<Command> commands;
+	
+	public SlyListener() {
+		addCommands();
+	}
 
+	private void addCommands() {
+		commands = new ArrayList<Command>();
+		Reflections r = new Reflections("");
+		//Get the subtypes of the command class
+		Set<Class<? extends Command>> classes = r.getSubTypesOf(Command.class);
+		
+		//loop through found classes and add them as commands
+		for (Class<? extends Command> c: classes) {
+			try {
+				Command cmd = c.newInstance();
+				System.out.println("Found command: " + cmd.command);
+				getCommands().add(cmd);
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	@Override
-	public void onEvent(Event arg0) throws Exception {
+	public void onEvent(Event<PircBotX> arg0) throws Exception {
 		//Check for channel messages
 		if (arg0 instanceof MessageEvent) {
-			MessageEvent e = (MessageEvent) arg0;
+			MessageEvent<PircBotX> e = (MessageEvent<PircBotX>) arg0;
 			
 			String message = e.getMessage();
 			
@@ -43,15 +77,19 @@ public class SlyListener implements Listener {
 			}
 		//check for PMs
 		} else if (arg0 instanceof PrivateMessageEvent) {
-			PrivateMessageEvent e = (PrivateMessageEvent) arg0;
+			PrivateMessageEvent<PircBotX> e = (PrivateMessageEvent<PircBotX>) arg0;
 			
 			CommandHandler.processCommand((SlyBot) e.getBot(), e.getUser(), null, e.getMessage(), false);
 		}
 	}
 	
-	private boolean isOP(MessageEvent e) {
+	private boolean isOP(MessageEvent<?> e) {
 		return e.getChannel().getOps().contains(e.getUser());
 	}
-	
+
+	public ArrayList<Command> getCommands() {
+		return commands;
+	}
+
 
 }
