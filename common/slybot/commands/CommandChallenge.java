@@ -8,7 +8,7 @@ import slybot.Main;
 import slybot.SlyBot;
 import slybot.challenges.Challenge;
 import slybot.challenges.ChallengeRTD;
-import slybot.challenges.ChallengeTickTackToe;
+import slybot.challenges.ChallengeTicTacToe;
 import slybot.lib.Reference;
 
 public class CommandChallenge extends Command {
@@ -30,6 +30,15 @@ public class CommandChallenge extends Command {
 	@Override
 	public void run(SlyBot bot, User user, Channel channel, String[] params) {
 		if (channel != null) {
+			if (params[0].equalsIgnoreCase("list")) {
+				for (String s: new String[] {
+					"Available Challenges: ",
+					"RTD -- Roll the Dice",
+					"TTT - Tic Tac Toe"
+				}) {
+					channel.send().message(s);
+				}
+			}
 			if (params.length >= 2) {
 				
 				if (!params[0].equalsIgnoreCase(user.getNick())) {
@@ -39,12 +48,12 @@ public class CommandChallenge extends Command {
 					}
 					
 					Challenge c = null;
-					switch(params[1]) {
+					switch(params[1].toLowerCase()) {
 					case "rtd":
 						c = new ChallengeRTD(channel, user, params[0], newParams, Reference.ACCEPT_TIMEOUT);
 						break;
 					case "ttt":
-						c = new ChallengeTickTackToe(channel, user, params[0], newParams, Reference.ACCEPT_TIMEOUT);
+						c = new ChallengeTicTacToe(channel, user, params[0], newParams, Reference.ACCEPT_TIMEOUT);
 						break;
 					} 
 

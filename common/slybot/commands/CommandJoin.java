@@ -3,6 +3,7 @@ package slybot.commands;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
+import slybot.Main;
 import slybot.SlyBot;
 
 public class CommandJoin extends Command {
@@ -14,7 +15,10 @@ public class CommandJoin extends Command {
 	@Override
 	public void run(SlyBot bot, User user, Channel channel, String[] params) {
 		if (params.length > 0 && params[0] != null) { 
-			System.out.println(params[0]);
+			if (params[0].equalsIgnoreCase("-a") || params[0].equalsIgnoreCase("-a")) {
+				Main.getConfig().appendSetting("default_channels", ",", params[1]);
+			}
+			System.out.println("Joining channel: " + params[0]);
 			bot.sendIRC().joinChannel(params[0]);
 		} else {
 			user.send().message("Too few parameters!");

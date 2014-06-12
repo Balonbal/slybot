@@ -4,14 +4,14 @@ import slybot.Main;
 
 public class Reference {
 	
+	public static final String BOTNICK = Main.getBot().getNick();
 	public static final String[] PREFIXES = {
-		Main.getNick() + ": ",
-		Main.getNick() + " ",
+		BOTNICK + ": ",
+		BOTNICK + " ",
+		BOTNICK + ", ",
 		"."
 	};
 	
-	public static final String VERSION = "v1.0.3";
-
 	public static final int ACCEPT_TIMEOUT = 60;
 	public static final int TTT_NEXT_TURN_TIMEOUT = 180;
 

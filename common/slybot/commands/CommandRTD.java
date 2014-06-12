@@ -26,7 +26,6 @@ public class CommandRTD extends Command {
 
 	@Override
 	public void run(SlyBot bot, User user, Channel channel, String[] params) {
-		System.out.println(params.length);
 		long[] numbers = calculateResult(params);
 		broadcastResult(channel, user, (int) numbers[1], (int) numbers[2], numbers[0]);
 	}
@@ -37,7 +36,6 @@ public class CommandRTD extends Command {
 		long num = 0;
 		Random r = new Random();
 		
-		System.out.println(params.length);
 		
 		switch (params.length) {
 		case 1:

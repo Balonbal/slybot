@@ -6,15 +6,6 @@ import org.pircbotx.User;
 import slybot.Main;
 import slybot.SlyBot;
 import slybot.commands.Command;
-import slybot.commands.CommandAccept;
-import slybot.commands.CommandChallenge;
-import slybot.commands.CommandClaim;
-import slybot.commands.CommandHelp;
-import slybot.commands.CommandJoin;
-import slybot.commands.CommandLeave;
-import slybot.commands.CommandOps;
-import slybot.commands.CommandRTD;
-import slybot.commands.CommandSetPass;
 import slybot.lib.Settings;
 
 public class CommandHandler {

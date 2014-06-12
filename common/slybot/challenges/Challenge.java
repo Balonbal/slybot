@@ -29,10 +29,9 @@ public abstract class Challenge {
 	public void timeOut() {
 		
 		//While the current time has not passed the 
-		while (System.currentTimeMillis() < timeOut) {
+		while (System.currentTimeMillis() < timeOut && !completed) {
 			try {
 				//Sleep for a second
-				System.out.println(timeOut - System.currentTimeMillis());
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
