@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>slybot</groupId>
   <artifactId>slybot</artifactId>
-  <version>1.0.2</version>
+  <version>1.1.0</version>
   <name>SlyBot</name>
   <build>
     <sourceDirectory>common</sourceDirectory>
