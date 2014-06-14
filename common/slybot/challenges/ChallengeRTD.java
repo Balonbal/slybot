@@ -5,8 +5,6 @@ import java.util.Random;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
-import slybot.SlyBot;
-
 public class ChallengeRTD extends Challenge {
 	
 	public ChallengeRTD(Channel chan, User initializer, String challenged,  String[] parameters, int timeOutInSeconds) {
@@ -44,24 +42,23 @@ public class ChallengeRTD extends Challenge {
 	}
 
 	@Override
-	public User run(SlyBot bot, User usera, User userb, Channel channel,
-			String[] params) {
+	public void run() {
 		
-		
+		//calculate the result for each player
 		long[] resulta = calculateResult(params);
 		long[] resultb = calculateResult(params);
-		channel.send().message(userb.getNick() + " has accepted a challenge from " + usera.getNick() + " in " + (resulta[2] - resulta[1]) + " sided dicing.");
-		channel.send().message("The fight is on! " + usera.getNick() + " rolls... " + resulta[0] + " versus " + userb.getNick() + ", who rolls... " + resultb[0] + "!");
+		getChannel().send().message(getChallengedUser() + " has accepted a challenge from " + getHost().getNick() + " in " + (resulta[2] - resulta[1]) + " sided dicing.");
+		channel.send().message("The fight is on! " + getHost().getNick() + " rolls... " + resulta[0] + " versus " + getChallengedUser() + ", who rolls... " + resultb[0] + "!");
 		
 		if (resulta[0] > resultb[0]) {
-			channel.send().message(usera.getNick() + " is rolling all over " + userb.getNick());
-			return usera;
+			channel.send().message(getHost().getNick() + " is rolling all over " + getChallengedUser());
+			completed = true;
 		} else if (resulta[0] == resultb[0]) {
 			channel.send().message("The dices are fighting back! It's a tie!");
-			return null;
+			completed = true;
 		} else {
-			channel.send().message(usera.getNick() + " is having a bad day, as " + userb.getNick() + " just defated his dice!");
-			return userb;
+			channel.send().message(getHost().getNick() + " is having a bad day, as " + getChallengedUser() + " just defated his dice!");
+			completed = true;
 		}
 		// TODO Auto-generated method stub
 		
@@ -69,13 +66,17 @@ public class ChallengeRTD extends Challenge {
 
 	@Override
 	public void initialize() {
-		// TODO Auto-generated method stub
-		
+		run();
 	}
 
 	@Override
 	public String getDescription() {
 		return "dice throwing";
+	}
+
+	@Override
+	public void proccessTurn(User u, String[] params2) {
+		//does not do turns
 	}
 
 }

@@ -6,10 +6,8 @@ import org.pircbotx.Channel;
 import org.pircbotx.User;
 
 import slybot.Main;
-import slybot.SlyBot;
-import slybot.lib.Reference;
 
-public class ChallengeTicTacToe extends MultiTurnChallenge {
+public class ChallengeTicTacToe extends Challenge {
 	
 	String[][] board;
 	boolean hostTurn;
@@ -17,11 +15,11 @@ public class ChallengeTicTacToe extends MultiTurnChallenge {
 	String challengeIcon;
 
 	public ChallengeTicTacToe(Channel chan, User initializer, String challenged, String[] parameters, int timeOutInSeconds) {
-		super(chan, initializer, challenged, "TicTacToe" , parameters, timeOutInSeconds, Reference.TTT_NEXT_TURN_TIMEOUT);
+		super(chan, initializer, challenged, parameters, timeOutInSeconds);
 		board = new String[][] { 
-				{ "null", "null", "null" },
-				{ "null", "null", "null" },
-				{ "null", "null", "null" } 
+				{ "_", "_", "_" },
+				{ "_", "_", "_" },
+				{ "_", "_", "_" } 
 				};
 		
 		//Choose a random person to make the first turn
@@ -49,7 +47,7 @@ public class ChallengeTicTacToe extends MultiTurnChallenge {
 	
 	private boolean updateBoard(int x, int y) {
 		//Check if the position is occupied
-		if (board[y][x] == "null") {
+		if (board[y][x].equals("_")) {
 			//put the icon in the board
 			board[y][x] = (hostTurn?hostIcon:challengeIcon);
 			return true;
@@ -57,7 +55,7 @@ public class ChallengeTicTacToe extends MultiTurnChallenge {
 		return false;
 	}
 	
-	public boolean doTurn(User u, String params[]) {
+	public void proccessTurn(User u, String params[]) {
 		int x=-1, y=-1;
 		
 		if (hostTurn) {
@@ -77,22 +75,20 @@ public class ChallengeTicTacToe extends MultiTurnChallenge {
 			
 			//Get the results from this move
 			String s = getResults();
-			if (!s.equalsIgnoreCase("null")) {
+			if (!s.equalsIgnoreCase("_")) {
 				end(s);
 			} else {
 			hostTurn = !hostTurn;
 			
 			getChannel().send().message((hostTurn ? getHost().getNick() : getChallengedUser()) + ": your turn!");
-			return true;
 			}
 		}
-		return false;
 	}
 	
 	public void printBoard() {
 		getChannel().send().message("  0 1 2");
 		for (int i = 0; i < board.length; i++) {
-			getChannel().send().message(i + " " + (board[i][0].equals("null") ? "_" : board[i][0]) + "|" + (board[i][1].equals("null") ? "_" : board[i][1]) + "|" + (board[i][2].equals("null") ? "_" : board[i][2]));
+			getChannel().send().message(i + " " + board[i][0] + "|" + board[i][1] + "|" + board[i][2]);
 		}
 	}
 	
@@ -132,9 +128,7 @@ public class ChallengeTicTacToe extends MultiTurnChallenge {
 	}
 
 	@Override
-	public User run(SlyBot bot, User usera, User userb, Channel channel,
-			String[] params) {
-		return null;
+	public void run() {
 	}
 
 	@Override
@@ -142,7 +136,6 @@ public class ChallengeTicTacToe extends MultiTurnChallenge {
 		return "Tic-Tac-Toe";
 	}
 	
-	@Override
 	public void end(String winner) {
 		completed = true;
 		getChannel().send().message("The game is over!");
@@ -155,5 +148,4 @@ public class ChallengeTicTacToe extends MultiTurnChallenge {
 		}
 		Main.getChallengeManager().removeChallenge(this);
 	}
-
 }

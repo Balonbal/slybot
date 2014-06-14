@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.pircbotx.User;
 
 import slybot.challenges.Challenge;
-import slybot.challenges.MultiTurnChallenge;
 
 public class ChallengeManager {
 	
@@ -17,13 +16,18 @@ public class ChallengeManager {
 	}
 	
 	public void addChallenge(Challenge c) {
+		System.out.println("a");
 		for (int i = 0; i < chal.size(); i++) {
+			if (c.completed) {
+				removeChallenge(c);
+			}
 			//Do not add challenges to users that already have one going in the SAME channel
 			if ((chal.get(i).getHost().getNick().equalsIgnoreCase(c.getHost().getNick()) || chal.get(i).getChallengedUser().equalsIgnoreCase(c.getChallengedUser())) && chal.get(i).getChannel().getName().equals(c.getChannel().getName())) {
 				return;
 			}
 			
 		}
+		System.out.println("b");
 		c.getChannel().send().message("Oh snap, " + c.getHost().getNick() + " challenged " + c.getChallengedUser() + " to a duel of " + c.getDescription()+". Use the \"accept\" command to accept the challenge");
 		chal.add(c);
 		chal.get(chal.size()-1).timeOut();
@@ -39,16 +43,15 @@ public class ChallengeManager {
 	
 	public void tryAccept(User u) {
 		for (Challenge c: chal) {
-			c.tryAccept(u);
+			if (u.getNick().equalsIgnoreCase(c.getChallengedUser())) {
+				c.initialize();
+			}
 		}
 	}
 	
 	public void doNextTurn(User u, String[] params) {
-		for (int i=0;i < chal.size(); i++) {
-			if (chal.get(i) instanceof MultiTurnChallenge) {
-				MultiTurnChallenge c = (MultiTurnChallenge) chal.get(i);
-				c.proccessTurn(u, params);
-			}
+		for (Challenge c: chal) {
+			c.proccessTurn(u, params);
 		}
 	}
 

@@ -4,14 +4,12 @@ import org.pircbotx.Channel;
 import org.pircbotx.User;
 
 import slybot.Main;
-import slybot.SlyBot;
 
 public abstract class Challenge {
 	
-	private Channel channel;
+	protected Channel channel;
 	private User host;
 	private String challengedUser;
-	private String name;
 	String[] params;
 	public boolean completed = false;
 	public long timeOut;
@@ -39,28 +37,17 @@ public abstract class Challenge {
 		}
 		if (!completed)  {
 			//inform the channel that the challenge was aborted and remove the challenge from the manager
-			getChannel().send().message("Challenge timed out, aborting");
+			getChannel().send().message("Challenge timed out.");
 			completed = true;
 			Main.getChallengeManager().removeChallenge(this);
 		}
 	}
 	
-	
-	public void tryAccept(User playah) {
-		if (completed) {
-			Main.getChallengeManager().removeChallenge(this);
-		}else {
-			if (playah.getNick().equalsIgnoreCase(getChallengedUser())) {
-				User u = run((SlyBot) getHost().getBot(), getHost(), playah, getChannel(), params);
-				completed = true;
-				//Stop the challenge
-				end(u.getNick());
-				Main.getChallengeManager().removeChallenge(this);
-			}
-		}
+	public void addTime(int timeInSeconds) {
+		timeOut += timeInSeconds*1000;
 	}
 	
-	public abstract User run(SlyBot bot, User usera, User userb, Channel channel, String[] params);
+	public abstract void run();
 	
 	public abstract void initialize();
 
@@ -76,13 +63,6 @@ public abstract class Challenge {
 	}
 
 	/**
-	 * @return the command
-	 */
-	public String getCommand() {
-		return name;
-	}
-
-	/**
 	 * @return the channel
 	 */
 	public Channel getChannel() {
@@ -91,9 +71,7 @@ public abstract class Challenge {
 	
 	public abstract String getDescription();
 
-	public void end(String winner) {
-		
-	}
+	public abstract void proccessTurn(User u, String[] params2);
 
 
 }
