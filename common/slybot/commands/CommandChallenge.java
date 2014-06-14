@@ -5,17 +5,12 @@ import org.pircbotx.Colors;
 import org.pircbotx.User;
 
 import slybot.Main;
-import slybot.SlyBot;
 import slybot.challenges.Challenge;
 import slybot.challenges.ChallengeRTD;
 import slybot.challenges.ChallengeTicTacToe;
 import slybot.lib.Reference;
 
-public class CommandChallenge extends Command {
-
-	public CommandChallenge() {
-		super("challenge", false, false, true);
-	}
+public class CommandChallenge implements Command {
 
 	@Override
 	public String[] help() {
@@ -28,7 +23,7 @@ public class CommandChallenge extends Command {
 	}
 
 	@Override
-	public void run(SlyBot bot, User user, Channel channel, String[] params) {
+	public void run(User user, Channel channel, String[] params) {
 		if (channel != null) {
 			if (params[0].equalsIgnoreCase("list")) {
 				for (String s: new String[] {
@@ -63,6 +58,29 @@ public class CommandChallenge extends Command {
 				}
 			}
 		}
+	}
+
+	@Override
+	public String[] getTriggers() {
+		return new String[] {
+				"challenge",
+				"chal"
+		};
+	}
+
+	@Override
+	public boolean requiresOP() {
+		return false;
+	}
+
+	@Override
+	public boolean channelCommand() {
+		return true;
+	}
+
+	@Override
+	public boolean pmCommand() {
+		return false;
 	}
 
 

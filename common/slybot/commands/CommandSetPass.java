@@ -5,14 +5,9 @@ import org.pircbotx.Colors;
 import org.pircbotx.User;
 
 import slybot.Main;
-import slybot.SlyBot;
 import slybot.lib.Settings;
 
-public class CommandSetPass extends Command {
-
-	public CommandSetPass() {
-		super("setPass", true, true, false);
-	}
+public class CommandSetPass implements Command {
 
 	@Override
 	public String[] help() {
@@ -24,7 +19,7 @@ public class CommandSetPass extends Command {
 	}
 
 	@Override
-	public void run(SlyBot bot, User user, Channel channel, String[] params) {
+	public void run(User user, Channel channel, String[] params) {
 		if (params.length == 1) {
 			//Check if no password is set
 			if (Settings.operatorpass.equals("")) {
@@ -37,5 +32,28 @@ public class CommandSetPass extends Command {
 				user.send().message("Sucessfully updated password.");
 			}
 		}
+	}
+
+	@Override
+	public String[] getTriggers() {
+		return new String[] {
+				"setpass",
+				"pass"
+		};
+	}
+
+	@Override
+	public boolean requiresOP() {
+		return true;
+	}
+
+	@Override
+	public boolean channelCommand() {
+		return false;
+	}
+
+	@Override
+	public boolean pmCommand() {
+		return true;
 	}
 }

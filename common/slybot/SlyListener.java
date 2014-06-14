@@ -34,7 +34,7 @@ public class SlyListener implements Listener<PircBotX> {
 		for (Class<? extends Command> c: classes) {
 			try {
 				Command cmd = c.newInstance();
-				System.out.println("Found command: " + cmd.command);
+				System.out.println("Found command: " + c.getName());
 				getCommands().add(cmd);
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
@@ -59,7 +59,7 @@ public class SlyListener implements Listener<PircBotX> {
 				if (message.toUpperCase().startsWith(s.toUpperCase())) {
 					message = message.substring(s.length());
 					//Run command
-					CommandHandler.processCommand((SlyBot) e.getBot(), e.getUser(), e.getChannel(), message, isOP(e));
+					CommandHandler.processCommand(e.getUser(), e.getChannel(), message, isOP(e));
 				}
 			}
 			
@@ -79,7 +79,7 @@ public class SlyListener implements Listener<PircBotX> {
 		} else if (arg0 instanceof PrivateMessageEvent) {
 			PrivateMessageEvent<PircBotX> e = (PrivateMessageEvent<PircBotX>) arg0;
 			
-			CommandHandler.processCommand((SlyBot) e.getBot(), e.getUser(), null, e.getMessage(), false);
+			CommandHandler.processCommand(e.getUser(), null, e.getMessage(), false);
 		}
 	}
 	

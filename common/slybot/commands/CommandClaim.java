@@ -4,14 +4,9 @@ import org.pircbotx.Channel;
 import org.pircbotx.User;
 
 import slybot.Main;
-import slybot.SlyBot;
 import slybot.lib.Settings;
 
-public class CommandClaim extends Command {
-
-	public CommandClaim() {
-		super("claim", false, true, false);
-	}
+public class CommandClaim implements Command {
 
 	@Override
 	public String[] help() {
@@ -21,7 +16,7 @@ public class CommandClaim extends Command {
 	}
 
 	@Override
-	public void run(SlyBot bot, User user, Channel channel, String[] params) {
+	public void run(User user, Channel channel, String[] params) {
 		
 		//if the command is sent in a channel, disregard it
 		if (channel != null) {
@@ -44,6 +39,29 @@ public class CommandClaim extends Command {
 		} else {
 			user.send().message("Error! Bot already claimed by " + Settings.owner + ".");
 		}
+	}
+
+	@Override
+	public String[] getTriggers() {
+		return new String[] {
+				"claim"
+		};
+	}
+
+	@Override
+	public boolean requiresOP() {
+		//No one is botop before the initial claim
+		return false;
+	}
+
+	@Override
+	public boolean channelCommand() {
+		return false;
+	}
+
+	@Override
+	public boolean pmCommand() {
+		return true;
 	}
 
 }

@@ -5,17 +5,10 @@ import org.pircbotx.Colors;
 import org.pircbotx.User;
 
 import slybot.Main;
-import slybot.SlyBot;
 import slybot.core.SlyConfiguration;
 import slybot.lib.Settings;
 
-public class CommandOps extends Command {
-
-	public CommandOps() {
-		super("ops", true, true, false);
-		// TODO Auto-generated constructor stub
-	}
-
+public class CommandOps implements Command {
 
 	@Override
 	public String[] help() {
@@ -23,13 +16,13 @@ public class CommandOps extends Command {
 				"Used to list, add and/or remove operators for this bot. Does " + Colors.BOLD + "NOT" + Colors.NORMAL + " affect any channels",
 				"Can only be issued by bot-operators per PM",
 				"Will return a list of the current operators if no parameters are passed",
-				"SYNTAX: " + Colors.BOLD + "OPS [ADD|REMOVE] [user] [botpassword]" + Colors.NORMAL,
+				"SYNTAX: " + Colors.BOLD + "OPS [ <ADD|REMOVE> <user> <botpassword> ]" + Colors.NORMAL,
 				"Example: " + Colors.BOLD + "OPS ADD sly mySecretPassword123" + Colors.NORMAL
 		};
 	}
 
 	@Override
-	public void run(SlyBot bot, User user, Channel channel, String[] params) {
+	public void run(User user, Channel channel, String[] params) {
 		//Double check that this is in fact requested through a pm
 		if (channel == null) {
 			if (params.length > 2) {
@@ -57,6 +50,29 @@ public class CommandOps extends Command {
 			user.send().message("Total: " + Settings.botops.length + " items");
 		}
 
+	}
+
+	@Override
+	public String[] getTriggers() {
+		return new String[] {
+				"ops",
+				"operators"
+		};
+	}
+
+	@Override
+	public boolean requiresOP() {
+		return true;
+	}
+
+	@Override
+	public boolean channelCommand() {
+		return false;
+	}
+
+	@Override
+	public boolean pmCommand() {
+		return true;
 	}
 
 }

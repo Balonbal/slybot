@@ -3,37 +3,43 @@ package slybot.commands;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
-import slybot.SlyBot;
-
-public abstract class Command {
+public interface Command {
 	
-	public boolean requiresOP;
-	public boolean PMCommand;
-	public boolean isChannelCommand;
-	public String command;
+	/**
+	 * Specify the strings that will cause the commandhandler to call run
+	 * @return an array of triggers
+	 */
+	public abstract String[] getTriggers();
 	
-	public Command(String command) {
-		this(command, false, false, true);
-	}
+	/**
+	 * Whether or not the command requires operator status to run.
+	 * Note that both botops and channel operators will be considered valid
+	 */
+	public abstract boolean requiresOP();
 	
-	public Command(String command, boolean needsop, boolean pmcommand, boolean isChannelCommand) {
-		this.command = command;
-		this.requiresOP = needsop;
-		this.PMCommand = pmcommand;
-		this.isChannelCommand = isChannelCommand;
-	}
+	/**
+	 * Define if the command can be used in channels 
+	 * @return true if it can, false if it cannot
+	 */
+	public abstract boolean channelCommand();
 	
-	public void sendHelp(User u, Channel c, String[] params) {
-		for (String s: help()) {
-			if (c == null) {
-				u.send().message(s);
-			} else {
-				c.send().message(s);
-			}
-		}
-	}
+	/**
+	 * Specify if the command may be used over private messaging
+	 * @return true if it can, false if it cannot
+	 */
+	public abstract boolean pmCommand();
 	
+	/**
+	 * The message/s a user will see if they run help
+	 * @return an array where each element is a line in the returned message
+	 */
 	public abstract String[] help();
 	
-	public abstract void run(SlyBot bot, User user, Channel channel, String[] params);
+	/**
+	 * Anything within this method will be run when a trigger from the command is found and {@link #requiresOP()}, {@link #channelCommand()} and {@link #pmCommand()} is satisfied
+	 * @param user the user performing the command
+	 * @param channel the channel the command was used in, will be null for private messages
+	 * @param params all, if any, parameters included by the user
+	 */
+	public abstract void run(User user, Channel channel, String[] params);
 }

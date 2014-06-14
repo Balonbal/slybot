@@ -5,17 +5,12 @@ import org.pircbotx.Colors;
 import org.pircbotx.User;
 
 import slybot.Main;
-import slybot.SlyBot;
 import slybot.core.CommandHandler;
 
-public class CommandLeave extends Command {
-
-	public CommandLeave() {
-		super("leave", true, false, true);
-	}
+public class CommandLeave implements Command {
 
 	@Override
-	public void run(SlyBot bot, User user, Channel channel, String[] params) {
+	public void run(User user, Channel channel, String[] params) {
 
 		if (params.length > 0) {
 			if (params[0].equals("-s")) {
@@ -40,6 +35,29 @@ public class CommandLeave extends Command {
 				"SYNTAX: " + Colors.BOLD + "LEAVE [-s]",
 				"-s        Shut down the bot"
 		};
+	}
+
+	@Override
+	public String[] getTriggers() {
+		return new String[] {
+				"leave",
+				"part"
+		};
+	}
+
+	@Override
+	public boolean requiresOP() {
+		return true;
+	}
+
+	@Override
+	public boolean channelCommand() {
+		return true;
+	}
+
+	@Override
+	public boolean pmCommand() {
+		return false;
 	}
 
 }

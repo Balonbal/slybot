@@ -6,13 +6,7 @@ import org.pircbotx.Channel;
 import org.pircbotx.User;
 import org.pircbotx.Colors;
 
-import slybot.SlyBot;
-
-public class CommandRTD extends Command {
-
-	public CommandRTD() {
-		super("rtd", false, false, true);
-	}
+public class CommandRTD implements Command {
 
 	@Override
 	public String[] help() {
@@ -25,7 +19,7 @@ public class CommandRTD extends Command {
 	}
 
 	@Override
-	public void run(SlyBot bot, User user, Channel channel, String[] params) {
+	public void run(User user, Channel channel, String[] params) {
 		long[] numbers = calculateResult(params);
 		broadcastResult(channel, user, (int) numbers[1], (int) numbers[2], numbers[0]);
 	}
@@ -64,6 +58,30 @@ public class CommandRTD extends Command {
 			channel.send().message(user.getNick() + " rolls the dice (" + (max-min) + " sides) and got... " + num + "!");
 		}
 		
+	}
+
+	@Override
+	public String[] getTriggers() {
+		return new String[] {
+				"rtd",
+				"roll",
+				"dice"
+		};
+	}
+
+	@Override
+	public boolean requiresOP() {
+		return false;
+	}
+
+	@Override
+	public boolean channelCommand() {
+		return true;
+	}
+
+	@Override
+	public boolean pmCommand() {
+		return false;
 	}
 
 }

@@ -148,10 +148,6 @@ public class Main {
 		return listener;
 	}
 	
-	public static String getNick() {
-		return nick;
-	}
-	
 	public static SlyBot getBot() {
 		return slybot;
 	}

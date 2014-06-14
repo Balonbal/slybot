@@ -4,13 +4,12 @@ import org.pircbotx.Channel;
 import org.pircbotx.User;
 
 import slybot.Main;
-import slybot.SlyBot;
 import slybot.commands.Command;
 import slybot.lib.Settings;
 
 public class CommandHandler {
 	
-	public static void processCommand(SlyBot bot, User user, Channel channel, String message, boolean isOP) {
+	public static void processCommand(User user, Channel channel, String message, boolean isOP) {
 		String cmd;
 		String[] params;
 		
@@ -27,14 +26,13 @@ public class CommandHandler {
 		
 		System.out.println("Trying command \"" + cmd + "\" with " + params.length + " parameters from user \"" + user.getNick() + "\", " + (isOP? "Operator":""));
 		
-		for (Command command: Main.getListener().getCommands()) {
-			if (cmd.equalsIgnoreCase(command.command)) {
-				//If the command requires op, check for OP
-				if (!(command.requiresOP && !isOP) || isBotOP(user)) {
-					//Only do commands in appropriate channels.
-					if ((command.isChannelCommand && channel != null) || (command.PMCommand && channel == null) || command.PMCommand && command.isChannelCommand) {
-						command.run(bot, user, channel, params);	
-					}
+		Command c = getCommand(cmd);
+		if (c != null) {
+			//If the command requires op, check for OP
+			if (!(c.requiresOP() && !isOP) || isBotOP(user)) {
+				//Only do commands in appropriate channels.
+				if ((c.channelCommand() && channel != null) || (c.pmCommand() && channel == null) || c.channelCommand() && c.pmCommand()) {
+					c.run(user, channel, params);	
 				}
 			}
 		}
@@ -56,8 +54,10 @@ public class CommandHandler {
 	
 	public static Command getCommand(String cmd) {
 		for (Command c: Main.getListener().getCommands()) {
-			if (c.command.equalsIgnoreCase(cmd)) {
-				return c;
+			for (String trigger: c.getTriggers()) {
+				if (cmd.equalsIgnoreCase(trigger)) {
+					return c;
+				}
 			}
 		}
 		

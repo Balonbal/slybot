@@ -4,14 +4,8 @@ import org.pircbotx.Channel;
 import org.pircbotx.User;
 
 import slybot.Main;
-import slybot.SlyBot;
 
-public class CommandAccept extends Command {
-
-	public CommandAccept() {
-		super("accept", false, false, true);
-		// TODO Auto-generated constructor stub
-	}
+public class CommandAccept implements Command {
 
 	@Override
 	public String[] help() {
@@ -21,10 +15,32 @@ public class CommandAccept extends Command {
 	}
 
 	@Override
-	public void run(SlyBot bot, User user, Channel channel, String[] params) {
+	public void run(User user, Channel channel, String[] params) {
 		System.out.println(user.getNick() + " accepted challenge");
 		//Main.getChallengeManager().cleanup();
 		Main.getChallengeManager().tryAccept(user);
+	}
+
+	@Override
+	public String[] getTriggers() {
+		return new String[] {
+			"accept"	
+		};
+	}
+
+	@Override
+	public boolean requiresOP() {
+		return false;
+	}
+
+	@Override
+	public boolean channelCommand() {
+		return true;
+	}
+
+	@Override
+	public boolean pmCommand() {
+		return false;
 	}
 
 }
