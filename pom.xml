@@ -17,21 +17,21 @@
         </configuration>
       </plugin>
       <plugin>
-		    <artifactId>maven-assembly-plugin</artifactId>
-		    <configuration>
-		      <archive>
-		        <manifest>
-			        <addClasspath>true</addClasspath>
-			        <mainClass>slybot.Main</mainClass>
-			      </manifest>
-		      </archive>
-		      <descriptorRefs>
-			      <descriptorRef>jar-with-dependencies</descriptorRef>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+	      <mainClass>slybot.Main</mainClass>
+            </manifest>
+	  </archive>
+	  <descriptorRefs>
+	    <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
-	      </configuration>
-		    <executions>
-		      <execution>
-			      <id>make-slybot-with-dependencies</id>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-slybot-with-dependencies</id>
             <phase>package</phase>
             <goals>
               <goal>single</goal>
@@ -42,15 +42,15 @@
     </plugins>
   </build>
   <dependencies>
-  	<dependency>
-  		<groupId>org.pircbotx</groupId>
-  		<artifactId>pircbotx</artifactId>
-  		<version>2.0.1</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.reflections</groupId>
-  		<artifactId>reflections</artifactId>
-  		<version>0.9.9-RC1</version>
-  	</dependency>
+    <dependency>
+      <groupId>org.pircbotx</groupId>
+      <artifactId>pircbotx</artifactId>
+      <version>2.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.9.9-RC1</version>
+    </dependency>
   </dependencies>
 </project>
