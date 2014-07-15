@@ -5,6 +5,7 @@
   <version>1.1.0</version>
   <name>SlyBot</name>
   <build>
+    <defaultGoal>install</defaultGoal>
     <sourceDirectory>common</sourceDirectory>
     <plugins>
       <plugin>
@@ -16,35 +17,25 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <classpathPrefix>libs/</classpathPrefix>
-              <mainClass>slybot.Main</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.5.1</version>
-        <executions>
-          <execution>
-            <id>copy-dependencies</id>
+		    <artifactId>maven-assembly-plugin</artifactId>
+		    <configuration>
+		      <archive>
+		        <manifest>
+			        <addClasspath>true</addClasspath>
+			        <mainClass>slybot.Main</mainClass>
+			      </manifest>
+		      </archive>
+		      <descriptorRefs>
+			      <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+	      </configuration>
+		    <executions>
+		      <execution>
+			      <id>make-slybot-with-dependencies</id>
             <phase>package</phase>
             <goals>
-              <goal>copy-dependencies</goal>
+              <goal>single</goal>
             </goals>
-            <configuration>
-              <outputDirectory>
-                ${project.build.directory}/libs/
-              </outputDirectory>
-            </configuration>
           </execution>
         </executions>
       </plugin>
