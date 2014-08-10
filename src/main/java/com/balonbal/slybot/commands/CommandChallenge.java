@@ -1,14 +1,13 @@
 package com.balonbal.slybot.commands;
 
-import org.pircbotx.Channel;
-import org.pircbotx.Colors;
-import org.pircbotx.User;
-
 import com.balonbal.slybot.Main;
 import com.balonbal.slybot.challenges.Challenge;
 import com.balonbal.slybot.challenges.ChallengeRTD;
 import com.balonbal.slybot.challenges.ChallengeTicTacToe;
 import com.balonbal.slybot.lib.Reference;
+import org.pircbotx.Channel;
+import org.pircbotx.Colors;
+import org.pircbotx.User;
 
 public class CommandChallenge implements Command {
 
@@ -38,9 +37,10 @@ public class CommandChallenge implements Command {
 				
 				if (!params[0].equalsIgnoreCase(user.getNick())) {
 					String[] newParams = new String[params.length - 2];
-					for (int i = 2; i <= params.length -1; i++) {
-						newParams[i-2] = params[i];
-					}
+                    System.arraycopy(params, 2, newParams, 0, newParams.length);
+                    /*for (int i = 2; i <= params.length -1; i++) {
+                        newParams[i-2] = params[i];
+					}*/
 					
 					Challenge c = null;
 					if (params[1].equalsIgnoreCase("rtd")) {

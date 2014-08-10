@@ -1,8 +1,9 @@
-package com.balonbal.slybot;
+package com.balonbal.slybot.listeners;
 
-import java.util.ArrayList;
-import java.util.Set;
-
+import com.balonbal.slybot.Main;
+import com.balonbal.slybot.commands.Command;
+import com.balonbal.slybot.core.CommandHandler;
+import com.balonbal.slybot.lib.Reference;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.Listener;
@@ -10,18 +11,18 @@ import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 import org.reflections.Reflections;
 
-import com.balonbal.slybot.commands.Command;
-import com.balonbal.slybot.core.CommandHandler;
-import com.balonbal.slybot.lib.Reference;
-import com.balonbal.slybot.lib.Strings;
-import com.balonbal.slybot.tools.Youtube;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.logging.Logger;
 
-public class SlyListener implements Listener<PircBotX> {
-	
-	private ArrayList<Command> commands;
-	
-	public SlyListener() {
-		addCommands();
+public class CommandListener implements Listener<PircBotX> {
+
+    private static final Logger logger = Logger.getLogger(CommandListener.class.getName());
+
+    private ArrayList<Command> commands;
+
+    public CommandListener() {
+        addCommands();
 	}
 
 	private void addCommands() {
@@ -34,8 +35,8 @@ public class SlyListener implements Listener<PircBotX> {
 		for (Class<? extends Command> c: classes) {
 			try {
 				Command cmd = c.newInstance();
-				System.out.println("Found command: " + c.getName());
-				getCommands().add(cmd);
+                logger.info("Loaded command: " + c.getName());
+                getCommands().add(cmd);
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -53,8 +54,10 @@ public class SlyListener implements Listener<PircBotX> {
 			MessageEvent<PircBotX> e = (MessageEvent<PircBotX>) arg0;
 			
 			String message = e.getMessage();
-			
-			//check if the message is a bot command
+
+            final Logger channelLog = Logger.getLogger(e.getChannel().getName());
+            channelLog.info(String.format("%s -> %s: %s", e.getUser().getNick(), e.getChannel().getName(), message));
+            //check if the message is a bot command
 			for (String s: Reference.PREFIXES) {
 				if (message.toUpperCase().startsWith(s.toUpperCase())) {
 					message = message.substring(s.length());
@@ -65,16 +68,6 @@ public class SlyListener implements Listener<PircBotX> {
 			
 			//try next turn TODO consider if this needs a command
 			Main.getChallengeManager().doNextTurn(e.getUser(), message.split(" "));
-			
-			for (String s: Strings.youtubes) {
-				if (message.toLowerCase().contains(s.toLowerCase())) {
-					//Extract the youtube link
-					Youtube y = new Youtube(message.substring(message.toLowerCase().indexOf(s)));
-					//Print the information and delete the file
-					y.printInfo(e.getChannel());
-					y.deleteFile();
-				}
-			}
 		//check for PMs
 		} else if (arg0 instanceof PrivateMessageEvent) {
 			PrivateMessageEvent<PircBotX> e = (PrivateMessageEvent<PircBotX>) arg0;

@@ -19,7 +19,8 @@ public class BotConfig extends SlyConfiguration {
 		Settings.network = configuration.get("default_network");
 		Settings.channels = (configuration.get("default_channels").contains(",") ? configuration.get("default_channels").split(",") : new String[] { configuration.get("default_channels") });
 		Settings.operatorpass = configuration.get("operatorpass");
-	}
+        Settings.loggedChannels = (configuration.get("loggedChannels").contains(",") ? configuration.get("loggedChannels").split(",") : new String[]{configuration.get("loggedChannels")});
+    }
 
 	@Override
 	public void createSettings() {
@@ -30,6 +31,7 @@ public class BotConfig extends SlyConfiguration {
 		addSetting("default_network", "");
 		addSetting("default_channels", "");
 		addSetting("operatorpass", "");
-	}
+        addSetting("loggedChannels", "");
+    }
 
 }

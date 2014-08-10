@@ -1,34 +1,34 @@
 package com.balonbal.slybot.core;
 
-import java.util.ArrayList;
-
+import com.balonbal.slybot.challenges.Challenge;
 import org.pircbotx.User;
 
-import com.balonbal.slybot.challenges.Challenge;
+import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class ChallengeManager {
-	
-	
-	private ArrayList<Challenge> chal;
-	
-	public ChallengeManager() {
+
+    private static final Logger logger = Logger.getLogger(ChallengeManager.class.getName());
+
+    private ArrayList<Challenge> chal;
+
+    public ChallengeManager() {
 		chal = new ArrayList<Challenge>();
 	}
 	
 	public void addChallenge(Challenge c) {
-		System.out.println("a");
-		for (int i = 0; i < chal.size(); i++) {
-			if (c.completed) {
-				removeChallenge(c);
-			}
+        for (Challenge challenge : chal) {
+            if (challenge.completed) {
+                removeChallenge(challenge);
+            }
 			//Do not add challenges to users that already have one going in the SAME channel
-			if ((chal.get(i).getHost().getNick().equalsIgnoreCase(c.getHost().getNick()) || chal.get(i).getChallengedUser().equalsIgnoreCase(c.getChallengedUser())) && chal.get(i).getChannel().getName().equals(c.getChannel().getName())) {
-				return;
+            if ((challenge.getHost().getNick().equalsIgnoreCase(c.getHost().getNick()) || challenge.getChallengedUser().equalsIgnoreCase(c.getChallengedUser())) && challenge.getChannel().getName().equals(c.getChannel().getName())) {
+                return;
 			}
 			
 		}
-		System.out.println("b");
-		c.getChannel().send().message("Oh snap, " + c.getHost().getNick() + " challenged " + c.getChallengedUser() + " to a duel of " + c.getDescription()+". Use the \"accept\" command to accept the challenge");
+        logger.info("Started challenge between user " + c.getHost().getNick() + " (host) and " + c.getChallengedUser());
+        c.getChannel().send().message("Oh snap, " + c.getHost().getNick() + " challenged " + c.getChallengedUser() + " to a duel of " + c.getDescription()+". Use the \"accept\" command to accept the challenge");
 		chal.add(c);
 		chal.get(chal.size()-1).timeOut();
 	}
