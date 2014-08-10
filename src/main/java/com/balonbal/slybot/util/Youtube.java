@@ -1,17 +1,5 @@
-package com.balonbal.slybot.tools;
+package com.balonbal.slybot.util;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Random;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.pircbotx.Channel;
 import org.pircbotx.Colors;
 import org.w3c.dom.Document;
@@ -19,9 +7,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.*;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.logging.Logger;
+
 public class Youtube {
-	
-	File f;
+
+    private static final Logger logger = Logger.getLogger(Youtube.class.getName());
+    File f;
 
 	public Youtube(String url) {
 		//Check if it's an URL or just the code
@@ -43,9 +40,9 @@ public class Youtube {
 			}
 		}
 		Random r = new Random();
-		System.out.println("Fetching file from https://gdata.youtube.com/feeds/api/videos/" + url);
-		
-		//Create a new temp file
+        logger.info("Fetching file from https://gdata.youtube.com/feeds/api/videos/" + url);
+
+        //Create a new temp file
 		f = new File("tmp_" + r.nextInt(10000));
 		try {
 			f.createNewFile();
@@ -72,9 +69,8 @@ public class Youtube {
 			//Close the outputbufferer
 			out.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            logger.warning("An error occured while reading file: " + e.toString());
+        }
 		
 	}
 	

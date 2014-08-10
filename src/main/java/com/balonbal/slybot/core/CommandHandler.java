@@ -1,16 +1,21 @@
 package com.balonbal.slybot.core;
 
-import org.pircbotx.Channel;
-import org.pircbotx.User;
-
 import com.balonbal.slybot.Main;
 import com.balonbal.slybot.commands.Command;
 import com.balonbal.slybot.lib.Settings;
+import org.apache.commons.lang3.StringUtils;
+import org.pircbotx.Channel;
+import org.pircbotx.User;
+
+import java.util.logging.Logger;
 
 public class CommandHandler {
-	
-	public static void processCommand(User user, Channel channel, String message, boolean isOP) {
-		String cmd;
+
+    private static final Logger logger = Logger.getLogger(CommandHandler.class.getName());
+    private static final Logger commandLogger = Logger.getLogger("commandLogger");
+
+    public static void processCommand(User user, Channel channel, String message, boolean isOP) {
+        String cmd;
 		String[] params;
 		
 		//If the message has parameters
@@ -23,16 +28,17 @@ public class CommandHandler {
 			cmd = message;
 			params = new String[] { };
 		}
-		
-		System.out.println("Trying command \"" + cmd + "\" with " + params.length + " parameters from user \"" + user.getNick() + "\", " + (isOP? "Operator":""));
-		
-		Command c = getCommand(cmd);
+
+        logger.info(String.format("%s %s tried to issue command: %s", (isOP ? "Operator" : "User"), user.getNick(), cmd));
+
+        Command c = getCommand(cmd);
 		if (c != null) {
 			//If the command requires op, check for OP
 			if (!(c.requiresOP() && !isOP) || isBotOP(user)) {
 				//Only do commands in appropriate channels.
 				if ((c.channelCommand() && channel != null) || (c.pmCommand() && channel == null) || c.channelCommand() && c.pmCommand()) {
-					c.run(user, channel, params);	
+                    commandLogger.info(String.format("Issuing command \"%s\" by user %s %s", cmd + " " + StringUtils.join(params, " "), user.getNick(), (channel != null ? "in channel " + channel.getName() : "")));
+                    c.run(user, channel, params);
 				}
 			}
 		}
@@ -53,8 +59,8 @@ public class CommandHandler {
 	}
 	
 	public static Command getCommand(String cmd) {
-		for (Command c: Main.getListener().getCommands()) {
-			for (String trigger: c.getTriggers()) {
+        for (Command c : Main.getCommandListener().getCommands()) {
+            for (String trigger: c.getTriggers()) {
 				if (cmd.equalsIgnoreCase(trigger)) {
 					return c;
 				}

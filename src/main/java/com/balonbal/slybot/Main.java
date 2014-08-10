@@ -1,32 +1,43 @@
 package com.balonbal.slybot;
 
-import java.io.IOException;
-import java.util.Scanner;
-
+import com.balonbal.slybot.core.BotConfig;
+import com.balonbal.slybot.core.ChallengeManager;
+import com.balonbal.slybot.core.SlyConfiguration;
+import com.balonbal.slybot.lib.Settings;
+import com.balonbal.slybot.listeners.CommandListener;
+import com.balonbal.slybot.listeners.LinkListener;
 import org.pircbotx.Configuration;
 import org.pircbotx.Configuration.Builder;
 import org.pircbotx.PircBotX;
 import org.pircbotx.exception.IrcException;
 
-import com.balonbal.slybot.core.BotConfig;
-import com.balonbal.slybot.core.ChallengeManager;
-import com.balonbal.slybot.core.SlyConfiguration;
-import com.balonbal.slybot.lib.Settings;
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class Main {
-	
-	static SlyListener listener;
-	static SlyConfiguration sc;
+
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
+
+    static CommandListener commandListener;
+    static LinkListener linkListener;
+    static SlyConfiguration sc;
 	static ChallengeManager cm;
 	static SlyBot slybot;
 	static String nick;
 	
 	public static void main(String[] args) {
-		
-		listener = new SlyListener();
-		sc = new BotConfig();
-		sc.initialize();
-		cm = new ChallengeManager();
+
+        sc = new BotConfig();
+        sc.initialize();
+        initLoggers();
+        commandListener = new CommandListener();
+        linkListener = new LinkListener();
+        cm = new ChallengeManager();
 		
 		//Set up local variables for network and channel
 		String network = null;
@@ -113,8 +124,9 @@ public class Main {
 			.setName(nick) //Set the nick of the bot.
 			.setAutoNickChange(true) //Automatically change nick when the current one is in use
 			.setCapEnabled(true) //Enable CAP features
-			.addListener(listener) //This class is a listener, so add it to the bots known listeners
-			.setServerHostname(network);
+                .addListener(commandListener) //This class is a commandListener, so add it to the bots known listeners
+                .addListener(linkListener)
+                .setServerHostname(network);
 		
 		if (nickPass != null && !nickPass.equals("")) {
 			config.setNickservPassword(nickPass);
@@ -143,10 +155,47 @@ public class Main {
 		}
 
 	}
-	
-	public static SlyListener getListener() {
-		return listener;
-	}
+
+    private static void initLoggers() {
+        try {
+            File logLoc = new File("logs");
+
+            //If the directory for logs doesn't exist, create it
+            if (!logLoc.isDirectory()) {
+                logLoc.mkdir();
+            }
+
+            //Bind commandLogger to a file for logging
+            FileHandler commandLog = new FileHandler("logs" + File.separator + "commands.log", true);
+            commandLog.setFormatter(new SimpleFormatter());
+            Logger.getLogger("commandLogger").addHandler(commandLog);
+            Logger.getLogger("commandLogger").setUseParentHandlers(false);
+
+            //Add a new log file for each logged channel
+            for (String channel : Settings.loggedChannels) {
+                FileHandler channelLog = new FileHandler("logs" + File.separator + channel + ".log", true);
+                channelLog.setFormatter(new SimpleFormatter());
+                Logger.getLogger(channel).addHandler(channelLog);
+                Logger.getLogger(channel).setUseParentHandlers(false);
+            }
+
+            //Add a log for everything else
+            Logger l = Logger.getLogger("");
+            FileHandler botLog = new FileHandler("logs" + File.separator + "bot.log", false);
+            botLog.setFormatter(new SimpleFormatter());
+            l.addHandler(botLog);
+            l.setLevel(Level.INFO);
+
+        } catch (IOException e) {
+            logger.warning("Unable to open files for logging, only console output will be used: " + e.toString());
+        }
+
+        logger.info("Loggers initialized.");
+    }
+
+    public static CommandListener getCommandListener() {
+        return commandListener;
+    }
 	
 	public static SlyBot getBot() {
 		return slybot;
