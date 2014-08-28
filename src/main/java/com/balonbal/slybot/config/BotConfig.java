@@ -1,5 +1,6 @@
-package com.balonbal.slybot.core;
+package com.balonbal.slybot.config;
 
+import com.balonbal.slybot.core.SlyConfiguration;
 import com.balonbal.slybot.lib.Settings;
 
 public class BotConfig extends SlyConfiguration {

@@ -39,7 +39,6 @@ public abstract class Challenge {
 			//inform the channel that the challenge was aborted and remove the challenge from the manager
 			getChannel().send().message("Challenge timed out.");
 			completed = true;
-			Main.getChallengeManager().removeChallenge(this);
 		}
 	}
 	

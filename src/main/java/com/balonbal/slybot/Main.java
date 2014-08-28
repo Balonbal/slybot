@@ -1,6 +1,6 @@
 package com.balonbal.slybot;
 
-import com.balonbal.slybot.core.BotConfig;
+import com.balonbal.slybot.config.BotConfig;
 import com.balonbal.slybot.core.ChallengeManager;
 import com.balonbal.slybot.core.SlyConfiguration;
 import com.balonbal.slybot.lib.Settings;

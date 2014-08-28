@@ -2,6 +2,7 @@ package com.balonbal.slybot.challenges;
 
 import java.util.Random;
 
+import com.balonbal.slybot.lib.Reference;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
@@ -43,6 +44,7 @@ public class ChallengeTicTacToe extends Challenge {
 		getChannel().send().message(getChallengedUser()+ " will be playing as " + challengeIcon);
 		printBoard();
 		getChannel().send().message((hostTurn?getHost().getNick():getChallengedUser()) + " will start of this legendary battle!");
+        addTime(Reference.TTT_NEXT_TURN_TIMEOUT);
 	}
 	
 	private boolean updateBoard(int x, int y) {
@@ -78,9 +80,11 @@ public class ChallengeTicTacToe extends Challenge {
 			if (!s.equalsIgnoreCase("_")) {
 				end(s);
 			} else {
-			hostTurn = !hostTurn;
-			
-			getChannel().send().message((hostTurn ? getHost().getNick() : getChallengedUser()) + ": your turn!");
+                hostTurn = !hostTurn;
+
+                getChannel().send().message((hostTurn ? getHost().getNick() : getChallengedUser()) + ": your turn!");
+
+                addTime(Reference.TTT_NEXT_TURN_TIMEOUT);
 			}
 		}
 	}
@@ -96,18 +100,18 @@ public class ChallengeTicTacToe extends Challenge {
 		
 		for (int i = 0; i < board.length; i++) {
 			//Check the board vertically
-			if (board[i][0].equals(board[i][1]) && board[i][1].equals(board[i][2]) && board[i][0] != "null") {
+			if (board[i][0].equals(board[i][1]) && board[i][1].equals(board[i][2]) && !board[i][0].equals("_")) {
 				return board[i][0];
 			//check the board horizontally
-			} else if (board[0][i].equals(board[1][i]) &&  board[1][i].equals(board[2][i]) && board[0][i] != "null") {
+			} else if (board[0][i].equals(board[1][i]) &&  board[1][i].equals(board[2][i]) && !board[0][i].equals("_")) {
 				return board[0][i];
 			}
 		}
 		
 		//check the board diagonally
-		if (board[0][0].equals(board[1][1]) && board[0][0].equals(board[2][2]) && board[0][0] != "null") {
+		if (board[0][0].equals(board[1][1]) && board[0][0].equals(board[2][2]) && !board[0][0].equals("_")) {
 			return board[0][0];
-		} else if (board[2][0].equals(board[1][1]) && board[2][0].equals(board[0][2]) && board[2][0] != "null") {
+		} else if (board[2][0].equals(board[1][1]) && board[2][0].equals(board[0][2]) && !board[2][0].equals("_")) {
 			return board[2][0];
 		}
 		
@@ -115,7 +119,7 @@ public class ChallengeTicTacToe extends Challenge {
 		boolean full = true;
 		for (String[] s: board) {
 			for (String str: s) {
-				if (str.equalsIgnoreCase("null")) {
+				if (str.equals("_")) {
 					full = false;
 				}
 			}
@@ -124,7 +128,7 @@ public class ChallengeTicTacToe extends Challenge {
 		if (full) {
 			return "full";
 		}
-		return "null";
+		return "_";
 	}
 
 	@Override
@@ -146,6 +150,5 @@ public class ChallengeTicTacToe extends Challenge {
 		} else {
 			getChannel().send().message("The game is a tie! Both players are officialy noobs.");
 		}
-		Main.getChallengeManager().removeChallenge(this);
 	}
 }

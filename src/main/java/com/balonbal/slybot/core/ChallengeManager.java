@@ -17,29 +17,33 @@ public class ChallengeManager {
 	}
 	
 	public void addChallenge(Challenge c) {
+        logger.info("Trying to create a new challenge");
+        ArrayList<Challenge> removeChallenges = new ArrayList<Challenge>();
         for (Challenge challenge : chal) {
+            logger.info(challenge.completed + "");
             if (challenge.completed) {
-                removeChallenge(challenge);
-            }
-			//Do not add challenges to users that already have one going in the SAME channel
-            if ((challenge.getHost().getNick().equalsIgnoreCase(c.getHost().getNick()) || challenge.getChallengedUser().equalsIgnoreCase(c.getChallengedUser())) && challenge.getChannel().getName().equals(c.getChannel().getName())) {
+                removeChallenges.add(challenge);
+            //Do not add challenges to users that already have one going in the SAME channe
+            } else if ((challenge.getHost().getNick().equalsIgnoreCase(c.getHost().getNick()) || challenge.getChallengedUser().equalsIgnoreCase(c.getChallengedUser())) && challenge.getChannel().getName().equals(c.getChannel().getName())) {
+                logger.info("Challenge not initialized as one of the user already has a challenge.");
                 return;
 			}
-			
 		}
+
+        //Remove obsolete challenges
+        for (Challenge challenge: removeChallenges) {
+            chal.remove(challenge);
+        }
+
         logger.info("Started challenge between user " + c.getHost().getNick() + " (host) and " + c.getChallengedUser());
         c.getChannel().send().message("Oh snap, " + c.getHost().getNick() + " challenged " + c.getChallengedUser() + " to a duel of " + c.getDescription()+". Use the \"accept\" command to accept the challenge");
 		chal.add(c);
 		chal.get(chal.size()-1).timeOut();
 	}
-	
-	public void removeChallenge(Challenge c) {
-		for (int i = 0; i < chal.size(); i++) {
-			if (chal.get(i) == c) {
-				chal.remove(i);
-			}
-		}
-	}
+
+    public void removeChallenge(Challenge c) {
+        chal.remove(c);
+    }
 	
 	public void tryAccept(User u) {
 		for (Challenge c: chal) {
@@ -51,7 +55,9 @@ public class ChallengeManager {
 	
 	public void doNextTurn(User u, String[] params) {
 		for (Challenge c: chal) {
-			c.proccessTurn(u, params);
+            if (!c.completed) {
+                c.proccessTurn(u, params);
+            }
 		}
 	}
 

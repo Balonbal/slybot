@@ -11,4 +11,9 @@ public class Strings {
 		"http://youtu.be"
 	};
 
+    /* config constants */
+    public static final String CHANNEL_SETTING_BLACKLISTED_COMMANDS = "command_blacklist";
+    public static final String CHANNEL_SETTING_ALIASES = "command_aliases";
+
+
 }

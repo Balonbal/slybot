@@ -1,5 +1,7 @@
 package com.balonbal.slybot.core;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -122,6 +124,10 @@ public abstract class SlyConfiguration {
 				e.printStackTrace();
 			}
 		}
+
+        public void addSetting(String key, String[] defaultVal, String splitter) {
+            addSetting(key, StringUtils.join(defaultVal, splitter));
+        }
 
 		public void addSetting(String key, String defaultVal) {
 			configuration.put(key, defaultVal);
