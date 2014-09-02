@@ -4,6 +4,8 @@ import com.balonbal.slybot.Main;
 import com.balonbal.slybot.commands.Command;
 import com.balonbal.slybot.core.CommandHandler;
 import com.balonbal.slybot.lib.Reference;
+import com.balonbal.slybot.lib.Settings;
+import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.Listener;
@@ -62,7 +64,7 @@ public class CommandListener implements Listener<PircBotX> {
 				if (message.toUpperCase().startsWith(s.toUpperCase())) {
 					message = message.substring(s.length());
 					//Run command
-					CommandHandler.processCommand(e.getUser(), e.getChannel(), message, isOP(e));
+					CommandHandler.processCommand(e.getUser(), e.getChannel(), message);
 				}
 			}
 			
@@ -72,17 +74,12 @@ public class CommandListener implements Listener<PircBotX> {
 		} else if (arg0 instanceof PrivateMessageEvent) {
 			PrivateMessageEvent<PircBotX> e = (PrivateMessageEvent<PircBotX>) arg0;
 			
-			CommandHandler.processCommand(e.getUser(), null, e.getMessage(), false);
+			CommandHandler.processCommand(e.getUser(), null, e.getMessage());
 		}
-	}
-	
-	private boolean isOP(MessageEvent<?> e) {
-		return e.getChannel().getOps().contains(e.getUser());
 	}
 
 	public ArrayList<Command> getCommands() {
 		return commands;
 	}
-
 
 }

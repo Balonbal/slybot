@@ -18,7 +18,7 @@ public class CommandSay implements Command {
 
     @Override
     public boolean requiresOP() {
-        return true;
+        return false;
     }
 
     @Override
@@ -47,10 +47,8 @@ public class CommandSay implements Command {
 
         //For channels
         if (channel != null) {
-            //Verify that the user is a channel operator
-            if (user.getChannelsOpIn().contains(channel)) {
-                channel.send().message(message);
-            }
+            //Prevent users from sending bot commands this way by adding a space
+            channel.send().message(" " + message);
         } else {
             //Let users talk with them selves
             user.send().message(message);

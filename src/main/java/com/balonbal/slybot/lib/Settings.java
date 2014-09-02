@@ -1,5 +1,7 @@
 package com.balonbal.slybot.lib;
 
+import java.util.HashMap;
+
 public class Settings {
 
     public static String owner;
@@ -10,5 +12,6 @@ public class Settings {
     public static String[] channels;
     public static String operatorpass;
     public static String[] loggedChannels;
+    public static HashMap<String, String> aliases;
 
 }

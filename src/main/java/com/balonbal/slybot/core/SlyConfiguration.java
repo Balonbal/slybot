@@ -82,7 +82,7 @@ public abstract class SlyConfiguration {
 
 		} catch(Exception e) {
 			System.out.println(file.getAbsolutePath() + " was corrupted, restoring default settings");
-
+            e.printStackTrace();
 			//If something goes wrong, delete the file and create new ones from the defaults
 			file.delete();
 			createSettings();

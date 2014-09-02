@@ -43,7 +43,7 @@ public class Main {
 		String network = null;
 		String[] channels = null;
 		String nickPass = null;
-		
+
 		//Check if default values are set
 		if (!Settings.botnick.equals("")) {
 			nick = Settings.botnick;

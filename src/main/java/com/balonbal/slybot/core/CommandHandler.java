@@ -14,14 +14,16 @@ public class CommandHandler {
     private static final Logger logger = Logger.getLogger(CommandHandler.class.getName());
     private static final Logger commandLogger = Logger.getLogger("commandLogger");
 
-    public static void processCommand(User user, Channel channel, String message, boolean isOP) {
+    public static void processCommand(User user, Channel channel, String message) {
         String cmd;
 		String[] params;
+        boolean isOP = (isBotOP(user) || (channel != null && isChannelOP(user, channel)));
 		
 		//If the message has parameters
 		if (message.contains(" ")) {
 			cmd = message.substring(0, message.indexOf(" "));
 			message = message.substring(message.indexOf(" ")+1);
+
 			//This will split at blank spaces, tabs etc
 			params = message.split("\\s+");
 		} else {
@@ -43,6 +45,8 @@ public class CommandHandler {
 			}
 		}
 
+        runAlias(user, channel, cmd, params);
+
 	}
 	
 	public static boolean isBotOP(User user) {
@@ -57,6 +61,10 @@ public class CommandHandler {
 		}
 		return false;
 	}
+
+   public static boolean isChannelOP(User u, Channel c) {
+       return c.getOps().contains(u);
+   }
 	
 	public static Command getCommand(String cmd) {
         for (Command c : Main.getCommandListener().getCommands()) {
@@ -69,5 +77,26 @@ public class CommandHandler {
 		
 		return null;
 	}
+
+    private static void runAlias(User u, Channel c, String alias, String[] params) {
+        if (Settings.aliases.containsKey(alias)) {
+            String command = Settings.aliases.get(alias);
+            if (command.contains("$USER")) {
+                command = command.replaceAll("\\$USER", u.getNick());
+            }
+            if (command.contains("$CHANNEL")) {
+                command = command.replaceAll("\\$CHANNEL", c.getName());
+            }
+            int i = 1;
+            while (command.contains("$" + i)) {
+                command = command.replaceAll("\\$" + i, params[i-1]);
+                i++;
+            }
+
+
+
+            processCommand(u, c, command);
+        }
+    }
 
 }
