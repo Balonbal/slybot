@@ -54,12 +54,12 @@ public class CommandAlias implements Command {
             } else {
                 user.send().message("Successfully bound alias " + Colors.BOLD + Colors.BLUE + name + Colors.NORMAL + " to " + Colors.BOLD + Colors.GREEN + command);
             }
-        }
-
-        if (channel != null) {
-            channel.send().message("Could not bind " + Colors.BOLD + Colors.RED + params[0] + Colors.NORMAL + " as it is already in use.");
         } else {
-            user.send().message("Could not bind " + Colors.BOLD + Colors.RED + params[0] + Colors.NORMAL + " as it is already in use.");
+            if (channel != null) {
+                channel.send().message("Could not bind " + Colors.BOLD + Colors.RED + params[0] + Colors.NORMAL + " as it is already in use.");
+            } else {
+                user.send().message("Could not bind " + Colors.BOLD + Colors.RED + params[0] + Colors.NORMAL + " as it is already in use.");
+            }
         }
     }
 }
