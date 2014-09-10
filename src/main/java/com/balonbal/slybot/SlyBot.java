@@ -18,7 +18,7 @@ public class SlyBot extends PircBotX {
 	}
 	
 	public void shutdown() {
-        logger.info("Got instructions to shut down.. Shutting down.");
+        System.out.println("Got instructions to shut down.. Shutting down.");
         this.stopBotReconnect();
 		this.sendRaw().rawLine("quit");
 	}

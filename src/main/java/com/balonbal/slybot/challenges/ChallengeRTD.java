@@ -2,6 +2,7 @@ package com.balonbal.slybot.challenges;
 
 import java.util.Random;
 
+import com.balonbal.slybot.Main;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
@@ -60,9 +61,9 @@ public class ChallengeRTD extends Challenge {
 			channel.send().message(getHost().getNick() + " is having a bad day, as " + getChallengedUser() + " just defated his dice!");
 			completed = true;
 		}
-		// TODO Auto-generated method stub
-		
-	}
+        Main.getChallengeManager().removeChallenge(this);
+
+    }
 
 	@Override
 	public void initialize() {

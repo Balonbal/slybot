@@ -3,8 +3,6 @@ package com.balonbal.slybot.challenges;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
-import com.balonbal.slybot.Main;
-
 public abstract class Challenge {
 	
 	protected Channel channel;
@@ -12,7 +10,7 @@ public abstract class Challenge {
 	private String challengedUser;
 	String[] params;
 	public boolean completed = false;
-	public long timeOut;
+	private long timeOut;
 	
 	public Challenge(Channel chan, User initializer, String challenged, String[] parameters, int timeOutInSeconds) {
 		channel = chan;

@@ -40,7 +40,7 @@ public class Youtube {
 			}
 		}
 		Random r = new Random();
-        logger.info("Fetching file from https://gdata.youtube.com/feeds/api/videos/" + url);
+        System.out.println("Fetching file from https://gdata.youtube.com/feeds/api/videos/" + url);
 
         //Create a new temp file
 		f = new File("tmp_" + r.nextInt(10000));

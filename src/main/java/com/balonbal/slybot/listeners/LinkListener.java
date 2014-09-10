@@ -23,7 +23,7 @@ public class LinkListener implements Listener<PircBotX> {
 
             for (String s : Strings.youtubes) {
                 if (message.toLowerCase().contains(s.toLowerCase())) {
-                    logger.info(String.format("Found matching link for domain %s in message from user %s, starting search", s, messageEvent.getUser().getNick()));
+                    System.out.println(String.format("Found matching link for domain %s in message from user %s, starting search", s, messageEvent.getUser().getNick()));
                     //Extract the youtube link
                     Youtube y = new Youtube(message.substring(message.toLowerCase().indexOf(s)));
                     //Print the information and delete the file

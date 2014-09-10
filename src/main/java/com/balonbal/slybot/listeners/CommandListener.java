@@ -4,8 +4,6 @@ import com.balonbal.slybot.Main;
 import com.balonbal.slybot.commands.Command;
 import com.balonbal.slybot.core.CommandHandler;
 import com.balonbal.slybot.lib.Reference;
-import com.balonbal.slybot.lib.Settings;
-import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.Listener;
@@ -37,7 +35,7 @@ public class CommandListener implements Listener<PircBotX> {
 		for (Class<? extends Command> c: classes) {
 			try {
 				Command cmd = c.newInstance();
-                logger.info("Loaded command: " + c.getName());
+                System.out.println("Loaded command: " + c.getName());
                 getCommands().add(cmd);
 			} catch (InstantiationException e) {
 				// TODO Auto-generated catch block

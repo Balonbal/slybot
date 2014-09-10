@@ -11,17 +11,10 @@ import org.pircbotx.Configuration.Builder;
 import org.pircbotx.PircBotX;
 import org.pircbotx.exception.IrcException;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 public class Main {
-
-    private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     static CommandListener commandListener;
     static LinkListener linkListener;
@@ -157,40 +150,7 @@ public class Main {
 	}
 
     private static void initLoggers() {
-        try {
-            File logLoc = new File("logs");
-
-            //If the directory for logs doesn't exist, create it
-            if (!logLoc.isDirectory()) {
-                logLoc.mkdir();
-            }
-
-            //Bind commandLogger to a file for logging
-            FileHandler commandLog = new FileHandler("logs" + File.separator + "commands.log", true);
-            commandLog.setFormatter(new SimpleFormatter());
-            Logger.getLogger("commandLogger").addHandler(commandLog);
-            Logger.getLogger("commandLogger").setUseParentHandlers(false);
-
-            //Add a new log file for each logged channel
-            for (String channel : Settings.loggedChannels) {
-                FileHandler channelLog = new FileHandler("logs" + File.separator + channel + ".log", true);
-                channelLog.setFormatter(new SimpleFormatter());
-                Logger.getLogger(channel).addHandler(channelLog);
-                Logger.getLogger(channel).setUseParentHandlers(false);
-            }
-
-            //Add a log for everything else
-            Logger l = Logger.getLogger("");
-            FileHandler botLog = new FileHandler("logs" + File.separator + "bot.log", false);
-            botLog.setFormatter(new SimpleFormatter());
-            l.addHandler(botLog);
-            l.setLevel(Level.INFO);
-
-        } catch (IOException e) {
-            logger.warning("Unable to open files for logging, only console output will be used: " + e.toString());
-        }
-
-        logger.info("Loggers initialized.");
+        //TODO add loggers that dosen't spend hours
     }
 
     public static CommandListener getCommandListener() {

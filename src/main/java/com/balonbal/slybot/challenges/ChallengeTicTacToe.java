@@ -12,6 +12,7 @@ public class ChallengeTicTacToe extends Challenge {
 	
 	String[][] board;
 	boolean hostTurn;
+    boolean started = false;
 	String hostIcon;
 	String challengeIcon;
 
@@ -39,12 +40,15 @@ public class ChallengeTicTacToe extends Challenge {
 	
 	@Override
 	public void initialize() {
-		getChannel().send().message(getHost().getNick() + " and " + getChallengedUser() + " decide to settle their disputes by an epic game of Tic-Tac-Toe!");
-		getChannel().send().message(getHost().getNick() + " will be playing as " + hostIcon);
-		getChannel().send().message(getChallengedUser()+ " will be playing as " + challengeIcon);
-		printBoard();
-		getChannel().send().message((hostTurn?getHost().getNick():getChallengedUser()) + " will start of this legendary battle!");
-        addTime(Reference.TTT_NEXT_TURN_TIMEOUT);
+        if (!started) {
+            getChannel().send().message(getHost().getNick() + " and " + getChallengedUser() + " decide to settle their disputes by an epic game of Tic-Tac-Toe!");
+            getChannel().send().message(getHost().getNick() + " will be playing as " + hostIcon);
+            getChannel().send().message(getChallengedUser() + " will be playing as " + challengeIcon);
+            printBoard();
+            getChannel().send().message((hostTurn ? getHost().getNick() : getChallengedUser()) + " will start of this legendary battle!");
+            addTime(Reference.TTT_NEXT_TURN_TIMEOUT);
+            started = true;
+        }
 	}
 	
 	private boolean updateBoard(int x, int y) {
@@ -150,5 +154,7 @@ public class ChallengeTicTacToe extends Challenge {
 		} else {
 			getChannel().send().message("The game is a tie! Both players are officialy noobs.");
 		}
+
+        Main.getChallengeManager().removeChallenge(this);
 	}
 }

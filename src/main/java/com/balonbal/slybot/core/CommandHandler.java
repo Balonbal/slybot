@@ -7,12 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
-import java.util.logging.Logger;
-
 public class CommandHandler {
-
-    private static final Logger logger = Logger.getLogger(CommandHandler.class.getName());
-    private static final Logger commandLogger = Logger.getLogger("commandLogger");
 
     public static void processCommand(User user, Channel channel, String message) {
         String cmd;
@@ -31,15 +26,17 @@ public class CommandHandler {
 			params = new String[] { };
 		}
 
-        logger.info(String.format("%s %s tried to issue command: %s", (isOP ? "Operator" : "User"), user.getNick(), cmd));
+        System.out.println(String.format("%s %s tried to issue command: %s", (isOP ? "Operator" : "User"), user.getNick(), cmd));
 
         Command c = getCommand(cmd);
 		if (c != null) {
 			//If the command requires op, check for OP
+            System.out.println(c.requiresOP() + " && " + !isOP + " || " + isBotOP(user));
 			if (!(c.requiresOP() && !isOP) || isBotOP(user)) {
 				//Only do commands in appropriate channels.
+                System.out.println(((c.channelCommand() && channel != null) || (c.pmCommand() && channel == null) || c.channelCommand() && c.pmCommand()) + "");
 				if ((c.channelCommand() && channel != null) || (c.pmCommand() && channel == null) || c.channelCommand() && c.pmCommand()) {
-                    commandLogger.info(String.format("Issuing command \"%s\" by user %s %s", cmd + " " + StringUtils.join(params, " "), user.getNick(), (channel != null ? "in channel " + channel.getName() : "")));
+                    System.out.println(String.format("Issuing command \"%s\" by user %s %s", cmd + " " + StringUtils.join(params, " "), user.getNick(), (channel != null ? "in channel " + channel.getName() : "")));
                     c.run(user, channel, params);
 				}
 			}
