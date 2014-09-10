@@ -31,10 +31,10 @@ public class CommandHandler {
         Command c = getCommand(cmd);
 		if (c != null) {
 			//If the command requires op, check for OP
-            System.out.println(c.requiresOP() + " && " + !isOP + " || " + isBotOP(user));
+            //System.out.println(c.requiresOP() + " && " + !isOP + " || " + isBotOP(user));
 			if (!(c.requiresOP() && !isOP) || isBotOP(user)) {
 				//Only do commands in appropriate channels.
-                System.out.println(((c.channelCommand() && channel != null) || (c.pmCommand() && channel == null) || c.channelCommand() && c.pmCommand()) + "");
+                //System.out.println(((c.channelCommand() && channel != null) || (c.pmCommand() && channel == null) || c.channelCommand() && c.pmCommand()) + "");
 				if ((c.channelCommand() && channel != null) || (c.pmCommand() && channel == null) || c.channelCommand() && c.pmCommand()) {
                     System.out.println(String.format("Issuing command \"%s\" by user %s %s", cmd + " " + StringUtils.join(params, " "), user.getNick(), (channel != null ? "in channel " + channel.getName() : "")));
                     c.run(user, channel, params);

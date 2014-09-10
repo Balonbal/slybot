@@ -56,7 +56,7 @@ public class CommandListener implements Listener<PircBotX> {
 			String message = e.getMessage();
 
             final Logger channelLog = Logger.getLogger(e.getChannel().getName());
-            channelLog.info(String.format("%s -> %s: %s", e.getUser().getNick(), e.getChannel().getName(), message));
+            System.out.println(String.format("%s -> %s: %s", e.getUser().getNick(), e.getChannel().getName(), message));
             //check if the message is a bot command
 			for (String s: Reference.PREFIXES) {
 				if (message.toUpperCase().startsWith(s.toUpperCase())) {
