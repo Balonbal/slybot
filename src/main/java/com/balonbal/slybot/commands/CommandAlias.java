@@ -45,10 +45,16 @@ public class CommandAlias implements Command {
 
     @Override
     public void run(User user, Channel channel, String[] params) {
-        if (!Settings.aliases.containsKey(params[0]) && (CommandHandler.getCommand(params[0]) == null)) {
+        if (!CommandHandler.isCommand(params[1])) {
+            if (channel != null) {
+                channel.send().message("Could not make alias " + Colors.RED + params[0] + Colors.NORMAL + " as " + Colors.BOLD + params[1] + Colors.NORMAL + " was not recognized as a valid command or alias");
+                return;
+            }
+        }
+        if (!CommandHandler.isCommand(params[0])) {
             String name = params[0];
-            String command = StringUtils.join(params, " ").substring(name.length());
-            Main.getConfig().appendSetting("aliases", ",", params[0] + ",\"" + command + "\"");
+            String command = StringUtils.join(params, " ").substring(name.length() + 1);
+            Main.getConfig().appendSetting("aliases", ",", params[0] + ",\"" + command.replaceAll("\"", "\\\\\"") + "\"");
             if (channel != null) {
                 channel.send().message("Successfully bound alias " + Colors.BOLD + Colors.BLUE + name + Colors.NORMAL + " to " + Colors.BOLD + Colors.GREEN + command);
             } else {

@@ -75,9 +75,14 @@ public class CommandHandler {
 		return null;
 	}
 
+    public static boolean isCommand(String cmd) {
+        return (getCommand(cmd) != null || Settings.aliases.containsKey(cmd));
+    }
+
     private static void runAlias(User u, Channel c, String alias, String[] params) {
         if (Settings.aliases.containsKey(alias)) {
             String command = Settings.aliases.get(alias);
+            System.out.println(command);
             if (command.contains("$USER")) {
                 command = command.replaceAll("\\$USER", u.getNick());
             }

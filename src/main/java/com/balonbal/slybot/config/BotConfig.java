@@ -34,7 +34,7 @@ public class BotConfig extends SlyConfiguration {
             }
             String name = alias.substring(nameStart, alias.indexOf(",", nameStart+1));
 
-            int startPos = alias.indexOf("\"")+2;
+            int startPos = alias.indexOf("\"")+1;
             int endPos = alias.indexOf("\"", startPos+1);
             //Escape any escaped quotes
             while (alias.charAt(endPos-1) == '\\') {
@@ -46,7 +46,7 @@ public class BotConfig extends SlyConfiguration {
             alias = alias.substring(endPos+1);
 
             //Update the alias list
-            aliases.put(name, command);
+            aliases.put(name, command.replaceAll("\\\\\"", "\""));
         }
         Settings.aliases = aliases;
 

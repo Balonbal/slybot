@@ -48,7 +48,7 @@ public class CommandSay implements Command {
         //For channels
         if (channel != null) {
             //Prevent users from sending bot commands this way by adding a space
-            channel.send().message(" " + message);
+            channel.send().message(Colors.NORMAL + message);
         } else {
             //Let users talk with them selves
             user.send().message(message);
