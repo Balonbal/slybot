@@ -1,29 +1,54 @@
 package com.balonbal.slybot.commands;
 
+import com.balonbal.slybot.SlyBot;
+import com.balonbal.slybot.lib.Reference;
 import org.pircbotx.Channel;
 import org.pircbotx.Colors;
+import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
 import com.balonbal.slybot.Main;
 import com.balonbal.slybot.core.CommandHandler;
+import org.pircbotx.hooks.Event;
+import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.events.PrivateMessageEvent;
 
 public class CommandLeave implements Command {
 
 	@Override
-	public void run(User user, Channel channel, String[] params) {
+	public void run(String[] parameters, Event<SlyBot> event) {
 
-		if (params.length > 0) {
-			if (params[0].equals("-s")) {
+        Channel channel = null;
+        User user = null;
+        if (event instanceof MessageEvent) {
+            user = ((MessageEvent) event).getUser();
+            channel = ((MessageEvent) event).getChannel();
+        }
+
+		if (parameters.length > 1) {
+			if (parameters[1].equals("-s")) {
 				//Check for botOP NOTE: this is not channel-op
-				if (CommandHandler.isBotOP(user)) {
-					channel.send().message("SlyBot is shutting down.");
+				if (event.getBot().isBotOP(user)) {
+					event.getBot().reply(event, "SlyBot is shutting down.");
 					//Shutdown the bot
-					Main.getBot().shutdown();
-				}
-			}
+					event.getBot().shutdown();
+				} else {
+                    event.getBot().reply(event, "You may not turn off the bot, sorry.");
+                    return;
+                }
+			} else {
+                for (Channel c: event.getBot().getUserBot().getChannels()) {
+                    if (c.getName().equalsIgnoreCase(parameters[1])) channel = c;
+                }
+            }
 		}
-		
-		System.out.println("leaving channel " + channel.getName());
+
+        if (channel == null) {
+            Main.getBot().reply(event, "Could not leave channel: Not Found");
+            return;
+        }
+
+		System.out.println("Leaving channel: " + channel.getName());
 		//Else leave the channel
 		channel.send().part("told by operator to leave");
 	}
@@ -38,16 +63,13 @@ public class CommandLeave implements Command {
 	}
 
 	@Override
-	public String[] getTriggers() {
-		return new String[] {
-				"leave",
-				"part"
-		};
+	public String getTrigger() {
+		return "leave";
 	}
 
 	@Override
-	public boolean requiresOP() {
-		return true;
+	public int requiresOP() {
+		return Reference.REQUIRES_OP_ANY;
 	}
 
 	@Override

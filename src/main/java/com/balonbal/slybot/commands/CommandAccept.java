@@ -1,9 +1,13 @@
 package com.balonbal.slybot.commands;
 
+import com.balonbal.slybot.lib.Reference;
 import org.pircbotx.Channel;
+import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
 import com.balonbal.slybot.Main;
+import org.pircbotx.hooks.Event;
+import org.pircbotx.hooks.events.MessageEvent;
 
 public class CommandAccept implements Command {
 
@@ -14,24 +18,24 @@ public class CommandAccept implements Command {
 		};
 	}
 
-	@Override
-	public void run(User user, Channel channel, String[] params) {
-		System.out.println(user.getNick() + " accepted challenge");
-		//Main.getChallengeManager().cleanup();
-		Main.getChallengeManager().tryAccept(user);
-	}
+    @Override
+    public void run(String[] parameters, Event event) {
+        if (!(event instanceof MessageEvent)) return;
+
+        MessageEvent e = (MessageEvent) event;
+
+        Main.getChallengeManager().tryAccept(e.getUser());
+    }
 
 	@Override
-	public String[] getTriggers() {
-		return new String[] {
-			"accept"	
-		};
+	public String getTrigger() {
+		return "accept";
 	}
 
-	@Override
-	public boolean requiresOP() {
-		return false;
-	}
+    @Override
+    public int requiresOP() {
+        return Reference.REQUIRES_OP_NONE;
+    }
 
 	@Override
 	public boolean channelCommand() {

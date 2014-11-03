@@ -2,10 +2,10 @@ package com.balonbal.slybot;
 
 import com.balonbal.slybot.config.BotConfig;
 import com.balonbal.slybot.core.ChallengeManager;
+import com.balonbal.slybot.core.CommandHandler;
 import com.balonbal.slybot.core.SlyConfiguration;
 import com.balonbal.slybot.lib.Settings;
-import com.balonbal.slybot.listeners.CommandListener;
-import com.balonbal.slybot.listeners.LinkListener;
+import com.balonbal.slybot.listeners.*;
 import org.pircbotx.Configuration;
 import org.pircbotx.Configuration.Builder;
 import org.pircbotx.PircBotX;
@@ -17,6 +17,7 @@ import java.util.Scanner;
 public class Main {
 
     static CommandListener commandListener;
+    static CommandHandler commandHandler;
     static LinkListener linkListener;
     static SlyConfiguration sc;
 	static ChallengeManager cm;
@@ -28,7 +29,8 @@ public class Main {
         sc = new BotConfig();
         sc.initialize();
         initLoggers();
-        commandListener = new CommandListener();
+        commandHandler = new CommandHandler();
+        commandListener = new CommandListener(commandHandler);
         linkListener = new LinkListener();
         cm = new ChallengeManager();
 		
@@ -113,12 +115,15 @@ public class Main {
 			s.close(); //close the input
 		}
 		
-		Builder<PircBotX> config = new Builder<PircBotX>()
+		Builder<SlyBot> config = new Builder<SlyBot>()
 			.setName(nick) //Set the nick of the bot.
 			.setAutoNickChange(true) //Automatically change nick when the current one is in use
 			.setCapEnabled(true) //Enable CAP features
                 .addListener(commandListener) //This class is a commandListener, so add it to the bots known listeners
                 .addListener(linkListener)
+                .addListener(new ChallengeListener())
+                .addListener(new LoggerListener())
+                .addListener(new AliasListener())
                 .setServerHostname(network);
 		
 		if (nickPass != null && !nickPass.equals("")) {
@@ -130,12 +135,11 @@ public class Main {
 		}
 		
 
-		Configuration<PircBotX> configuration = config.buildConfiguration();
+		Configuration<SlyBot> configuration = config.buildConfiguration();
 		//create the bot with the defined config
 		slybot = new SlyBot(configuration);
 		
 		System.out.println("This bot is owned by " + Settings.owner);
-		
 		try {
 			//Start the bot
 			slybot.startBot();

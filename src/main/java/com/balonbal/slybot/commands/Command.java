@@ -1,7 +1,10 @@
 package com.balonbal.slybot.commands;
 
+import com.balonbal.slybot.SlyBot;
 import org.pircbotx.Channel;
+import org.pircbotx.PircBotX;
 import org.pircbotx.User;
+import org.pircbotx.hooks.Event;
 
 public interface Command {
 	
@@ -9,14 +12,14 @@ public interface Command {
 	 * Specify the strings that will cause the commandhandler to call run
 	 * @return an array of triggers
 	 */
-	public abstract String[] getTriggers();
+	public abstract String getTrigger();
 	
 	/**
 	 * Whether or not the command requires operator status to run.
-	 * Note that both botops and channel operators will be considered valid
+     * @return the integer value of the permission needed. See {@link com.balonbal.slybot.lib.Reference} for the exact values.
 	 */
-	public abstract boolean requiresOP();
-	
+	public abstract int requiresOP();
+
 	/**
 	 * Define if the command can be used in channels 
 	 * @return true if it can, false if it cannot
@@ -37,9 +40,8 @@ public interface Command {
 	
 	/**
 	 * Anything within this method will be run when a trigger from the command is found and {@link #requiresOP()}, {@link #channelCommand()} and {@link #pmCommand()} is satisfied
-	 * @param user the user performing the command
-	 * @param channel the channel the command was used in, will be null for private messages
-	 * @param params all, if any, parameters included by the user
+	 * @param parameters the parameters sent from the user. An array with the first element as the name of the command.
+     * @param event the event that occurred. This contains useful information like channels, users, timestamps etc.
 	 */
-	public abstract void run(User user, Channel channel, String[] params);
+	public abstract void run(String[] parameters, Event<SlyBot> event);
 }

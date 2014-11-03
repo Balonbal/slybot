@@ -3,9 +3,14 @@ package com.balonbal.slybot.commands;
 import java.util.Random;
 
 import com.balonbal.slybot.Main;
+import com.balonbal.slybot.SlyBot;
+import com.balonbal.slybot.lib.Reference;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 import org.pircbotx.Colors;
+import org.pircbotx.hooks.Event;
+import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.events.PrivateMessageEvent;
 
 public class CommandRTD implements Command {
 
@@ -20,9 +25,9 @@ public class CommandRTD implements Command {
 	}
 
 	@Override
-	public void run(User user, Channel channel, String[] params) {
+	public void run(String[] params, Event<SlyBot> event) {
 		long[] numbers = calculateResult(params);
-		broadcastResult(channel, user, (int) numbers[1], (int) numbers[2], numbers[0]);
+		broadcastResult(event, (int) numbers[1], (int) numbers[2], numbers[0]);
 	}
 	
 	private long[] calculateResult(String[] params) {
@@ -33,15 +38,15 @@ public class CommandRTD implements Command {
 		
 		
 		switch (params.length) {
-		case 1:
-			if (params[0] != null && params[0] != "null") {
-				max = Integer.parseInt(params[0]);
+		case 2:
+			if (params[1] != null && params[1] != "null") {
+				max = Integer.parseInt(params[1]);
 			}
 			break;
-		case 2:
-			if(params[0] != null && params[1] != null) {
-				min = Integer.parseInt(params[0]);
-				max = Integer.parseInt(params[1]);
+		case 3:
+			if(params[1] != null && params[2] != null) {
+				min = Integer.parseInt(params[1]);
+				max = Integer.parseInt(params[2]);
 			}
 			break;
 		}
@@ -54,25 +59,23 @@ public class CommandRTD implements Command {
 		return new long[] { num, min, max };
 	}
 		
-	public void broadcastResult(Channel channel, User user, int min, int max, long num) {
-		if (channel != null && (num > 0)) {
-            Main.getBot().reply(channel, user, user.getNick() + " rolls the dice (" + (max - min) + " sides) and got... " + num + "!");
-		}
+	public void broadcastResult(Event<SlyBot> event, int min, int max, long num) {
+        User user = null;
+        if (event instanceof MessageEvent) user = ((MessageEvent) event).getUser();
+        if (event instanceof PrivateMessageEvent) user = ((PrivateMessageEvent) event).getUser();
+
+        event.getBot().reply(event, user.getNick() + " rolls the dice (" + (max - min) + " sides) and got... " + num + "!");
 		
 	}
 
 	@Override
-	public String[] getTriggers() {
-		return new String[] {
-				"rtd",
-				"roll",
-				"dice"
-		};
+	public String getTrigger() {
+		return "rtd";
 	}
 
 	@Override
-	public boolean requiresOP() {
-		return false;
+	public int requiresOP() {
+		return Reference.REQUIRES_OP_NONE;
 	}
 
 	@Override

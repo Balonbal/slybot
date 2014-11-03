@@ -1,22 +1,27 @@
 package com.balonbal.slybot.commands;
 
+import com.balonbal.slybot.SlyBot;
+import com.balonbal.slybot.lib.Reference;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
 import com.balonbal.slybot.Main;
+import org.pircbotx.hooks.Event;
 
 public class CommandJoin implements Command {
 
 	@Override
-	public void run(User user, Channel channel, String[] params) {
-		if (params.length > 0 && params[0] != null) { 
-			if (params[0].equalsIgnoreCase("-a") || params[0].equalsIgnoreCase("-a")) {
-				Main.getConfig().appendSetting("default_channels", ",", params[1]);
+	public void run(String[] params, Event<SlyBot> event) {
+		if (params.length > 1 && params[1] != null) {
+            String channel = params[1];
+			if (params[1].equalsIgnoreCase("-a") || params[1].equalsIgnoreCase("--auto")) {
+                channel = params[2];
+				Main.getConfig().appendSetting("default_channels", ",", channel);
 			}
-			System.out.println("Joining channel: " + params[0]);
-			Main.getBot().sendIRC().joinChannel(params[0]);
+			System.out.println("Joining channel: " + channel);
+			event.getBot().sendIRC().joinChannel(channel);
 		} else {
-			user.send().message("Too few parameters!");
+			event.getBot().reply(event, "Too few parameters!");
 		}
 	}
 
@@ -30,15 +35,13 @@ public class CommandJoin implements Command {
 	}
 
 	@Override
-	public String[] getTriggers() {
-		return new String[] {
-				"join"
-		};
+	public String getTrigger() {
+		return "join";
 	}
 
 	@Override
-	public boolean requiresOP() {
-		return true;
+	public int requiresOP() {
+		return Reference.REQUIRES_OP_BOT;
 	}
 
 	@Override

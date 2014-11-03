@@ -1,5 +1,6 @@
 package com.balonbal.slybot.challenges;
 
+import com.balonbal.slybot.Main;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
@@ -7,12 +8,12 @@ public abstract class Challenge {
 	
 	protected Channel channel;
 	private User host;
-	private String challengedUser;
+	private User challengedUser;
 	String[] params;
 	public boolean completed = false;
 	private long timeOut;
 	
-	public Challenge(Channel chan, User initializer, String challenged, String[] parameters, int timeOutInSeconds) {
+	public Challenge(Channel chan, User initializer, User challenged, String[] parameters, int timeOutInSeconds) {
 		channel = chan;
 		host = initializer;
 		challengedUser = challenged;
@@ -35,7 +36,7 @@ public abstract class Challenge {
 		}
 		if (!completed)  {
 			//inform the channel that the challenge was aborted and remove the challenge from the manager
-			getChannel().send().message("Challenge timed out.");
+            Main.getBot().reply(channel, null, "Challenge timed out.");
 			completed = true;
 		}
 	}
@@ -55,7 +56,7 @@ public abstract class Challenge {
 		return host;
 	}
 
-	public String getChallengedUser() {
+	public User getChallengedUser() {
 		return challengedUser;
 	}
 

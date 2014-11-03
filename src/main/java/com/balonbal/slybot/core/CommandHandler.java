@@ -1,102 +1,108 @@
 package com.balonbal.slybot.core;
 
 import com.balonbal.slybot.Main;
+import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.commands.Command;
+import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
+import org.pircbotx.PircBotX;
 import org.pircbotx.User;
+import org.pircbotx.hooks.Event;
+import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.events.PrivateMessageEvent;
+import org.reflections.Reflections;
+
+import java.util.ArrayList;
+import java.util.Set;
 
 public class CommandHandler {
 
-    public static void processCommand(User user, Channel channel, String message) {
-        String cmd;
-		String[] params;
-        boolean isOP = (isBotOP(user) || (channel != null && isChannelOP(user, channel)));
-		
-		//If the message has parameters
-		if (message.contains(" ")) {
-			cmd = message.substring(0, message.indexOf(" "));
-			message = message.substring(message.indexOf(" ")+1);
+    private ArrayList<Command> commands;
 
-			//This will split at blank spaces, tabs etc
-			params = message.split("\\s+");
-		} else {
-			cmd = message;
-			params = new String[] { };
-		}
+    public void addCommands() {
+        commands = new ArrayList<Command>();
+        Reflections r = new Reflections("");
+        //Get the subtypes of the command class
+        Set<Class<? extends Command>> classes = r.getSubTypesOf(Command.class);
 
-        Command c = getCommand(cmd);
-		if (c != null) {
-			//If the command requires op, check for OP
-			if (!(c.requiresOP() && !isOP) || isBotOP(user)) {
-				//Only do commands in appropriate channels.
-                //System.out.println(((c.channelCommand() && channel != null) || (c.pmCommand() && channel == null) || c.channelCommand() && c.pmCommand()) + "");
-				if ((c.channelCommand() && channel != null) || (c.pmCommand() && channel == null) || c.channelCommand() && c.pmCommand()) {
-                    System.out.println(String.format("Issuing command \"%s\" by user %s %s", cmd + " " + StringUtils.join(params, " "), user.getNick(), (channel != null ? "in channel " + channel.getName() : "")));
-                    c.run(user, channel, params);
-				}
-			}
-		}
+        //loop through found classes and add them as commands
+        for (Class<? extends Command> c: classes) {
+            try {
+                Command cmd = c.newInstance();
+                System.out.println("Loaded command: " + c.getName());
+                getCommands().add(cmd);
+            } catch (InstantiationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
 
-        runAlias(user, channel, cmd, params);
+    public void processCommand(String command, Event<SlyBot> e) {
 
-	}
-	
-	public static boolean isBotOP(User user) {
-		//Only include users verified by the nickserv
-		if (user.isVerified()) {
-			for (String s: Settings.botops) {
-				if (s.equalsIgnoreCase(user.getNick())) {
-					return true;
-				}
-			}
-			
-		}
-		return false;
-	}
+        Command cmd = getCommand(command.contains(" ") ? command.substring(0, command.indexOf(" ")) : command);
+        System.out.println(command);
 
-   public static boolean isChannelOP(User u, Channel c) {
+        //Verify that the command exists
+        if (cmd == null) return;
+        //Check that it is used in a valid place
+        if (!(cmd.channelCommand() && e instanceof MessageEvent) && !(cmd.pmCommand() && e instanceof PrivateMessageEvent))
+            return;
+        //Check permissions
+        if (!hasPermission(e, cmd.requiresOP())) {
+            e.respond("You do not have the required permissions to do that");
+            return;
+        }
+
+        cmd.run(command.split("\\s+"), e);
+
+        //runAlias(user, channel, cmd, params);
+
+    }
+
+    public static boolean isChannelOP(User u, Channel c) {
        return c.getOps().contains(u);
    }
-	
-	public static Command getCommand(String cmd) {
-        for (Command c : Main.getCommandListener().getCommands()) {
-            for (String trigger: c.getTriggers()) {
-				if (cmd.equalsIgnoreCase(trigger)) {
-					return c;
-				}
-			}
+
+    public boolean hasPermission(Event<SlyBot> e, int level) {
+        MessageEvent messageEvent = null;
+        PrivateMessageEvent privateMessageEvent = null;
+
+        //Convert to compatible type
+        if (e instanceof MessageEvent) messageEvent = (MessageEvent) e;
+        if (e instanceof PrivateMessageEvent) privateMessageEvent = (PrivateMessageEvent) e;
+
+        //Check the permissions
+        switch (level) {
+            case Reference.REQUIRES_OP_NONE: return true;
+            case Reference.REQUIRES_OP_BOT: return ((messageEvent != null) ? e.getBot().isBotOP(messageEvent.getUser()) : e.getBot().isBotOP(privateMessageEvent.getUser()));
+            case Reference.REQUIRES_OP_CHANNEL: return (e instanceof MessageEvent && isChannelOP(messageEvent.getUser(), messageEvent.getChannel()));
+            case Reference.REQUIRES_OP_ANY: return hasPermission(e, Reference.REQUIRES_OP_BOT) || hasPermission(e, Reference.REQUIRES_OP_CHANNEL);
+            case Reference.REQUIRES_OP_BOTH: return hasPermission(e, Reference.REQUIRES_OP_BOT) && hasPermission(e, Reference.REQUIRES_OP_CHANNEL);
+        }
+
+        return false;
+    }
+
+	public Command getCommand(String cmd) {
+        for (Command c : getCommands()) {
+            if (cmd.equalsIgnoreCase(c.getTrigger())) return c;
 		}
 		
 		return null;
 	}
 
-    public static boolean isCommand(String cmd) {
+    public boolean isCommand(String cmd) {
         return (getCommand(cmd) != null || Settings.aliases.containsKey(cmd));
     }
 
-    private static void runAlias(User u, Channel c, String alias, String[] params) {
-        alias = alias.toUpperCase();
-        if (Settings.aliases.containsKey(alias)) {
-            String command = Settings.aliases.get(alias);
-            System.out.println(command);
-            if (command.contains("$USER")) {
-                command = command.replaceAll("\\$USER", u.getNick());
-            }
-            if (command.contains("$CHANNEL")) {
-                command = command.replaceAll("\\$CHANNEL", c.getName());
-            }
-            int i = 1;
-            while (command.contains("$" + i)) {
-                command = command.replaceAll("\\$" + i, params[i-1]);
-                i++;
-            }
-
-
-
-            processCommand(u, c, command);
-        }
+    public ArrayList<Command> getCommands() {
+        return commands;
     }
 
 }

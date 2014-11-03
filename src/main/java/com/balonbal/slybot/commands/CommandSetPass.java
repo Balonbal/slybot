@@ -1,11 +1,15 @@
 package com.balonbal.slybot.commands;
 
+import com.balonbal.slybot.SlyBot;
+import com.balonbal.slybot.lib.Reference;
 import org.pircbotx.Channel;
 import org.pircbotx.Colors;
 import org.pircbotx.User;
 
 import com.balonbal.slybot.Main;
 import com.balonbal.slybot.lib.Settings;
+import org.pircbotx.hooks.Event;
+import org.pircbotx.hooks.events.PrivateMessageEvent;
 
 public class CommandSetPass implements Command {
 
@@ -19,32 +23,31 @@ public class CommandSetPass implements Command {
 	}
 
 	@Override
-	public void run(User user, Channel channel, String[] params) {
-		if (params.length == 1) {
+	public void run(String[] params, Event<SlyBot> event) {
+        if (!(event instanceof PrivateMessageEvent)) return;
+
+		if (params.length == 2) {
 			//Check if no password is set
 			if (Settings.operatorpass.equals("")) {
-				Main.getConfig().changeSetting("operatorpass", params[0]);
-				user.send().message("Sucessfully updated password.");
-			}
-		} else if (params.length == 2){
-			if (Settings.operatorpass.equals(params[0])) {
 				Main.getConfig().changeSetting("operatorpass", params[1]);
-				user.send().message("Sucessfully updated password.");
+				event.getBot().reply(event, "Sucessfully updated password.");
+			}
+		} else if (params.length == 3){
+			if (Settings.operatorpass.equals(params[1])) {
+				Main.getConfig().changeSetting("operatorpass", params[2]);
+                event.getBot().reply(event, "Sucessfully updated password.");
 			}
 		}
 	}
 
 	@Override
-	public String[] getTriggers() {
-		return new String[] {
-				"setpass",
-				"pass"
-		};
+	public String getTrigger() {
+		return "setpass";
 	}
 
 	@Override
-	public boolean requiresOP() {
-		return true;
+	public int requiresOP() {
+		return Reference.REQUIRES_OP_BOT;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.balonbal.slybot.listeners;
 
+import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.lib.Strings;
 import com.balonbal.slybot.util.Youtube;
 import org.pircbotx.PircBotX;
@@ -9,15 +10,15 @@ import org.pircbotx.hooks.events.MessageEvent;
 
 import java.util.logging.Logger;
 
-public class LinkListener implements Listener<PircBotX> {
+public class LinkListener implements Listener<SlyBot> {
 
     public static final Logger logger = Logger.getLogger(LinkListener.class.getName());
 
     @Override
-    public void onEvent(Event<PircBotX> pircBotXEvent) throws Exception {
+    public void onEvent(Event<SlyBot> pircBotXEvent) throws Exception {
         if (pircBotXEvent instanceof MessageEvent) {
 
-            MessageEvent<PircBotX> messageEvent = (MessageEvent<PircBotX>) pircBotXEvent;
+            MessageEvent<SlyBot> messageEvent = (MessageEvent<SlyBot>) pircBotXEvent;
             //Extract the message
             String message = messageEvent.getMessage();
 

@@ -8,7 +8,7 @@ import org.pircbotx.User;
 
 public class ChallengeRTD extends Challenge {
 	
-	public ChallengeRTD(Channel chan, User initializer, String challenged,  String[] parameters, int timeOutInSeconds) {
+	public ChallengeRTD(Channel chan, User initializer, User challenged,  String[] parameters, int timeOutInSeconds) {
 		super(chan, initializer, challenged, parameters, timeOutInSeconds);
 		// TODO Auto-generated constructor stub
 	}
@@ -48,17 +48,17 @@ public class ChallengeRTD extends Challenge {
 		//calculate the result for each player
 		long[] resulta = calculateResult(params);
 		long[] resultb = calculateResult(params);
-		getChannel().send().message(getChallengedUser() + " has accepted a challenge from " + getHost().getNick() + " in " + (resulta[2] - resulta[1]) + " sided dicing.");
-		channel.send().message("The fight is on! " + getHost().getNick() + " rolls... " + resulta[0] + " versus " + getChallengedUser() + ", who rolls... " + resultb[0] + "!");
+		getChannel().send().message(getChallengedUser().getNick() + " has accepted a challenge from " + getHost().getNick() + " in " + (resulta[2] - resulta[1]) + " sided dicing.");
+		channel.send().message("The fight is on! " + getHost().getNick() + " rolls... " + resulta[0] + " versus " + getChallengedUser().getNick() + ", who rolls... " + resultb[0] + "!");
 		
 		if (resulta[0] > resultb[0]) {
-			Main.getBot().reply(channel, null, getHost().getNick() + " is rolling all over " + getChallengedUser());
+			Main.getBot().reply(channel, null, getHost().getNick() + " is rolling all over " + getChallengedUser().getNick());
 			completed = true;
 		} else if (resulta[0] == resultb[0]) {
             Main.getBot().reply(channel, null, "The dices are fighting back! It's a tie!");
 			completed = true;
 		} else {
-            Main.getBot().reply(channel, null, getHost().getNick() + " is having a bad day, as " + getChallengedUser() + " just defated his dice!");
+            Main.getBot().reply(channel, null, getHost().getNick() + " is having a bad day, as " + getChallengedUser().getNick() + " just defated his dice!");
 			completed = true;
 		}
         Main.getChallengeManager().removeChallenge(this);

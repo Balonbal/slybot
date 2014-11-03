@@ -1,25 +1,25 @@
 package com.balonbal.slybot.commands;
 
 import com.balonbal.slybot.Main;
+import com.balonbal.slybot.SlyBot;
+import com.balonbal.slybot.lib.Reference;
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
 import org.pircbotx.Colors;
 import org.pircbotx.User;
+import org.pircbotx.hooks.Event;
 
 public class CommandSay implements Command {
 
 
     @Override
-    public String[] getTriggers() {
-        return new String[] {
-                "say",
-                "echo"
-        };
+    public String getTrigger() {
+        return "say";
     }
 
     @Override
-    public boolean requiresOP() {
-        return false;
+    public int requiresOP() {
+        return Reference.REQUIRES_OP_NONE;
     }
 
     @Override
@@ -41,11 +41,11 @@ public class CommandSay implements Command {
     }
 
     @Override
-    public void run(User user, Channel channel, String[] params) {
+    public void run(String[] params, Event<SlyBot> event) {
 
         //Convert the array to a single string
-        String message = StringUtils.join(params, " ");
+        String message = StringUtils.join(params, " ").substring(params[0].length() + 1);
 
-        Main.getBot().reply(channel, user, Colors.NORMAL + message);
+        Main.getBot().reply(event, Colors.NORMAL + message);
     }
 }

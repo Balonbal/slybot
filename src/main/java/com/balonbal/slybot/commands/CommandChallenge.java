@@ -1,6 +1,7 @@
 package com.balonbal.slybot.commands;
 
 import com.balonbal.slybot.Main;
+import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.challenges.Challenge;
 import com.balonbal.slybot.challenges.ChallengeRTD;
 import com.balonbal.slybot.challenges.ChallengeTicTacToe;
@@ -8,6 +9,8 @@ import com.balonbal.slybot.lib.Reference;
 import org.pircbotx.Channel;
 import org.pircbotx.Colors;
 import org.pircbotx.User;
+import org.pircbotx.hooks.Event;
+import org.pircbotx.hooks.events.MessageEvent;
 
 public class CommandChallenge implements Command {
 
@@ -22,52 +25,63 @@ public class CommandChallenge implements Command {
 	}
 
 	@Override
-	public void run(User user, Channel channel, String[] params) {
-		if (channel != null) {
-			if (params[0].equalsIgnoreCase("list")) {
-				for (String s: new String[] {
-					"Available Challenges: ",
-					"RTD -- Roll the Dice",
-					"TTT - Tic Tac Toe"
-				}) {
-					Main.getBot().reply(channel, user, s);
-				}
-			}
-			if (params.length >= 2) {
-				
-				if (!params[0].equalsIgnoreCase(user.getNick())) {
-					String[] newParams = new String[params.length - 2];
-                    System.arraycopy(params, 2, newParams, 0, newParams.length);
-                    /*for (int i = 2; i <= params.length -1; i++) {
-                        newParams[i-2] = params[i];
-					}*/
-					
-					Challenge c = null;
-					if (params[1].equalsIgnoreCase("rtd")) {
-                        c = new ChallengeRTD(channel, user, params[0], newParams, Reference.ACCEPT_TIMEOUT);
-                    } else if (params[1].equalsIgnoreCase("ttt")) {
-						c = new ChallengeTicTacToe(channel, user, params[0], newParams, Reference.ACCEPT_TIMEOUT);
-					} 
+	public void run(String[] params, Event<SlyBot> event) {
+        if (!(event instanceof MessageEvent)) return;
+        Channel channel = ((MessageEvent) event).getChannel();
+        User user = ((MessageEvent) event).getUser();
 
-					if (c != null) {
-						Main.getChallengeManager().addChallenge(c);
-					}
+		if (params[1].equalsIgnoreCase("list")) {
+			for (String s: new String[] {
+				"Available Challenges: ",
+				"RTD -- Roll the Dice",
+				"TTT - Tic Tac Toe"
+			}) {
+				Main.getBot().reply(channel, user, s);
+			}
+		}
+		if (params.length >= 2) {
+
+            User challengedUser = null;
+            //Find the user linked to the specified username
+            for (User u: channel.getUsers()) {
+                if (u.getNick().equalsIgnoreCase(params[1])) challengedUser = u;
+            }
+
+            if (challengedUser == null) {
+                event.getBot().reply(event, "User " + Colors.RED + params[1] + Colors.NORMAL + " was not found in this channel.");
+                return;
+            }
+
+            //Do not create matches with the bot or themselves
+			if (!user.equals(challengedUser) && !user.equals(event.getBot().getUserBot())) {
+				String[] newParams = new String[params.length - 3];
+                System.arraycopy(params, 3, newParams, 0, newParams.length);
+                /*for (int i = 2; i <= params.length -1; i++) {
+                    newParams[i-2] = params[i];
+				}*/
+
+				Challenge c = null;
+				if (params[2].equalsIgnoreCase("rtd")) {
+                    c = new ChallengeRTD(channel, user, challengedUser, newParams, Reference.ACCEPT_TIMEOUT);
+                } else if (params[2].equalsIgnoreCase("ttt")) {
+					c = new ChallengeTicTacToe(channel, user, challengedUser, newParams, Reference.ACCEPT_TIMEOUT);
+				}
+
+				if (c != null) {
+				Main.getChallengeManager().addChallenge(c);
 				}
 			}
 		}
 	}
 
 	@Override
-	public String[] getTriggers() {
-		return new String[] {
-				"challenge",
-				"chal"
-		};
+	public String getTrigger() {
+		return "challenge";
 	}
 
 	@Override
-	public boolean requiresOP() {
-		return false;
+	public int requiresOP() {
+		return Reference.REQUIRES_OP_NONE;
 	}
 
 	@Override

@@ -1,25 +1,26 @@
 package com.balonbal.slybot.commands;
 
 import com.balonbal.slybot.Main;
+import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.core.CommandHandler;
+import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
 import org.pircbotx.Colors;
+import org.pircbotx.PircBotX;
 import org.pircbotx.User;
+import org.pircbotx.hooks.Event;
 
 public class CommandAlias implements Command {
     @Override
-    public String[] getTriggers() {
-        return new String[] {
-                "alias",
-                "addcommand"
-        };
+    public String getTrigger() {
+        return "alias";
     }
 
     @Override
-    public boolean requiresOP() {
-        return true;
+    public int requiresOP() {
+        return Reference.REQUIRES_OP_BOT;
     }
 
     @Override
@@ -43,37 +44,37 @@ public class CommandAlias implements Command {
     }
 
     @Override
-    public void run(User user, Channel channel, String[] params) {
-        if (params[0].equalsIgnoreCase("-rm")) {
-            String alias = params[1].toUpperCase();
+    public void run(String[] parameters, Event<SlyBot> event) {
+        if (parameters[1].equalsIgnoreCase("-rm")) {
+            String alias = parameters[2].toUpperCase();
             if (Settings.aliases.containsKey(alias)) {
                 //Build new aliases setting
                 String newAliases ="";
                 for (String s: Settings.aliases.keySet()) {
                     if (s.equalsIgnoreCase(alias)) continue;
-                    newAliases += (newAliases.equals("") ? "" : ",") + s + "," + Settings.aliases.get(s).replaceAll("\"", "\\\\\"");
+                    newAliases += (newAliases.equals("") ? "" : ",") + s + ",\"" + Settings.aliases.get(s).replaceAll("\"", "\\\\\"") + "\"";
                 }
 
                 Main.getConfig().changeSetting("aliases", newAliases);
 
-                Main.getBot().reply(channel, user, "Removed alias " + Colors.BLUE + alias);
-
-                return;
+                event.getBot().reply(event, "Removed alias " + Colors.BLUE + alias);
             } else {
-                Main.getBot().reply(channel, user, "Could not remove alias " + Colors.RED + params[1] + Colors.NORMAL + ": Not found.");
+                event.getBot().reply(event, "Could not remove alias " + Colors.RED + parameters[2] + Colors.NORMAL + ": Not found.");
             }
-        }
-        if (!CommandHandler.isCommand(params[1])) {
-            Main.getBot().reply(channel, user, "Could not make alias " + Colors.RED + params[0] + Colors.NORMAL + " as " + Colors.BOLD + params[1] + Colors.NORMAL + " was not recognized as a valid command or alias");
+
             return;
         }
-        if (!CommandHandler.isCommand(params[0])) {
-            String name = params[0].toUpperCase();
-            String command = StringUtils.join(params, " ").substring(name.length() + 1);
+        if (!Main.getCommandListener().getCommandHandler().isCommand(parameters[2])) {
+            event.getBot().reply(event, "Could not make alias " + Colors.RED + parameters[1] + Colors.NORMAL + " as " + Colors.BOLD + parameters[2] + Colors.NORMAL + " was not recognized as a valid command or alias");
+            return;
+        }
+        if (!Main.getCommandListener().getCommandHandler().isCommand(parameters[1])) {
+            String name = parameters[1].toUpperCase();
+            String command = StringUtils.join(parameters, " ").substring(parameters[0].length() + name.length() + 2);
             Main.getConfig().appendSetting("aliases", ",", name + ",\"" + command.replaceAll("\"", "\\\\\"") + "\"");
-            Main.getBot().reply(channel, user, "Successfully bound alias " + Colors.BOLD + Colors.BLUE + name + Colors.NORMAL + " to " + Colors.BOLD + Colors.GREEN + command);
+            event.getBot().reply(event, "Successfully bound alias " + Colors.BOLD + Colors.BLUE + name + Colors.NORMAL + " to " + Colors.BOLD + Colors.GREEN + command);
         } else {
-            Main.getBot().reply(channel, user, "Could not bind " + Colors.BOLD + Colors.RED + params[0] + Colors.NORMAL + " as it is already in use.");
+            event.getBot().reply(event, "Could not bind " + Colors.BOLD + Colors.RED + parameters[1] + Colors.NORMAL + " as it is already in use.");
         }
     }
 }

@@ -1,23 +1,24 @@
 package com.balonbal.slybot.commands;
 
 import com.balonbal.slybot.Main;
+import com.balonbal.slybot.SlyBot;
+import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
 import org.pircbotx.Channel;
 import org.pircbotx.Colors;
 import org.pircbotx.User;
+import org.pircbotx.hooks.Event;
+import org.pircbotx.hooks.events.MessageEvent;
 
 public class CommandMute implements Command {
     @Override
-    public String[] getTriggers() {
-        return new String[] {
-                "mute",
-                "silence"
-        };
+    public String getTrigger() {
+        return "mute";
     }
 
     @Override
-    public boolean requiresOP() {
-        return true;
+    public int requiresOP() {
+        return Reference.REQUIRES_OP_ANY;
     }
 
     @Override
@@ -40,28 +41,33 @@ public class CommandMute implements Command {
     }
 
     @Override
-    public void run(User user, Channel channel, String[] params) {
-        String c = channel.getName();
-        if (params[0].equalsIgnoreCase("-u") || params[0].equalsIgnoreCase("--unmute")) {
-            if (params.length > 1) {
-                c = params[1];
+    public void run(String[] params, Event<SlyBot> event) {
+        String channel = "";
+
+        if (event instanceof MessageEvent) {
+            channel = ((MessageEvent) event).getChannel().getName();
+        }
+        System.out.println(channel);
+        if (params[1].equalsIgnoreCase("-u") || params[1].equalsIgnoreCase("--unmute")) {
+            if (params.length > 2) {
+                channel = params[2];
             }
 
             String newMuted = "";
             for (String s: Settings.mutedChannels) {
-                if (s.equalsIgnoreCase(c)) continue;
+                if (s.equalsIgnoreCase(channel)) continue;
                 newMuted += (newMuted.equals("") ? "" : ",") + s;
             }
 
             Main.getConfig().changeSetting("mutedChannels", newMuted);
-            Main.getBot().reply(channel, user, "No longer muted in channel " + c);
+            event.getBot().reply(event, "No longer muted in channel " + channel);
         } else {
-            if (params.length > 0) {
-                c = params[0];
+            if (params.length > 1) {
+                channel = params[1];
             }
 
-            System.out.println("Muted channel " + c);
-            Main.getConfig().appendSetting("mutedChannels", ",", c);
+            System.out.println("Muted channel " + channel);
+            Main.getConfig().appendSetting("mutedChannels", ",", channel);
         }
     }
 }

@@ -4,6 +4,7 @@ import java.util.Random;
 
 import com.balonbal.slybot.lib.Reference;
 import org.pircbotx.Channel;
+import org.pircbotx.Colors;
 import org.pircbotx.User;
 
 import com.balonbal.slybot.Main;
@@ -16,7 +17,7 @@ public class ChallengeTicTacToe extends Challenge {
 	String hostIcon;
 	String challengeIcon;
 
-	public ChallengeTicTacToe(Channel chan, User initializer, String challenged, String[] parameters, int timeOutInSeconds) {
+	public ChallengeTicTacToe(Channel chan, User initializer, User challenged, String[] parameters, int timeOutInSeconds) {
 		super(chan, initializer, challenged, parameters, timeOutInSeconds);
 		board = new String[][] { 
 				{ "_", "_", "_" },
@@ -41,11 +42,11 @@ public class ChallengeTicTacToe extends Challenge {
 	@Override
 	public void initialize() {
         if (!started) {
-            getChannel().send().message(getHost().getNick() + " and " + getChallengedUser() + " decide to settle their disputes by an epic game of Tic-Tac-Toe!");
+            getChannel().send().message(getHost().getNick() + " and " + getChallengedUser().getNick() + " decide to settle their disputes by an epic game of Tic-Tac-Toe!");
             getChannel().send().message(getHost().getNick() + " will be playing as " + hostIcon);
-            getChannel().send().message(getChallengedUser() + " will be playing as " + challengeIcon);
+            getChannel().send().message(getChallengedUser().getNick() + " will be playing as " + challengeIcon);
             printBoard();
-            getChannel().send().message((hostTurn ? getHost().getNick() : getChallengedUser()) + " will start of this legendary battle!");
+            getChannel().send().message((hostTurn ? getHost() : getChallengedUser()).getNick() + " will start of this legendary battle!");
             addTime(Reference.TTT_NEXT_TURN_TIMEOUT);
             started = true;
         }
@@ -70,7 +71,7 @@ public class ChallengeTicTacToe extends Challenge {
 				y = Integer.parseInt(params[1]);
 			}
 		} else {
-			if (u.getNick().equalsIgnoreCase(getChallengedUser())) {
+			if (u.getNick().equalsIgnoreCase(getChallengedUser().getNick())) {
 				x = Integer.parseInt(params[0]);
 				y = Integer.parseInt(params[1]);
 			}
@@ -86,7 +87,7 @@ public class ChallengeTicTacToe extends Challenge {
 			} else {
                 hostTurn = !hostTurn;
 
-                getChannel().send().message((hostTurn ? getHost().getNick() : getChallengedUser()) + ": your turn!");
+                getChannel().send().message(((hostTurn ? getHost() : getChallengedUser()).getNick()) + ": your turn!");
 
                 addTime(Reference.TTT_NEXT_TURN_TIMEOUT);
 			}
@@ -96,9 +97,13 @@ public class ChallengeTicTacToe extends Challenge {
 	public void printBoard() {
 		getChannel().send().message("  0 1 2");
 		for (int i = 0; i < board.length; i++) {
-            Main.getBot().reply(channel, null, i + " " + board[i][0] + "|" + board[i][1] + "|" + board[i][2]);
+            Main.getBot().reply(channel, null, i + " " + colorize(board[i][0]) + "|" + colorize(board[i][1]) + "|" + colorize(board[i][2]));
 		}
 	}
+
+    private String colorize(String characther) {
+        return (characther.equals("X") ? Colors.RED : characther.equals("O") ? Colors.DARK_BLUE : Colors.PURPLE ) + characther + Colors.NORMAL;
+    }
 	
 	public String getResults() {
 		
@@ -148,9 +153,9 @@ public class ChallengeTicTacToe extends Challenge {
 		completed = true;
 		getChannel().send().message("The game is over!");
 		if (winner.equalsIgnoreCase(hostIcon)) {
-            Main.getBot().reply(channel, null, getHost().getNick() + " has defeated the noob " + getChallengedUser());
+            Main.getBot().reply(channel, null, getHost().getNick() + " has defeated the noob " + getChallengedUser().getNick());
 		} else if (winner.equalsIgnoreCase(challengeIcon)) {
-            Main.getBot().reply(channel, null, getHost().getNick() + " fought until the bitter end, but could not keep up with " + getChallengedUser());
+            Main.getBot().reply(channel, null, getHost().getNick() + " fought until the bitter end, but could not keep up with " + getChallengedUser().getNick());
 		} else {
             Main.getBot().reply(channel, null, "The game is a tie! Both players are officialy noobs.");
 		}

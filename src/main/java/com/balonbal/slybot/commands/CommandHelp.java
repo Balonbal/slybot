@@ -1,10 +1,13 @@
 package com.balonbal.slybot.commands;
 
 import com.balonbal.slybot.Main;
+import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.core.CommandHandler;
+import com.balonbal.slybot.lib.Reference;
 import org.pircbotx.Channel;
 import org.pircbotx.Colors;
 import org.pircbotx.User;
+import org.pircbotx.hooks.Event;
 
 import java.util.ArrayList;
 
@@ -21,47 +24,44 @@ public class CommandHelp implements Command {
     }
 
     @Override
-    public void run(User user, Channel channel, String[] params) {
+    public void run(String[] params, Event<SlyBot> event) {
         String[] response = null;
         if (params.length == 0) {
             //Fetch all the commands
-            ArrayList<Command> cmds = Main.getCommandListener().getCommands();
+            ArrayList<Command> cmds = Main.getCommandListener().getCommandHandler().getCommands();
 
             response = new String[cmds.size() + 2];
             response[0] = "Available commands: ";
 
             for (int i = 0; i < cmds.size(); i++) {
                 //Add the first trigger for each command
-                response[i + 1] = cmds.get(i).getTriggers()[0];
+                response[i + 1] = cmds.get(i).getTrigger();
             }
 
             response[response.length - 1] = "Total: " + Colors.BOLD + cmds.size() + Colors.NORMAL + " items.";
         } else {
-            if (CommandHandler.getCommand(params[0]) != null) {
+            Command command = Main.getCommandListener().getCommandHandler().getCommand(params[1]);
+            if (command != null) {
                 //Fetch the help strings for the given command
-                response = CommandHandler.getCommand(params[0]).help();
+                response = command.help();
             }
         }
 
+        if (response == null) return;
+
         for (String s : response) {
-            //if  sent on PM
-            Main.getBot().reply(channel, user, s);
+            event.getBot().reply(event, s);
         }
     }
 
     @Override
-    public String[] getTriggers() {
-        return new String[]{
-                "help",
-                "halp",
-                "command",
-                "commands"
-        };
+    public String getTrigger() {
+        return "help";
     }
 
     @Override
-    public boolean requiresOP() {
-        return false;
+    public int requiresOP() {
+        return Reference.REQUIRES_OP_NONE;
     }
 
     @Override

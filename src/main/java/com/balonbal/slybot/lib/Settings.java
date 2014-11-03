@@ -14,5 +14,6 @@ public class Settings {
     public static String[] loggedChannels;
     public static String[] mutedChannels;
     public static HashMap<String, String> aliases;
+    public static HashMap<String, HashMap<String, String>> userEvents;
 
 }
