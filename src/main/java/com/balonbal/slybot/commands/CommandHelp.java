@@ -45,11 +45,7 @@ public class CommandHelp implements Command {
 
         for (String s : response) {
             //if  sent on PM
-            if (channel == null) {
-                user.send().message(s);
-            } else {
-                channel.send().message(s);
-            }
+            Main.getBot().reply(channel, user, s);
         }
     }
 

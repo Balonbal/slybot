@@ -52,13 +52,13 @@ public class ChallengeRTD extends Challenge {
 		channel.send().message("The fight is on! " + getHost().getNick() + " rolls... " + resulta[0] + " versus " + getChallengedUser() + ", who rolls... " + resultb[0] + "!");
 		
 		if (resulta[0] > resultb[0]) {
-			channel.send().message(getHost().getNick() + " is rolling all over " + getChallengedUser());
+			Main.getBot().reply(channel, null, getHost().getNick() + " is rolling all over " + getChallengedUser());
 			completed = true;
 		} else if (resulta[0] == resultb[0]) {
-			channel.send().message("The dices are fighting back! It's a tie!");
+            Main.getBot().reply(channel, null, "The dices are fighting back! It's a tie!");
 			completed = true;
 		} else {
-			channel.send().message(getHost().getNick() + " is having a bad day, as " + getChallengedUser() + " just defated his dice!");
+            Main.getBot().reply(channel, null, getHost().getNick() + " is having a bad day, as " + getChallengedUser() + " just defated his dice!");
 			completed = true;
 		}
         Main.getChallengeManager().removeChallenge(this);

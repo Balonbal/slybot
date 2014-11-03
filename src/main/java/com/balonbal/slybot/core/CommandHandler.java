@@ -26,12 +26,9 @@ public class CommandHandler {
 			params = new String[] { };
 		}
 
-        System.out.println(String.format("%s %s tried to issue command: %s", (isOP ? "Operator" : "User"), user.getNick(), cmd));
-
         Command c = getCommand(cmd);
 		if (c != null) {
 			//If the command requires op, check for OP
-            //System.out.println(c.requiresOP() + " && " + !isOP + " || " + isBotOP(user));
 			if (!(c.requiresOP() && !isOP) || isBotOP(user)) {
 				//Only do commands in appropriate channels.
                 //System.out.println(((c.channelCommand() && channel != null) || (c.pmCommand() && channel == null) || c.channelCommand() && c.pmCommand()) + "");
@@ -80,6 +77,7 @@ public class CommandHandler {
     }
 
     private static void runAlias(User u, Channel c, String alias, String[] params) {
+        alias = alias.toUpperCase();
         if (Settings.aliases.containsKey(alias)) {
             String command = Settings.aliases.get(alias);
             System.out.println(command);

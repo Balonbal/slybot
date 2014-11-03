@@ -23,6 +23,7 @@ public class BotConfig extends SlyConfiguration {
 		Settings.channels = (configuration.get("default_channels").contains(",") ? configuration.get("default_channels").split(",") : new String[] { configuration.get("default_channels") });
 		Settings.operatorpass = configuration.get("operatorpass");
         Settings.loggedChannels = (configuration.get("loggedChannels").contains(",") ? configuration.get("loggedChannels").split(",") : new String[]{configuration.get("loggedChannels")});
+        Settings.mutedChannels = (configuration.get("mutedChannels").contains(",") ? configuration.get("mutedChannels").split(",") : new String[]{configuration.get("mutedChannels")});
         String alias = configuration.get("aliases");
         HashMap<String, String> aliases = new HashMap<String, String>();
         while (alias.contains(",")) {
@@ -62,6 +63,7 @@ public class BotConfig extends SlyConfiguration {
 		addSetting("default_channels", "");
 		addSetting("operatorpass", "");
         addSetting("loggedChannels", "");
+        addSetting("mutedChannels", "");
         addSetting("aliases", "");
     }
 

@@ -1,5 +1,6 @@
 package com.balonbal.slybot.commands;
 
+import com.balonbal.slybot.Main;
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
 import org.pircbotx.Colors;
@@ -45,13 +46,6 @@ public class CommandSay implements Command {
         //Convert the array to a single string
         String message = StringUtils.join(params, " ");
 
-        //For channels
-        if (channel != null) {
-            //Prevent users from sending bot commands this way by adding a space
-            channel.send().message(Colors.NORMAL + message);
-        } else {
-            //Let users talk with them selves
-            user.send().message(message);
-        }
+        Main.getBot().reply(channel, user, Colors.NORMAL + message);
     }
 }

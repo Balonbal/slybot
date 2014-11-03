@@ -2,6 +2,7 @@ package com.balonbal.slybot.commands;
 
 import java.util.Random;
 
+import com.balonbal.slybot.Main;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 import org.pircbotx.Colors;
@@ -55,7 +56,7 @@ public class CommandRTD implements Command {
 		
 	public void broadcastResult(Channel channel, User user, int min, int max, long num) {
 		if (channel != null && (num > 0)) {
-			channel.send().message(user.getNick() + " rolls the dice (" + (max-min) + " sides) and got... " + num + "!");
+            Main.getBot().reply(channel, user, user.getNick() + " rolls the dice (" + (max - min) + " sides) and got... " + num + "!");
 		}
 		
 	}

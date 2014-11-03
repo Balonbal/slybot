@@ -12,6 +12,7 @@ public class Settings {
     public static String[] channels;
     public static String operatorpass;
     public static String[] loggedChannels;
+    public static String[] mutedChannels;
     public static HashMap<String, String> aliases;
 
 }

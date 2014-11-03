@@ -30,7 +30,7 @@ public class CommandChallenge implements Command {
 					"RTD -- Roll the Dice",
 					"TTT - Tic Tac Toe"
 				}) {
-					channel.send().message(s);
+					Main.getBot().reply(channel, user, s);
 				}
 			}
 			if (params.length >= 2) {

@@ -96,7 +96,7 @@ public class ChallengeTicTacToe extends Challenge {
 	public void printBoard() {
 		getChannel().send().message("  0 1 2");
 		for (int i = 0; i < board.length; i++) {
-			getChannel().send().message(i + " " + board[i][0] + "|" + board[i][1] + "|" + board[i][2]);
+            Main.getBot().reply(channel, null, i + " " + board[i][0] + "|" + board[i][1] + "|" + board[i][2]);
 		}
 	}
 	
@@ -148,11 +148,11 @@ public class ChallengeTicTacToe extends Challenge {
 		completed = true;
 		getChannel().send().message("The game is over!");
 		if (winner.equalsIgnoreCase(hostIcon)) {
-			getChannel().send().message(getHost().getNick() + " has defeated the noob " + getChallengedUser());
+            Main.getBot().reply(channel, null, getHost().getNick() + " has defeated the noob " + getChallengedUser());
 		} else if (winner.equalsIgnoreCase(challengeIcon)) {
-			getChannel().send().message(getHost().getNick() + " fought until the bitter end, but could not keep up with " + getChallengedUser());
+            Main.getBot().reply(channel, null, getHost().getNick() + " fought until the bitter end, but could not keep up with " + getChallengedUser());
 		} else {
-			getChannel().send().message("The game is a tie! Both players are officialy noobs.");
+            Main.getBot().reply(channel, null, "The game is a tie! Both players are officialy noobs.");
 		}
 
         Main.getChallengeManager().removeChallenge(this);
