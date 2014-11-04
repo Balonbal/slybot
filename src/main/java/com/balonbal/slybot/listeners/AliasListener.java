@@ -12,7 +12,12 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class AliasListener extends ListenerAdapter<SlyBot> {
+
+    private static final Pattern pattern = Pattern.compile("(?<!\\\\)\\$(USER|CHANNEL|@|\\d)");
 
     @Override
     public void onMessage(MessageEvent<SlyBot> event) throws Exception {
@@ -26,37 +31,45 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
     }
 
     private void runAlias(String[] params, Event<SlyBot> event) {
-        User u = null;
-        Channel c = null;
-        if (event instanceof MessageEvent) {
-            u = ((MessageEvent) event).getUser();
-            c = ((MessageEvent) event).getChannel();
-        } else if (event instanceof PrivateMessageEvent) {
-            u = ((PrivateMessageEvent) event).getUser();
-        }
 
         String alias = params[0].toUpperCase();
         if (Settings.aliases.containsKey(alias)) {
             String command = Settings.aliases.get(alias);
-            System.out.println(command);
-            if (command.contains("$USER") && u != null) {
-                command = command.replaceAll("\\$USER", u.getNick());
-            }
-            if (command.contains("$CHANNEL") && c != null) {
-                command = command.replaceAll("\\$CHANNEL", c.getName());
-            }
-            if (command.contains("$@")) {
-                String[] newParams = new String[params.length - 1];
-                System.arraycopy(params, 1, newParams, 0, newParams.length);
-                command = command.replace("$@", StringUtils.join(newParams, " "));
-            }
-            int i = 1;
-            while (command.contains("$" + i)) {
-                command = command.replaceAll("\\$" + i, params[i-1]);
-                i++;
+
+            StringBuffer buffer = new StringBuffer();
+            Matcher matcher = pattern.matcher(command);
+
+            while(matcher.find()) {
+                matcher.appendReplacement(buffer, getReplacement(matcher, event, params));
             }
 
-            Main.getCommandListener().getCommandHandler().processCommand(command, event);
+            matcher.appendTail(buffer);
+
+            Main.getCommandListener().getCommandHandler().processCommand(buffer.toString(), event);
         }
+    }
+
+    private String getReplacement(Matcher matcher, Event event, String[] params) {
+        String s = matcher.group();
+
+        if (s.equals("$USER")) {
+            if (event instanceof MessageEvent) return ((MessageEvent) event).getUser().getNick();
+            if (event instanceof PrivateMessageEvent) return ((PrivateMessageEvent) event).getUser().getNick();
+        } else if (s.equals("$CHANNEL")) {
+            if (event instanceof MessageEvent) return ((MessageEvent) event).getChannel().getName();
+            if (event instanceof PrivateMessageEvent) return "PM";
+        } else if (s.equals("$@")) {
+            //Fetch the parameters excluding $0 (alias name)
+            String[] newParams = new String[params.length -1];
+            System.arraycopy(params, 1, newParams, 0, newParams.length);
+            return StringUtils.join(newParams, " ");
+        } else if (s.matches("\\$\\d")) {
+            int param = Integer.parseInt(s.substring(1));
+            //Check if the parameter exists
+            if (param < 0 || param >= params.length) return "";
+            return params[param];
+        }
+
+        return "";
     }
 }

@@ -42,11 +42,11 @@ public class ChallengeTicTacToe extends Challenge {
 	@Override
 	public void initialize() {
         if (!started) {
-            getChannel().send().message(getHost().getNick() + " and " + getChallengedUser().getNick() + " decide to settle their disputes by an epic game of Tic-Tac-Toe!");
-            getChannel().send().message(getHost().getNick() + " will be playing as " + hostIcon);
-            getChannel().send().message(getChallengedUser().getNick() + " will be playing as " + challengeIcon);
+            Main.getBot().reply(getChannel(), null, getHost().getNick() + " and " + getChallengedUser().getNick() + " decide to settle their disputes by an epic game of Tic-Tac-Toe!");
+            Main.getBot().reply(getChannel(), null, getHost().getNick() + " will be playing as " + hostIcon);
+            Main.getBot().reply(getChannel(), null, getChallengedUser().getNick() + " will be playing as " + challengeIcon);
             printBoard();
-            getChannel().send().message((hostTurn ? getHost() : getChallengedUser()).getNick() + " will start of this legendary battle!");
+            Main.getBot().reply(getChannel(), null, (hostTurn ? getHost() : getChallengedUser()).getNick() + " will start of this legendary battle!");
             addTime(Reference.TTT_NEXT_TURN_TIMEOUT);
             started = true;
         }
@@ -87,7 +87,7 @@ public class ChallengeTicTacToe extends Challenge {
 			} else {
                 hostTurn = !hostTurn;
 
-                getChannel().send().message(((hostTurn ? getHost() : getChallengedUser()).getNick()) + ": your turn!");
+                Main.getBot().reply(getChannel(), null,((hostTurn ? getHost() : getChallengedUser()).getNick()) + ": your turn!");
 
                 addTime(Reference.TTT_NEXT_TURN_TIMEOUT);
 			}
@@ -151,7 +151,7 @@ public class ChallengeTicTacToe extends Challenge {
 	
 	public void end(String winner) {
 		completed = true;
-		getChannel().send().message("The game is over!");
+        Main.getBot().reply(getChannel(), null, "The game is over!");
 		if (winner.equalsIgnoreCase(hostIcon)) {
             Main.getBot().reply(channel, null, getHost().getNick() + " has defeated the noob " + getChallengedUser().getNick());
 		} else if (winner.equalsIgnoreCase(challengeIcon)) {

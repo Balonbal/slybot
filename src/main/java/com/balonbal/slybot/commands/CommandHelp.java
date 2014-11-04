@@ -4,6 +4,7 @@ import com.balonbal.slybot.Main;
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.core.CommandHandler;
 import com.balonbal.slybot.lib.Reference;
+import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
 import org.pircbotx.Colors;
 import org.pircbotx.User;
@@ -26,19 +27,20 @@ public class CommandHelp implements Command {
     @Override
     public void run(String[] params, Event<SlyBot> event) {
         String[] response = null;
-        if (params.length == 0) {
+        if (params.length == 1) {
             //Fetch all the commands
             ArrayList<Command> cmds = Main.getCommandListener().getCommandHandler().getCommands();
 
-            response = new String[cmds.size() + 2];
-            response[0] = "Available commands: ";
-
-            for (int i = 0; i < cmds.size(); i++) {
-                //Add the first trigger for each command
-                response[i + 1] = cmds.get(i).getTrigger();
+            String commands = "";
+            for (Command c: cmds) {
+                commands += (commands.equals("") ? "" : ", ") + c.getTrigger();
             }
 
-            response[response.length - 1] = "Total: " + Colors.BOLD + cmds.size() + Colors.NORMAL + " items.";
+            response = new String[]{
+                    "Available commands: ",
+                    commands,
+                    "Total: " + Colors.BOLD + cmds.size() + Colors.NORMAL + " items."
+            };
         } else {
             Command command = Main.getCommandListener().getCommandHandler().getCommand(params[1]);
             if (command != null) {

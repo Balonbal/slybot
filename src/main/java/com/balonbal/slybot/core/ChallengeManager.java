@@ -1,5 +1,6 @@
 package com.balonbal.slybot.core;
 
+import com.balonbal.slybot.Main;
 import com.balonbal.slybot.challenges.Challenge;
 import org.pircbotx.User;
 
@@ -20,9 +21,10 @@ public class ChallengeManager {
             System.out.println(challenge.completed + "");
             if (challenge.completed) {
                 removeChallenges.add(challenge);
-            //Do not add challenges to users that already have one going in the SAME channe
-            } else if ((challenge.getHost().getNick().equalsIgnoreCase(c.getHost().getNick()) || challenge.getChallengedUser().equals(c.getChallengedUser())) && challenge.getChannel().getName().equals(c.getChannel().getName())) {
-                System.out.println("Challenge not initialized as one of the user already has a challenge.");
+            //Do not add challenges to users that already have one going in the SAME channel
+            } else if (challenge.getChannel().equals(c.getChannel())) {
+                System.out.println("Challenge not initialized as this channel already has a challenge.");
+                Main.getBot().reply(c.getChannel(), null, "This channel already has a challenge running. Try again later.");
                 return;
 			}
 		}
@@ -33,7 +35,7 @@ public class ChallengeManager {
         }
 
         System.out.println("Started challenge between user " + c.getHost().getNick() + " (host) and " + c.getChallengedUser().getNick());
-        c.getChannel().send().message("Oh snap, " + c.getHost().getNick() + " challenged " + c.getChallengedUser().getNick() + " to a duel of " + c.getDescription()+". Use the \"accept\" command to accept the challenge.");
+        Main.getBot().reply(c.getChannel(), null,"Oh snap, " + c.getHost().getNick() + " challenged " + c.getChallengedUser().getNick() + " to a duel of " + c.getDescription()+". Use the \"accept\" command to accept the challenge.");
 		chal.add(c);
 		chal.get(chal.size()-1).timeOut();
 	}

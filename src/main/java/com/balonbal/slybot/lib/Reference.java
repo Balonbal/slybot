@@ -22,4 +22,7 @@ public class Reference {
     public static final int REQUIRES_OP_BOT = 2;
     public static final int REQUIRES_OP_BOTH = 3;
 
+    /* REGEX CONSTANTS */
+    public static final String PATTERN_PREFIX = "(?<!\\\\)\\$"; //Matches any $ without a \ before
+
 }

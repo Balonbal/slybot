@@ -46,7 +46,7 @@ public class CommandHandler {
     public void processCommand(String command, Event<SlyBot> e) {
 
         Command cmd = getCommand(command.contains(" ") ? command.substring(0, command.indexOf(" ")) : command);
-        System.out.println(command);
+        System.out.println("Running command: " + command);
 
         //Verify that the command exists
         if (cmd == null) return;
@@ -98,7 +98,7 @@ public class CommandHandler {
 	}
 
     public boolean isCommand(String cmd) {
-        return (getCommand(cmd) != null || Settings.aliases.containsKey(cmd));
+        return (getCommand(cmd) != null || Settings.aliases.containsKey(cmd.toUpperCase()));
     }
 
     public ArrayList<Command> getCommands() {

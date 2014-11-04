@@ -63,6 +63,17 @@ public class CommandAlias implements Command {
             }
 
             return;
+        } else if (parameters[1].equalsIgnoreCase("--list") || parameters[1].equalsIgnoreCase("-l")) {
+            if (parameters.length > 2) {
+                if (Settings.aliases.containsKey(parameters[2].toUpperCase())) {
+                    event.getBot().reply(event, Settings.aliases.get(parameters[2].toUpperCase()));
+                } else {
+                    event.getBot().reply(event, "No such alias.");
+                }
+            } else {
+                event.getBot().reply(event, "Loaded aliases: " + StringUtils.join(Settings.aliases.keySet(), ", "));
+            }
+            return;
         }
         if (!Main.getCommandListener().getCommandHandler().isCommand(parameters[2])) {
             event.getBot().reply(event, "Could not make alias " + Colors.RED + parameters[1] + Colors.NORMAL + " as " + Colors.BOLD + parameters[2] + Colors.NORMAL + " was not recognized as a valid command or alias");

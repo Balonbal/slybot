@@ -8,7 +8,6 @@ import com.balonbal.slybot.lib.Settings;
 import com.balonbal.slybot.listeners.*;
 import org.pircbotx.Configuration;
 import org.pircbotx.Configuration.Builder;
-import org.pircbotx.PircBotX;
 import org.pircbotx.exception.IrcException;
 
 import java.io.IOException;
@@ -23,7 +22,7 @@ public class Main {
 	static ChallengeManager cm;
 	static SlyBot slybot;
 	static String nick;
-	
+
 	public static void main(String[] args) {
 
         sc = new BotConfig();
