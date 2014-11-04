@@ -84,7 +84,7 @@ public class CommandDate implements Command {
         event.getBot().reply(event, format);
     }
 
-    public String getReplaceMent(Matcher matcher, Calendar calendar) {
+    private String getReplaceMent(Matcher matcher, Calendar calendar) {
         String s = matcher.group();
 
         if (s.equals("%A"))      return TimeDateUtil.getDayOfWeek(calendar);
@@ -92,17 +92,21 @@ public class CommandDate implements Command {
         else if (s.equals("%d")) return String.valueOf(TimeDateUtil.getDate(calendar));
         else if (s.equals("%D")) return "%d/%m/%y";
         else if (s.equals("%F")) return "%d-%m-%y";
-        else if (s.equals("%h")) return String.valueOf(TimeDateUtil.getHour(true, calendar));
-        else if (s.equals("%H")) return String.valueOf(TimeDateUtil.getHour(false, calendar));
+        else if (s.equals("%h")) return addZeroes(TimeDateUtil.getHour(true, calendar));
+        else if (s.equals("%H")) return addZeroes(TimeDateUtil.getHour(false, calendar));
         else if (s.equals("%m")) return String.valueOf(TimeDateUtil.getMonthOfYear(calendar));
-        else if (s.equals("%M")) return String.valueOf(TimeDateUtil.getMinute(calendar));
+        else if (s.equals("%M")) return addZeroes(TimeDateUtil.getMinute(calendar));
         else if (s.equals("%p")) return (TimeDateUtil.isPM(calendar) ? "PM" : "AM");
-        else if (s.equals("%S")) return String.valueOf(TimeDateUtil.getSecond(calendar));
+        else if (s.equals("%S")) return addZeroes(TimeDateUtil.getSecond(calendar));
         else if (s.equals("%t")) return "%h:%M:%S";
         else if (s.equals("%T")) return "%H:%M:%S%p";
         else if (s.equals("%W")) return String.valueOf(TimeDateUtil.getWeek(calendar));
         else if (s.equals("%y")) return String.valueOf(TimeDateUtil.getYear(calendar)).substring(2);
         else if (s.equals("%Y")) return String.valueOf(TimeDateUtil.getYear(calendar));
         else return "";
+    }
+
+    private String addZeroes(int i) {
+        return (i > 10 ? "" : "0") + String.valueOf(i);
     }
 }
