@@ -65,7 +65,6 @@ public class CommandDate implements Command {
         String[] newParams = new String[parameters.length - skip];
         System.arraycopy(parameters, skip, newParams, 0, newParams.length);
         String format = StringUtils.join(newParams, " ");
-        System.out.println(format);
 
         //Replace patterns containing patterns first
         for (Pattern p: new Pattern[] { parentPattern, pattern }) {
@@ -107,6 +106,6 @@ public class CommandDate implements Command {
     }
 
     private String addZeroes(int i) {
-        return (i > 10 ? "" : "0") + String.valueOf(i);
+        return (i < 10 ? "0" : "") + String.valueOf(i);
     }
 }
