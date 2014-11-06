@@ -29,12 +29,12 @@ public class CommandSetPass implements Command {
 		if (params.length == 2) {
 			//Check if no password is set
 			if (Settings.operatorpass.equals("")) {
-				Main.getConfig().changeSetting("operatorpass", params[1]);
+                event.getBot().getConfig().updateSetting(Reference.CONFIG_BOTPASS, params[1]);
 				event.getBot().reply(event, "Sucessfully updated password.");
 			}
 		} else if (params.length == 3){
 			if (Settings.operatorpass.equals(params[1])) {
-				Main.getConfig().changeSetting("operatorpass", params[2]);
+                event.getBot().getConfig().updateSetting("operatorpass", params[2]);
                 event.getBot().reply(event, "Sucessfully updated password.");
 			}
 		}

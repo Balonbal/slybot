@@ -1,16 +1,21 @@
 package com.balonbal.slybot;
 
 import com.balonbal.slybot.config.BotConfig;
+import com.balonbal.slybot.config.Config;
 import com.balonbal.slybot.core.ChallengeManager;
 import com.balonbal.slybot.core.CommandHandler;
+import com.balonbal.slybot.core.ConfigurationHandler;
 import com.balonbal.slybot.core.SlyConfiguration;
+import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
 import com.balonbal.slybot.listeners.*;
 import org.pircbotx.Configuration;
 import org.pircbotx.Configuration.Builder;
 import org.pircbotx.exception.IrcException;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -18,15 +23,16 @@ public class Main {
     static CommandListener commandListener;
     static CommandHandler commandHandler;
     static LinkListener linkListener;
-    static SlyConfiguration sc;
+    static ConfigurationHandler configurationHandler;
 	static ChallengeManager cm;
 	static SlyBot slybot;
 	static String nick;
 
 	public static void main(String[] args) {
 
-        sc = new BotConfig();
-        sc.initialize();
+        BotConfig botConfig = new BotConfig();
+        configurationHandler = new ConfigurationHandler();
+        configurationHandler.addConfiguration(new File("configuration.yaml"), "botConfig", botConfig);
         initLoggers();
         commandHandler = new CommandHandler();
         commandListener = new CommandListener(commandHandler);
@@ -35,7 +41,7 @@ public class Main {
 		
 		//Set up local variables for network and channel
 		String network = null;
-		String[] channels = null;
+		ArrayList<String> channels = new ArrayList<String>();
 		String nickPass = null;
 
 		//Check if default values are set
@@ -45,7 +51,7 @@ public class Main {
 		if (!Settings.network.equals("")) {
 			network = Settings.network;
 		}
-		if (!Settings.channels[0].equals("")) {
+		if (!Settings.channels.isEmpty()) {
 			channels = Settings.channels;
 		}
 		if (!Settings.nickpass.equals("")) {
@@ -60,7 +66,7 @@ public class Main {
 			case 3:
 				nick = args[2];
 			case 2:
-				channels = new String[] { args[1] };
+				channels.add(args[1]);
 			case 1:
 				network = args[0];
 				
@@ -75,7 +81,7 @@ public class Main {
 				network = s.nextLine();
 			case 1:
 				System.out.print("Please select a channel to join: ");
-				channels = s.nextLine().split(", ");
+				channels.add(s.nextLine());
 			case 2:
 				System.out.print("Enter a nick for the bot: ");
 				nick = s.nextLine();
@@ -87,31 +93,30 @@ public class Main {
 			if (Settings.botnick.equals("")) {
 				System.out.print("Do you want to use \"" + nick + "\" as the default nick? (yes/no): ");
 				if (s.nextLine().equalsIgnoreCase("yes")) {
-					sc.changeSetting("botnick", nick);
+					botConfig.updateSetting(Reference.CONFIG_BOTNICK, nick);
 				}
 			}
 			if (Settings.nickpass.equals("") && !Settings.botnick.equals("")) {
 				System.out.print("Do you want to add \"" + nickPass + "\" as the default nickserv password? (yes/no): ");
 				if (s.nextLine().equalsIgnoreCase("yes")) {
-					sc.changeSetting("nickpass", nickPass);
+					botConfig.updateSetting(Reference.CONFIG_BOTPASS, nickPass);
 				}
 			}
 			if (Settings.network.equals("")) {
 				System.out.print("Do you want to add \"" + network + "\" as the default network? (yes/no): ");
 				if (s.nextLine().equalsIgnoreCase("yes")) {
-					sc.changeSetting("default_network", network);
+					botConfig.updateSetting(Reference.CONFIG_NETWORK, network);
 				}
 			}
-			if (Settings.channels[0].equals("")) {
-				System.out.print("Do you want to add \"" + channels[0] + "\" to the default channels? (yes/no): ");
+			if (Settings.channels.isEmpty()) {
+				System.out.print("Do you want to add \"" + channels.get(0) + "\" to the default channels? (yes/no): ");
 				if (s.nextLine().equalsIgnoreCase("yes")) {
-					sc.appendSetting("default_channels", ",", channels[0]);
+					botConfig.updateSetting(Reference.CONFIG_CHANNELS, channels);
 				}
 			}
-		
-		
 			
 			s.close(); //close the input
+            configurationHandler.saveAll();
 		}
 		
 		Builder<SlyBot> config = new Builder<SlyBot>()
@@ -136,7 +141,7 @@ public class Main {
 
 		Configuration<SlyBot> configuration = config.buildConfiguration();
 		//create the bot with the defined config
-		slybot = new SlyBot(configuration);
+		slybot = new SlyBot(configuration, (BotConfig) configurationHandler.getConfig("botConfig"));
 		
 		System.out.println("This bot is owned by " + Settings.owner);
 		try {
@@ -164,8 +169,8 @@ public class Main {
 		return slybot;
 	}
 	
-	public static SlyConfiguration getConfig() {
-		return sc;
+	public static ConfigurationHandler getConfig() {
+		return configurationHandler;
 	}
 	
 	public static ChallengeManager getChallengeManager() {

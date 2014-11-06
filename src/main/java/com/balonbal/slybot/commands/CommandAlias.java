@@ -12,6 +12,8 @@ import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 import org.pircbotx.hooks.Event;
 
+import java.util.HashMap;
+
 public class CommandAlias implements Command {
     @Override
     public String getTrigger() {
@@ -48,14 +50,7 @@ public class CommandAlias implements Command {
         if (parameters[1].equalsIgnoreCase("-rm")) {
             String alias = parameters[2].toUpperCase();
             if (Settings.aliases.containsKey(alias)) {
-                //Build new aliases setting
-                String newAliases ="";
-                for (String s: Settings.aliases.keySet()) {
-                    if (s.equalsIgnoreCase(alias)) continue;
-                    newAliases += (newAliases.equals("") ? "" : ",") + s + ",\"" + Settings.aliases.get(s).replaceAll("\"", "\\\\\"") + "\"";
-                }
-
-                Main.getConfig().changeSetting("aliases", newAliases);
+                event.getBot().getConfig().removeSetting("aliases", alias);
 
                 event.getBot().reply(event, "Removed alias " + Colors.BLUE + alias);
             } else {
@@ -82,7 +77,9 @@ public class CommandAlias implements Command {
         if (!Main.getCommandListener().getCommandHandler().isCommand(parameters[1])) {
             String name = parameters[1].toUpperCase();
             String command = StringUtils.join(parameters, " ").substring(parameters[0].length() + name.length() + 2);
-            Main.getConfig().appendSetting("aliases", ",", name + ",\"" + command.replaceAll("\"", "\\\\\"") + "\"");
+            HashMap<String, String > newAlias = new HashMap<String, String>();
+            newAlias.put(name, command);
+            event.getBot().getConfig().appendSetting(Reference.CONFIG_ALIASES, newAlias);
             event.getBot().reply(event, "Successfully bound alias " + Colors.BOLD + Colors.BLUE + name + Colors.NORMAL + " to " + Colors.BOLD + Colors.GREEN + command);
         } else {
             event.getBot().reply(event, "Could not bind " + Colors.BOLD + Colors.RED + parameters[1] + Colors.NORMAL + " as it is already in use.");

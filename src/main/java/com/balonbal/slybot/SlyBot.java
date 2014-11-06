@@ -1,5 +1,7 @@
 package com.balonbal.slybot;
 
+import com.balonbal.slybot.config.BotConfig;
+import com.balonbal.slybot.config.Config;
 import com.balonbal.slybot.lib.Settings;
 import org.pircbotx.Channel;
 import org.pircbotx.Configuration;
@@ -13,18 +15,20 @@ import java.util.logging.Logger;
 
 public class SlyBot extends PircBotX {
 
-    private static final Logger logger = Logger.getLogger(SlyBot.class.getName());
+    protected Config config;
 
-	public SlyBot(Configuration<? extends PircBotX> configuration) {
+	public SlyBot(Configuration<? extends PircBotX> configuration, BotConfig botConfig) {
 		super(configuration);
+        config = botConfig;
 	}
-	
+
 	public void quit() {
 		this.sendRaw().rawLine("part");
 	}
 	
 	public void shutdown() {
         System.out.println("Got instructions to shut down.. Shutting down.");
+        Main.getConfig().saveAll();
         this.stopBotReconnect();
 		this.sendRaw().rawLine("quit");
 	}
@@ -62,4 +66,7 @@ public class SlyBot extends PircBotX {
         return false;
     }
 
+    public Config getConfig() {
+        return config;
+    }
 }

@@ -22,7 +22,17 @@ public class Reference {
     public static final int REQUIRES_OP_BOT = 2;
     public static final int REQUIRES_OP_BOTH = 3;
 
-    /* REGEX CONSTANTS */
-    public static final String PATTERN_PREFIX = "(?<!\\\\)\\$"; //Matches any $ without a \ before
+    /* CONFIGURATION CONSTANTS */
+    public static final String CONFIG_ALIASES = "aliases";
+    public static final String CONFIG_BOTNICK = "botnick";
+    public static final String CONFIG_BOTOPS = "botops";
+    public static final String CONFIG_BOTPASS = "operatorPass";
+    public static final String CONFIG_CHANNELS = "channels";
+    public static final String CONFIG_MUTED_CHANNELS = "mutedChannels";
+    public static final String CONFIG_NETWORK = "network";
+    public static final String CONFIG_NICKPASS = "nickpass";
+    public static final String CONFIG_OWNER = "owner";
+
+    public static final long CONFIG_AUTOSAVE_FREQUENCY = 2*60*60*1000; //Every two hours
 
 }

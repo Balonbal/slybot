@@ -16,7 +16,7 @@ public class CommandJoin implements Command {
             String channel = params[1];
 			if (params[1].equalsIgnoreCase("-a") || params[1].equalsIgnoreCase("--auto")) {
                 channel = params[2];
-				Main.getConfig().appendSetting("default_channels", ",", channel);
+                event.getBot().getConfig().appendSetting(Reference.CONFIG_CHANNELS, channel);
 			}
 			System.out.println("Joining channel: " + channel);
 			event.getBot().sendIRC().joinChannel(channel);

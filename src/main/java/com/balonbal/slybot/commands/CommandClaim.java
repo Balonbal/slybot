@@ -10,6 +10,8 @@ import com.balonbal.slybot.lib.Settings;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 
+import java.util.ArrayList;
+
 public class CommandClaim implements Command {
 
 	@Override
@@ -29,8 +31,10 @@ public class CommandClaim implements Command {
 			//check if the user is verified with nickserv
 			if (user.isVerified()) {
 				//update config accordingly
-				Main.getConfig().changeSetting("owner", user.getNick());
-				Main.getConfig().changeSetting("botops", user.getNick());
+			    event.getBot().getConfig().updateSetting(Reference.CONFIG_OWNER, user.getNick());
+                ArrayList<String> list  = new ArrayList<String>();
+                list.add(user.getNick());
+				event.getBot().getConfig().updateSetting(Reference.CONFIG_BOTOPS, list);
 				event.getBot().reply(event, "Successfully claimed bot.");
 			} else {
 				user.send().message("Please register your nick before claiming this bot");

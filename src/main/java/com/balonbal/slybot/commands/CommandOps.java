@@ -37,11 +37,11 @@ public class CommandOps implements Command {
 
             if (pwd.equals(Settings.operatorpass)) {
                 if (params[1].equalsIgnoreCase("add")) {
-                    Main.getConfig().appendSetting("botops", ",", nick);
+                    event.getBot().getConfig().appendSetting(Reference.CONFIG_BOTOPS, nick);
                 } else if (params[1].equalsIgnoreCase("remove")) {
                     //Owner cannot be removed from the ops
                     if (!nick.equalsIgnoreCase(Settings.owner)) {
-                        Main.getConfig().changeSetting("botops", SlyConfiguration.getSetting("botops").replace("," + nick, ""));
+                        event.getBot().getConfig().removeSetting(Reference.CONFIG_BOTOPS, nick);
                     }
                 }
             }
@@ -50,7 +50,7 @@ public class CommandOps implements Command {
 		for (String s: Settings.botops) {
 			event.getBot().reply(event, " - " + s);
 		}
-		event.getBot().reply(event, "Total: " + Settings.botops.length + " items");
+		event.getBot().reply(event, "Total: " + Settings.botops.size() + " items");
 
 
 	}

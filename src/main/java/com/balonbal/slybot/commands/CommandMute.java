@@ -54,13 +54,7 @@ public class CommandMute implements Command {
                     channel = params[2];
                 }
 
-                String newMuted = "";
-                for (String s : Settings.mutedChannels) {
-                    if (s.equalsIgnoreCase(channel)) continue;
-                    newMuted += (newMuted.equals("") ? "" : ",") + s;
-                }
-
-                Main.getConfig().changeSetting("mutedChannels", newMuted);
+                event.getBot().getConfig().removeSetting(Reference.CONFIG_MUTED_CHANNELS, channel);
                 event.getBot().reply(event, "No longer muted in channel " + channel);
             } else {
                 channel = params[1];
@@ -70,6 +64,6 @@ public class CommandMute implements Command {
         }
 
         System.out.println("Muted channel " + channel);
-        Main.getConfig().appendSetting("mutedChannels", ",", channel);
+        event.getBot().getConfig().appendSetting("mutedChannels", channel);
     }
 }
