@@ -11,7 +11,7 @@ import org.pircbotx.hooks.Event;
 public class CommandJoin implements Command {
 
 	@Override
-	public void run(String[] params, Event<SlyBot> event) {
+	public String run(String[] params, Event<SlyBot> event) {
 		if (params.length > 1 && params[1] != null) {
             String channel = params[1];
 			if (params[1].equalsIgnoreCase("-a") || params[1].equalsIgnoreCase("--auto")) {
@@ -20,9 +20,12 @@ public class CommandJoin implements Command {
 			}
 			System.out.println("Joining channel: " + channel);
 			event.getBot().sendIRC().joinChannel(channel);
+            return "true";
 		} else {
 			event.getBot().reply(event, "Too few parameters!");
 		}
+
+        return "false";
 	}
 
 	@Override

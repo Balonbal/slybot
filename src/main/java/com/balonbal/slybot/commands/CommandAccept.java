@@ -19,12 +19,13 @@ public class CommandAccept implements Command {
 	}
 
     @Override
-    public void run(String[] parameters, Event event) {
-        if (!(event instanceof MessageEvent)) return;
+    public String run(String[] parameters, Event event) {
+        if (!(event instanceof MessageEvent)) return "";
 
         MessageEvent e = (MessageEvent) event;
 
         Main.getChallengeManager().tryAccept(e.getUser());
+        return "";
     }
 
 	@Override

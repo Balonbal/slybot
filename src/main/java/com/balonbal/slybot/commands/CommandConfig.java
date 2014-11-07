@@ -47,9 +47,9 @@ public class CommandConfig implements Command {
     }
 
     @Override
-    public void run(String[] parameters, Event<SlyBot> event) {
-        if (parameters.length < 2) return;
-        if (!(event instanceof PrivateMessageEvent)) return;
+    public String run(String[] parameters, Event<SlyBot> event) {
+        if (parameters.length < 2) return "false";
+        if (!(event instanceof PrivateMessageEvent)) return "false";
 
         User u = ((PrivateMessageEvent) event).getUser();
 
@@ -72,6 +72,7 @@ public class CommandConfig implements Command {
                         value = String.valueOf(map.get(key));
                     }
                     event.getBot().reply(event, String.format(" - %s: %s", key, (value.equals("") ? "Not set" : value)));
+                    return "true";
                 }
             } else if (parameters.length > 3) {
                 //Verify that it is a valid key
@@ -86,9 +87,9 @@ public class CommandConfig implements Command {
                     Object newValue = "";
 
                     //Aliases can not be changed this way
-                    if (key.equalsIgnoreCase(Reference.CONFIG_ALIASES)) return;
+                    if (key.equalsIgnoreCase(Reference.CONFIG_ALIASES)) return "false";
                     //Only owners can change ownership
-                    if (key.equalsIgnoreCase(Reference.CONFIG_OWNER) && (!Settings.owner.equalsIgnoreCase(u.getNick()) || !u.isVerified())) return;
+                    if (key.equalsIgnoreCase(Reference.CONFIG_OWNER) && (!Settings.owner.equalsIgnoreCase(u.getNick()) || !u.isVerified())) return "false";
                     if (currValue instanceof ArrayList) {
                         ArrayList<String> list = new ArrayList<String>();
                         Collections.addAll(list, value);
@@ -99,6 +100,7 @@ public class CommandConfig implements Command {
 
                     event.getBot().getConfig().updateSetting(key, newValue);
                     event.getBot().reply(event, "Successfully updated key: " + key);
+                    return "true";
                 } else {
                     event.getBot().reply(event, "No such key: " + key);
                 }
@@ -109,12 +111,15 @@ public class CommandConfig implements Command {
             try {
                 Main.getConfig().loadFromFile(Reference.CONFIG_BOTCONFIG_ID);
                 event.getBot().reply(event, "Successfully reloaded bot configuration from file.");
+                return "true";
             } catch (FileNotFoundException e) {
                 event.getBot().reply(event, "Could not load config: File not found.");
             }
         } else if (command.equalsIgnoreCase("save")) {
             Main.getConfig().save(Reference.CONFIG_BOTCONFIG_ID);
             event.getBot().reply(event, "Successfully saved bot configuration to file.");
+            return "true";
         }
+        return "false";
     }
 }

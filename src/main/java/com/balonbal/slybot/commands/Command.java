@@ -42,6 +42,7 @@ public interface Command {
 	 * Anything within this method will be run when a trigger from the command is found and {@link #requiresOP()}, {@link #channelCommand()} and {@link #pmCommand()} is satisfied
 	 * @param parameters the parameters sent from the user. An array with the first element as the name of the command.
      * @param event the event that occurred. This contains useful information like channels, users, timestamps etc.
+     * @return the string value to be used for piping commands, for example for the $EXEC in aliases
 	 */
-	public abstract void run(String[] parameters, Event<SlyBot> event);
+	public abstract String run(String[] parameters, Event<SlyBot> event);
 }

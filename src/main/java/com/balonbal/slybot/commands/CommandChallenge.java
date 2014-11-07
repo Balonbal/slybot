@@ -25,8 +25,8 @@ public class CommandChallenge implements Command {
 	}
 
 	@Override
-	public void run(String[] params, Event<SlyBot> event) {
-        if (!(event instanceof MessageEvent)) return;
+	public String run(String[] params, Event<SlyBot> event) {
+        if (!(event instanceof MessageEvent)) return "false";
         Channel channel = ((MessageEvent) event).getChannel();
         User user = ((MessageEvent) event).getUser();
 
@@ -49,7 +49,7 @@ public class CommandChallenge implements Command {
 
             if (challengedUser == null) {
                 event.getBot().reply(event, "User " + Colors.RED + params[1] + Colors.NORMAL + " was not found in this channel.");
-                return;
+                return "false";
             }
 
             //Do not create matches with the bot or themselves
@@ -68,10 +68,12 @@ public class CommandChallenge implements Command {
 				}
 
 				if (c != null) {
-				Main.getChallengeManager().addChallenge(c);
+				    Main.getChallengeManager().addChallenge(c);
+                    return c.getDescription();
 				}
 			}
 		}
+        return "false";
 	}
 
 	@Override

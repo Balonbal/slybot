@@ -48,7 +48,7 @@ public class CommandDate implements Command {
     }
 
     @Override
-    public void run(String[] parameters, Event<SlyBot> event) {
+    public String run(String[] parameters, Event<SlyBot> event) {
 
         Calendar calendar = Calendar.getInstance();
         int skip = 1;
@@ -81,6 +81,7 @@ public class CommandDate implements Command {
         }
 
         event.getBot().reply(event, format);
+        return format;
     }
 
     private String getReplaceMent(Matcher matcher, Calendar calendar) {

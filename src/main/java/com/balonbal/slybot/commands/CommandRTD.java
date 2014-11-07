@@ -25,9 +25,10 @@ public class CommandRTD implements Command {
 	}
 
 	@Override
-	public void run(String[] params, Event<SlyBot> event) {
+	public String run(String[] params, Event<SlyBot> event) {
 		long[] numbers = calculateResult(params);
 		broadcastResult(event, (int) numbers[1], (int) numbers[2], numbers[0]);
+        return String.valueOf(numbers[0]);
 	}
 	
 	private long[] calculateResult(String[] params) {

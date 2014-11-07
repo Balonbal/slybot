@@ -41,7 +41,7 @@ public class CommandMute implements Command {
     }
 
     @Override
-    public void run(String[] params, Event<SlyBot> event) {
+    public String run(String[] params, Event<SlyBot> event) {
         String channel = "";
 
         if (event instanceof MessageEvent) {
@@ -56,14 +56,16 @@ public class CommandMute implements Command {
 
                 event.getBot().getConfig().removeSetting(Reference.CONFIG_MUTED_CHANNELS, channel);
                 event.getBot().reply(event, "No longer muted in channel " + channel);
+                return "true";
             } else {
                 channel = params[1];
             }
 
-            return;
+            return "false";
         }
 
         System.out.println("Muted channel " + channel);
         event.getBot().getConfig().appendSetting("mutedChannels", channel);
+        return "true";
     }
 }

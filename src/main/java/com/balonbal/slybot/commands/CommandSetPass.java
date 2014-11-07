@@ -23,21 +23,25 @@ public class CommandSetPass implements Command {
 	}
 
 	@Override
-	public void run(String[] params, Event<SlyBot> event) {
-        if (!(event instanceof PrivateMessageEvent)) return;
+	public String run(String[] params, Event<SlyBot> event) {
+        if (!(event instanceof PrivateMessageEvent)) return "false";
 
 		if (params.length == 2) {
 			//Check if no password is set
 			if (Settings.operatorpass.equals("")) {
                 event.getBot().getConfig().updateSetting(Reference.CONFIG_BOTPASS, params[1]);
 				event.getBot().reply(event, "Sucessfully updated password.");
+                return "true";
 			}
 		} else if (params.length == 3){
 			if (Settings.operatorpass.equals(params[1])) {
                 event.getBot().getConfig().updateSetting("operatorpass", params[2]);
                 event.getBot().reply(event, "Sucessfully updated password.");
+                return "true";
 			}
 		}
+
+        return "false";
 	}
 
 	@Override

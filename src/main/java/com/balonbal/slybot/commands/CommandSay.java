@@ -41,11 +41,12 @@ public class CommandSay implements Command {
     }
 
     @Override
-    public void run(String[] params, Event<SlyBot> event) {
+    public String run(String[] params, Event<SlyBot> event) {
 
         //Convert the array to a single string
         String message = StringUtils.join(params, " ").substring(params[0].length() + 1);
 
         Main.getBot().reply(event, Colors.NORMAL + message);
+        return "";
     }
 }

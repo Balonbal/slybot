@@ -46,7 +46,7 @@ public class CommandAlias implements Command {
     }
 
     @Override
-    public void run(String[] parameters, Event<SlyBot> event) {
+    public String run(String[] parameters, Event<SlyBot> event) {
         if (parameters[1].equalsIgnoreCase("-rm")) {
             String alias = parameters[2].toUpperCase();
             if (Settings.aliases.containsKey(alias)) {
@@ -57,7 +57,7 @@ public class CommandAlias implements Command {
                 event.getBot().reply(event, "Could not remove alias " + Colors.RED + parameters[2] + Colors.NORMAL + ": Not found.");
             }
 
-            return;
+            return "false";
         } else if (parameters[1].equalsIgnoreCase("--list") || parameters[1].equalsIgnoreCase("-l")) {
             if (parameters.length > 2) {
                 if (Settings.aliases.containsKey(parameters[2].toUpperCase())) {
@@ -68,11 +68,11 @@ public class CommandAlias implements Command {
             } else {
                 event.getBot().reply(event, "Loaded aliases: " + StringUtils.join(Settings.aliases.keySet(), ", "));
             }
-            return;
+            return "false";
         }
         if (!Main.getCommandListener().getCommandHandler().isCommand(parameters[2])) {
             event.getBot().reply(event, "Could not make alias " + Colors.RED + parameters[1] + Colors.NORMAL + " as " + Colors.BOLD + parameters[2] + Colors.NORMAL + " was not recognized as a valid command or alias");
-            return;
+            return "false";
         }
         if (!Main.getCommandListener().getCommandHandler().isCommand(parameters[1])) {
             String name = parameters[1].toUpperCase();
@@ -81,8 +81,10 @@ public class CommandAlias implements Command {
             newAlias.put(name, command);
             event.getBot().getConfig().appendSetting(Reference.CONFIG_ALIASES, newAlias);
             event.getBot().reply(event, "Successfully bound alias " + Colors.BOLD + Colors.BLUE + name + Colors.NORMAL + " to " + Colors.BOLD + Colors.GREEN + command);
+            return name;
         } else {
             event.getBot().reply(event, "Could not bind " + Colors.BOLD + Colors.RED + parameters[1] + Colors.NORMAL + " as it is already in use.");
+            return "false";
         }
     }
 }

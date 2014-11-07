@@ -43,23 +43,23 @@ public class CommandHandler {
         }
     }
 
-    public void processCommand(String command, Event<SlyBot> e) {
+    public String processCommand(String command, Event<SlyBot> e) {
 
         Command cmd = getCommand(command.contains(" ") ? command.substring(0, command.indexOf(" ")) : command);
         System.out.println("Running command: " + command);
 
         //Verify that the command exists
-        if (cmd == null) return;
+        if (cmd == null) return "false";
         //Check that it is used in a valid place
         if (!(cmd.channelCommand() && e instanceof MessageEvent) && !(cmd.pmCommand() && e instanceof PrivateMessageEvent))
-            return;
+            return "false";
         //Check permissions
         if (!hasPermission(e, cmd.requiresOP())) {
             e.respond("You do not have the required permissions to do that");
-            return;
+            return "false";
         }
 
-        cmd.run(command.split("\\s+"), e);
+        return cmd.run(command.split("\\s+"), e);
 
         //runAlias(user, channel, cmd, params);
 

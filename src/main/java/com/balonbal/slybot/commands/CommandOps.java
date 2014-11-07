@@ -26,9 +26,9 @@ public class CommandOps implements Command {
 	}
 
 	@Override
-	public void run(String[] params, Event<SlyBot> event) {
+	public String run(String[] params, Event<SlyBot> event) {
 		//Double check that this is in fact requested through a pm
-        if (!(event instanceof PrivateMessageEvent)) return;
+        if (!(event instanceof PrivateMessageEvent)) return "false";
 
 		if (params.length > 3) {
             String nick = params[2];
@@ -52,7 +52,7 @@ public class CommandOps implements Command {
 		}
 		event.getBot().reply(event, "Total: " + Settings.botops.size() + " items");
 
-
+        return "true";
 	}
 
 	@Override

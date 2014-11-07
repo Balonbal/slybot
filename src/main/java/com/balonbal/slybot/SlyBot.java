@@ -35,6 +35,7 @@ public class SlyBot extends PircBotX {
 	}
 
     public void reply(Channel c, User u, String message) {
+        if (Settings.suppressOutput) return;
         if (c == null) {
             u.send().message(message);
         } else {

@@ -10,6 +10,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,7 +29,7 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
         }
     }
 
-    private void runAlias(String[] params, Event<SlyBot> event) {
+    private String runAlias(String[] params, Event<SlyBot> event) {
 
         String alias = params[0].toUpperCase();
         if (Settings.aliases.containsKey(alias)) {
@@ -45,9 +46,10 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
             matcher.appendTail(buffer);
 
             //Run output in both listeners
-            runAlias(buffer.toString().split("\\s+"), event);
-            Main.getCommandListener().getCommandHandler().processCommand(buffer.toString(), event);
+            if (Settings.aliases.containsKey(buffer.toString().split("\\s+")[0])) return runAlias(buffer.toString().split("\\s+"), event);
+            return Main.getCommandListener().getCommandHandler().processCommand(buffer.toString(), event);
         }
+        return "false";
     }
 
     private String getReplacement(Matcher matcher, Event event, String[] params) {
@@ -86,12 +88,12 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
             String[] assessment = buffer.toString().split("(?<!\\\\),");
 
             //Return first parameter on successful assess, else return second
-            if (assess(assessment[0].split("(?<!\\\\)(?=(==|<=|>=|<|>))|(?<=(==|<=|>=|<|>))(?<!\\\\(==|<=|>=|<|>))"))) return assessment[1];
+            if (assess(assessment[0].split("(?<!\\\\)(?=(==|!=|c=|<=|>=|<|>))|(?<=(==|!=|c=|<=|>=|<|>))(?<!\\\\(==|!=|c=|<=|>=|<|>))"))) return assessment[1];
             else return assessment[2];
 
 
         } else if (s.matches("\\$EXEC\\((.*)\\)")) {
-            s = s.substring("$EXEC".length());
+            s = s.substring("$EXEC".length() + 1, s.length() - 1);
             Matcher submatcher = pattern.matcher(s);
             StringBuffer buffer = new StringBuffer();
 
@@ -103,8 +105,16 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
             submatcher.appendTail(buffer);
 
             String command = buffer.toString();
-            if (Main.getCommandListener().getCommandHandler().isCommand(command)) {
-                //TODO Invent magic to get response from commands
+            System.out.println("Running command: " + command);
+            if (Main.getCommandListener().getCommandHandler().isCommand(command.substring(0, command.indexOf(" ")))) {
+                String r = "";
+
+                Settings.suppressOutput = true;
+                if (Settings.aliases.containsKey(command.substring(0, command.indexOf(" ")))) r = runAlias(command.split("\\s+"), event);
+                else r = Main.getCommandListener().getCommandHandler().processCommand(command, event);
+                Settings.suppressOutput = false;
+
+                return r;
             } else return "";
         }
 
@@ -114,12 +124,15 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
     private boolean assess(String[] check) {
         //Remove trailing spaces
         String input = check[0].trim();
+        if (input.equals("true")) return true;
+        if (input.equals("false")) return false;
         String compare = check[2].trim();
-
         //TODO: Solve math?
 
         try {
             if (check[1].equals("==")) return input.equals(compare);
+            if (check[1].equals("!=")) return input.equals(compare);
+            if (check[1].equals("c=")) return input.contains(compare);
 
             //Do digits
             if (input.matches("\\d+") && compare.matches("\\d+")) {

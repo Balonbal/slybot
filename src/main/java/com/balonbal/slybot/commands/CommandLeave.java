@@ -16,7 +16,7 @@ import org.pircbotx.hooks.events.PrivateMessageEvent;
 public class CommandLeave implements Command {
 
 	@Override
-	public void run(String[] parameters, Event<SlyBot> event) {
+	public String run(String[] parameters, Event<SlyBot> event) {
 
         Channel channel = null;
         User user = null;
@@ -34,7 +34,7 @@ public class CommandLeave implements Command {
 					event.getBot().shutdown();
 				} else {
                     event.getBot().reply(event, "You may not turn off the bot, sorry.");
-                    return;
+                    return "true";
                 }
 			} else {
                 for (Channel c: event.getBot().getUserBot().getChannels()) {
@@ -45,12 +45,13 @@ public class CommandLeave implements Command {
 
         if (channel == null) {
             Main.getBot().reply(event, "Could not leave channel: Not Found");
-            return;
+            return "false";
         }
 
 		System.out.println("Leaving channel: " + channel.getName());
 		//Else leave the channel
-		channel.send().part("told by operator to leave");
+		channel.send().part("Told by operator to leave");
+        return "true";
 	}
 
 	@Override

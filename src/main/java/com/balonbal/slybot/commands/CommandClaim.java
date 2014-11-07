@@ -22,9 +22,9 @@ public class CommandClaim implements Command {
 	}
 
 	@Override
-	public void run(String[] params, Event<SlyBot> event) {
+	public String run(String[] params, Event<SlyBot> event) {
 
-		if (!(event instanceof PrivateMessageEvent)) return;
+		if (!(event instanceof PrivateMessageEvent)) return "false";
         User user = ((PrivateMessageEvent) event).getUser();
 		
 		if (Settings.owner.equals("")) {
@@ -36,6 +36,7 @@ public class CommandClaim implements Command {
                 list.add(user.getNick());
 				event.getBot().getConfig().updateSetting(Reference.CONFIG_BOTOPS, list);
 				event.getBot().reply(event, "Successfully claimed bot.");
+                return "true";
 			} else {
 				user.send().message("Please register your nick before claiming this bot");
 			}
@@ -45,6 +46,7 @@ public class CommandClaim implements Command {
 		} else {
 			event.getBot().reply(event, "Error! Bot already claimed by " + Settings.owner + ".");
 		}
+        return "false";
 	}
 
 	@Override

@@ -25,7 +25,7 @@ public class CommandHelp implements Command {
     }
 
     @Override
-    public void run(String[] params, Event<SlyBot> event) {
+    public String run(String[] params, Event<SlyBot> event) {
         String[] response = null;
         if (params.length == 1) {
             //Fetch all the commands
@@ -49,11 +49,13 @@ public class CommandHelp implements Command {
             }
         }
 
-        if (response == null) return;
+        if (response == null) return "false";
 
         for (String s : response) {
             event.getBot().reply(event, s);
         }
+
+        return "true";
     }
 
     @Override
