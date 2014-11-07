@@ -35,4 +35,5 @@ public class Reference {
 
     public static final long CONFIG_AUTOSAVE_FREQUENCY = 2*60*60*1000; //Every two hours
 
+    public static final String CONFIG_BOTCONFIG_ID = "botConfig";
 }

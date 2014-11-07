@@ -32,7 +32,7 @@ public class Main {
 
         BotConfig botConfig = new BotConfig();
         configurationHandler = new ConfigurationHandler();
-        configurationHandler.addConfiguration(new File("configuration.yaml"), "botConfig", botConfig);
+        configurationHandler.addConfiguration(new File("configuration.yaml"), Reference.CONFIG_BOTCONFIG_ID, botConfig);
         initLoggers();
         commandHandler = new CommandHandler();
         commandListener = new CommandListener(commandHandler);
@@ -141,7 +141,7 @@ public class Main {
 
 		Configuration<SlyBot> configuration = config.buildConfiguration();
 		//create the bot with the defined config
-		slybot = new SlyBot(configuration, (BotConfig) configurationHandler.getConfig("botConfig"));
+		slybot = new SlyBot(configuration, (BotConfig) configurationHandler.getConfig(Reference.CONFIG_BOTCONFIG_ID));
 		
 		System.out.println("This bot is owned by " + Settings.owner);
 		try {

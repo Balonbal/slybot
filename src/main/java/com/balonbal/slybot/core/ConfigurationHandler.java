@@ -12,6 +12,7 @@ import java.util.TimerTask;
 public class ConfigurationHandler {
 
     public HashMap<String, Config> configurations;
+    private Timer timer;
 
     public ConfigurationHandler() {
         configurations = new HashMap<String, Config>();
@@ -23,20 +24,22 @@ public class ConfigurationHandler {
             }
         };
 
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(task, System.currentTimeMillis() + 500000, Reference.CONFIG_AUTOSAVE_FREQUENCY);
+        timer = new Timer();
+        //Schedule autosave
+        timer.scheduleAtFixedRate(task, 500000, Reference.CONFIG_AUTOSAVE_FREQUENCY);
+
+    }
+
+    public void stopAutoSave() {
+        timer.cancel();
     }
 
     public void addConfiguration(File file, String id, Config config) {
         if (file.exists()) {
             try {
                 //Try to load configuration from file
-                HashMap<String, Object> map = (HashMap<String, Object>) load(file);
 
-                for (String s: map.keySet()) {
-                    config.updateSetting(s, map.get(s));
-                }
-
+                loadFromFile(file, config);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -44,6 +47,18 @@ public class ConfigurationHandler {
 
         config.setSaveLocation(file);
         configurations.put(id, config);
+    }
+
+    public void loadFromFile(String configId) throws FileNotFoundException {
+        if (configurations.containsKey(configId)) loadFromFile(configurations.get(configId).getSaveLocation(), configurations.get(configId));
+    }
+
+    public void loadFromFile(File file, Config config) throws FileNotFoundException {
+        HashMap<String, Object> map = (HashMap<String, Object>) load(file);
+
+        for (String s: map.keySet()) {
+            config.updateSetting(s, map.get(s));
+        }
     }
 
     public Config getConfig(String id) {
@@ -58,6 +73,8 @@ public class ConfigurationHandler {
         Yaml yaml = new Yaml();
         return yaml.load(new FileInputStream(f));
     }
+
+    public void save(String id) { if(configurations.containsKey(id)) save(configurations.get(id));}
 
     public void save(Config config) {
         save(config.getSaveLocation(), config);

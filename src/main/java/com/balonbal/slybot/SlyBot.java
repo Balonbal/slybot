@@ -29,6 +29,7 @@ public class SlyBot extends PircBotX {
 	public void shutdown() {
         System.out.println("Got instructions to shut down.. Shutting down.");
         Main.getConfig().saveAll();
+        Main.getConfig().stopAutoSave();
         this.stopBotReconnect();
 		this.sendRaw().rawLine("quit");
 	}

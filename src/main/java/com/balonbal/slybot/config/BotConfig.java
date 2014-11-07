@@ -17,16 +17,21 @@ public class BotConfig implements Config {
     @Override
     @SuppressWarnings("unchecked")
     public void updateSetting(String key, Object value) {
-        if (key.equals(Reference.CONFIG_ALIASES)) Settings.aliases = (HashMap<String, String>) value;
-        else if (key.equals(Reference.CONFIG_BOTNICK)) Settings.botnick = String.valueOf(value);
-        else if (key.equals(Reference.CONFIG_BOTOPS)) Settings.botops = (ArrayList<String>) value;
-        else if (key.equals(Reference.CONFIG_BOTPASS)) Settings.operatorpass = String.valueOf(value);
-        else if (key.equals(Reference.CONFIG_CHANNELS)) Settings.channels = (ArrayList<String>) value;
-        else if (key.equals(Reference.CONFIG_MUTED_CHANNELS)) Settings.mutedChannels = (ArrayList<String>) value;
-        else if (key.equals(Reference.CONFIG_NETWORK)) Settings.network = String.valueOf(value);
-        else if (key.equals(Reference.CONFIG_NICKPASS)) Settings.nickpass = String.valueOf(value);
-        else if (key.equals(Reference.CONFIG_OWNER)) Settings.owner = String.valueOf(value);
-        else System.out.println("Unknown config key: " + key);
+        try {
+            if (key.equals(Reference.CONFIG_ALIASES)) Settings.aliases = (HashMap<String, String>) value;
+            else if (key.equals(Reference.CONFIG_BOTNICK)) Settings.botnick = String.valueOf(value);
+            else if (key.equals(Reference.CONFIG_BOTOPS)) Settings.botops = (ArrayList<String>) value;
+            else if (key.equals(Reference.CONFIG_BOTPASS)) Settings.operatorpass = String.valueOf(value);
+            else if (key.equals(Reference.CONFIG_CHANNELS)) Settings.channels = (ArrayList<String>) value;
+            else if (key.equals(Reference.CONFIG_MUTED_CHANNELS)) Settings.mutedChannels = (ArrayList<String>) value;
+            else if (key.equals(Reference.CONFIG_NETWORK)) Settings.network = String.valueOf(value);
+            else if (key.equals(Reference.CONFIG_NICKPASS)) Settings.nickpass = String.valueOf(value);
+            else if (key.equals(Reference.CONFIG_OWNER)) Settings.owner = String.valueOf(value);
+            else System.out.println("Unknown config key: " + key);
+        } catch (ClassCastException e) {
+            //
+            System.out.println("Received value of illegal type.");
+        }
     }
 
     @Override
@@ -72,6 +77,7 @@ public class BotConfig implements Config {
         map.put(Reference.CONFIG_NETWORK, Settings.network);
         map.put(Reference.CONFIG_OWNER, Settings.owner);
         map.put(Reference.CONFIG_BOTPASS, Settings.operatorpass);
+        map.put(Reference.CONFIG_NICKPASS, Settings.nickpass);
         return map;
     }
 
