@@ -38,7 +38,7 @@ public class CommandVersion implements Command {
     public String run(String[] parameters, Event<SlyBot> event) {
         //Get the local version and build
         String localVersion = event.getBot().getVersion();
-        String localBuild = localVersion.substring(localVersion.lastIndexOf(" "));
+        String localBuild = localVersion.substring(localVersion.lastIndexOf(" ") + 1);
 
         event.getBot().reply(event, "Currently running slybot version: " + Colors.BLUE + localVersion);
 
