@@ -28,6 +28,8 @@ public class Main {
 
 	public static void main(String[] args) {
 
+        System.out.println("Starting slybot, this is version " + Main.class.getPackage().getImplementationVersion());
+
         BotConfig botConfig = new BotConfig();
         configurationHandler = new ConfigurationHandler();
         configurationHandler.addConfiguration(new File("configuration.yaml"), Reference.CONFIG_BOTCONFIG_ID, botConfig);
@@ -119,6 +121,7 @@ public class Main {
 		
 		Builder<SlyBot> config = new Builder<SlyBot>()
 			.setName(nick) //Set the nick of the bot.
+            .setRealName("SlyBot v" + Main.class.getPackage().getImplementationVersion())
 			.setAutoNickChange(true) //Automatically change nick when the current one is in use
 			.setCapEnabled(true) //Enable CAP features
                 .addListener(commandListener) //This class is a commandListener, so add it to the bots known listeners
@@ -126,7 +129,7 @@ public class Main {
                 .addListener(new ChallengeListener())
                 .addListener(new LoggerListener())
                 .addListener(new AliasListener())
-                .setServerHostname(network);
+            .setServerHostname(network);
 		
 		if (nickPass != null && !nickPass.equals("")) {
 			config.setNickservPassword(nickPass);

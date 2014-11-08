@@ -3,7 +3,8 @@ package com.balonbal.slybot.lib;
 import com.balonbal.slybot.Main;
 
 public class Reference {
-	
+
+    /* BOT CONSTANTS */
 	public static final String BOTNICK = Main.getBot().getNick();
 	public static final String[] PREFIXES = {
 		BOTNICK + ": ",

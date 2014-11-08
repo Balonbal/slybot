@@ -100,6 +100,8 @@ public class CommandConfig implements Command {
                     }
 
                     event.getBot().getConfig().updateSetting(key, newValue);
+                    //Change the bot's nickname
+                    if (key.equals(Reference.CONFIG_BOTNICK)) event.getBot().sendRaw().rawLine("nick " + newValue);
                     event.getBot().reply(event, "Successfully updated key: " + key);
                     return "true";
                 } else {

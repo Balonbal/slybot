@@ -20,8 +20,7 @@ public class BotConfig implements Config {
             else if (key.equals(Reference.CONFIG_AUTOSAVE)) {
                 Settings.configAutosaveFrequency = Long.parseLong(String.valueOf(value));
                 Main.getConfig().updateSaveFrequency(Long.parseLong(String.valueOf(value)));
-            }
-            else if (key.equals(Reference.CONFIG_BOTNICK)) Settings.botnick = String.valueOf(value);
+            } else if (key.equals(Reference.CONFIG_BOTNICK)) Settings.botnick = String.valueOf(value);
             else if (key.equals(Reference.CONFIG_BOTOPS)) Settings.botops = (ArrayList<String>) value;
             else if (key.equals(Reference.CONFIG_BOTPASS)) Settings.operatorpass = String.valueOf(value);
             else if (key.equals(Reference.CONFIG_CHANNELS)) Settings.channels = (ArrayList<String>) value;

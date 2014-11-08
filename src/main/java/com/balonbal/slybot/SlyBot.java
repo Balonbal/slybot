@@ -16,10 +16,12 @@ import java.util.logging.Logger;
 public class SlyBot extends PircBotX {
 
     protected Config config;
+    protected String version = Main.class.getPackage().getImplementationVersion();
 
 	public SlyBot(Configuration<? extends PircBotX> configuration, BotConfig botConfig) {
 		super(configuration);
         config = botConfig;
+        if (version == null) version = "development build";
 	}
 
 	public void quit() {
@@ -70,5 +72,9 @@ public class SlyBot extends PircBotX {
 
     public Config getConfig() {
         return config;
+    }
+
+    public String getVersion() {
+        return  version;
     }
 }
