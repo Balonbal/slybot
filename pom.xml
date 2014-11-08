@@ -8,7 +8,21 @@
     <defaultGoal>install</defaultGoal>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
-      <plugin>
+        <plugin>
+          <groupId>ru.concerteza.buildnumber</groupId>
+          <artifactId>maven-jgit-buildnumber-plugin</artifactId>
+          <version>1.2.8</version>
+            <executions>
+              <execution>
+                <id>git-buildnumber</id>
+                <goals>
+                  <goal>extract-buildnumber</goal>
+                </goals>
+              <phase>prepare-package</phase>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
@@ -22,11 +36,16 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-	      <mainClass>com.balonbal.slybot.Main</mainClass>
+	          <mainClass>com.balonbal.slybot.Main</mainClass>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
             </manifest>
-	  </archive>
-	  <descriptorRefs>
-	    <descriptorRef>jar-with-dependencies</descriptorRef>
+            <manifestEntries>
+              <Implementation-Version>${project.version} build ${git.shortRevision}</Implementation-Version>
+            </manifestEntries>
+	      </archive>
+	      <descriptorRefs>
+	        <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
         </configuration>
         <executions>
