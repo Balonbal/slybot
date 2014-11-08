@@ -2,12 +2,8 @@ package com.balonbal.slybot.commands;
 
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.lib.Reference;
-import org.pircbotx.Channel;
 import org.pircbotx.Colors;
-import org.pircbotx.User;
 
-import com.balonbal.slybot.Main;
-import com.balonbal.slybot.core.SlyConfiguration;
 import com.balonbal.slybot.lib.Settings;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.events.PrivateMessageEvent;

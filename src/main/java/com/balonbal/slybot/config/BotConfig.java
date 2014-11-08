@@ -1,13 +1,11 @@
 package com.balonbal.slybot.config;
 
-import com.balonbal.slybot.core.SlyConfiguration;
+import com.balonbal.slybot.Main;
 import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
-import com.balonbal.slybot.lib.Strings;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class BotConfig implements Config {
@@ -19,6 +17,10 @@ public class BotConfig implements Config {
     public void updateSetting(String key, Object value) {
         try {
             if (key.equals(Reference.CONFIG_ALIASES)) Settings.aliases = (HashMap<String, String>) value;
+            else if (key.equals(Reference.CONFIG_AUTOSAVE)) {
+                Settings.configAutosaveFrequency = Long.parseLong(String.valueOf(value));
+                Main.getConfig().updateSaveFrequency(Long.parseLong(String.valueOf(value)));
+            }
             else if (key.equals(Reference.CONFIG_BOTNICK)) Settings.botnick = String.valueOf(value);
             else if (key.equals(Reference.CONFIG_BOTOPS)) Settings.botops = (ArrayList<String>) value;
             else if (key.equals(Reference.CONFIG_BOTPASS)) Settings.operatorpass = String.valueOf(value);
@@ -70,6 +72,7 @@ public class BotConfig implements Config {
     public HashMap<String, Object> getSaveValues() {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(Reference.CONFIG_ALIASES, Settings.aliases);
+        map.put(Reference.CONFIG_AUTOSAVE, Settings.configAutosaveFrequency);
         map.put(Reference.CONFIG_BOTNICK, Settings.botnick);
         map.put(Reference.CONFIG_BOTOPS, Settings.botops);
         map.put(Reference.CONFIG_CHANNELS, Settings.channels);

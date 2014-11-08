@@ -24,6 +24,7 @@ public class Reference {
 
     /* CONFIGURATION CONSTANTS */
     public static final String CONFIG_ALIASES = "aliases";
+    public static final String CONFIG_AUTOSAVE = "autosaveFrequency";
     public static final String CONFIG_BOTNICK = "botnick";
     public static final String CONFIG_BOTOPS = "botops";
     public static final String CONFIG_BOTPASS = "operatorPass";
@@ -32,8 +33,6 @@ public class Reference {
     public static final String CONFIG_NETWORK = "network";
     public static final String CONFIG_NICKPASS = "nickpass";
     public static final String CONFIG_OWNER = "owner";
-
-    public static final long CONFIG_AUTOSAVE_FREQUENCY = 2*60*60*1000; //Every two hours
 
     public static final String CONFIG_BOTCONFIG_ID = "botConfig";
 }

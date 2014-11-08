@@ -4,6 +4,7 @@ import com.balonbal.slybot.Main;
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.ListenerAdapter;
@@ -16,7 +17,8 @@ import java.util.regex.Pattern;
 
 public class AliasListener extends ListenerAdapter<SlyBot> {
 
-    private static final Pattern pattern = Pattern.compile("(?<!\\\\)\\$(USER|CHANNEL|@|\\d|IF\\((.*?),(.*?),(.*?)\\)|EXEC\\((.*?)\\))");
+    private static final Pattern pattern = Pattern.compile("(?<!\\\\)\\$(USER|CHANNEL|@|\\d|IF\\((.*?),(.*?),(.*)\\)|EXEC\\((.*)\\))");
+    private static final Pattern specialPattern = Pattern.compile("(?<!\\\\)\\$(IF|EXEC)\\((.*)\\)");
 
     @Override
     public void onMessage(MessageEvent<SlyBot> event) throws Exception {
@@ -40,7 +42,7 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
 
             //Search and replace
             while(matcher.find()) {
-                matcher.appendReplacement(buffer, getReplacement(matcher, event, params));
+                matcher.appendReplacement(buffer, getReplacement(matcher.group(), event, params));
             }
 
             matcher.appendTail(buffer);
@@ -52,8 +54,7 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
         return "false";
     }
 
-    private String getReplacement(Matcher matcher, Event event, String[] params) {
-        String s = matcher.group();
+    private String getReplacement(String s, Event event, String[] params) {
 
         if (s.equals("$USER")) {
             if (event instanceof MessageEvent) return ((MessageEvent) event).getUser().getNick();
@@ -71,41 +72,46 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
             //Check if the parameter exists
             if (param < 0 || param >= params.length) return "";
             return params[param];
-        } else if (s.matches("\\$IF\\((.*?),(.*?),(.*?)\\)")) {
-            //remove $ASSERT, ( and )
-            s = s.substring("$IF".length() + 1, s.length() - 1);
-            Matcher submatcher = pattern.matcher(s);
-            StringBuffer buffer = new StringBuffer();
+        } else if (s.matches("\\$IF\\((.*?),(.*?),(.*)\\)")) {
+            s = getOuterParentheses(s);
 
-            //Find all expressions within the expression that needs to be replaced
-            while (submatcher.find()) {
-                submatcher.appendReplacement(buffer, getReplacement(submatcher, event, params));
+            //Any nested parenthesis
+            s = parseNested(s, event, params);
+
+            Matcher subMatcher = pattern.matcher(s);
+            StringBuffer subBuffer = new StringBuffer();
+
+            //Match other replacements
+            while (subMatcher.find()) {
+                subMatcher.appendReplacement(subBuffer, getReplacement(subMatcher.group(), event, params));
             }
+            subMatcher.appendTail(subBuffer);
+            s = subBuffer.toString();
 
-            submatcher.appendTail(buffer);
-
-            //Split at all "," without backslashes
-            String[] assessment = buffer.toString().split("(?<!\\\\),");
+            String[] assessment = s.split("(?<!\\\\),");
 
             //Return first parameter on successful assess, else return second
-            if (assess(assessment[0].split("(?<!\\\\)(?=(==|!=|c=|<=|>=|<|>))|(?<=(==|!=|c=|<=|>=|<|>))(?<!\\\\(==|!=|c=|<=|>=|<|>))"))) return assessment[1];
-            else return assessment[2];
+            if (assess(assessment[0].split("(?<!\\\\)(?=(==|!=|c=|<=|>=|<|>))|(?<=(==|!=|c=|<=|>=|<|>))(?<!\\\\(==|!=|c=|<=|>=|<|>))"))) return assessment[1].replaceAll("\\\\,", ",");
+            else return Matcher.quoteReplacement(assessment[2].replaceAll("\\\\,", ","));
 
 
-        } else if (s.matches("\\$EXEC\\((.*)\\)")) {
-            s = s.substring("$EXEC".length() + 1, s.length() - 1);
+        } else if (s.matches("\\$EXEC\\((.*?)\\)")) {
+            s = getOuterParentheses(s);
+
+            //Parse nested parenthesis
+            s = parseNested(s, event, params);
+
             Matcher submatcher = pattern.matcher(s);
             StringBuffer buffer = new StringBuffer();
 
             //Find and replace submatches
             while (submatcher.find()) {
-                submatcher.appendReplacement(buffer, getReplacement(submatcher, event, params));
+                submatcher.appendReplacement(buffer, Matcher.quoteReplacement(getReplacement(submatcher.group(), event, params)));
             }
 
             submatcher.appendTail(buffer);
 
             String command = buffer.toString();
-            System.out.println("Running command: " + command);
             if (Main.getCommandListener().getCommandHandler().isCommand(command.substring(0, command.indexOf(" ")))) {
                 String r = "";
 
@@ -124,8 +130,10 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
     private boolean assess(String[] check) {
         //Remove trailing spaces
         String input = check[0].trim();
+
         if (input.equals("true")) return true;
         if (input.equals("false")) return false;
+        if (check.length < 3) return false;
         String compare = check[2].trim();
         //TODO: Solve math?
 
@@ -151,5 +159,67 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
         }
 
         return false;
+    }
+
+    private String getOuterParentheses(String pattern) {
+        int start = pattern.indexOf("(");
+        int end = 0;
+        String r = "";
+
+        //Get the first unescaped parenthesis
+        if (start != 0) {
+            while (pattern.charAt(start -  1) == '\\') {
+                start = pattern.indexOf("(", start);
+            }
+        }
+
+        r = pattern.substring(start + 1);
+        int parenthesisLevel = 1;
+
+        for (int i = 1; i < r.length(); i++) {
+            if (r.charAt(i - 1) == '\\') continue;
+            switch (r.charAt(i)) {
+                case '(':
+                    parenthesisLevel++;
+                    end = i;
+                    break;
+                case ')':
+                    parenthesisLevel--;
+                    end = i;
+                    break;
+                default:
+                    continue;
+            }
+
+            if (parenthesisLevel == 0) { break; }
+            else if (parenthesisLevel < 0) return ""; //Should really not happen, but whatever
+        }
+
+        return r.substring(0, end);
+    }
+
+    private String parseNested(String s, Event event, String[] params) {
+        //Parse nested parenthesis
+        Matcher specialMatcher = specialPattern.matcher(s);
+        while (specialMatcher.find()) {
+            //The start of the match in the string
+            int start = specialMatcher.start();
+            //The length of the start, ex $IF(.....) is 5
+            int off = specialMatcher.group().replaceAll("\\((.*)\\)", "").length() + 2;
+
+            //Stop at startposition plus the full length of the parenthesis
+            int end = start + getOuterParentheses(s.substring(start)).length() + off;
+
+            //Get replacement for the parenthesis
+            String replace = getReplacement(s.substring(start, end), event, params);
+
+            //Replace the string in s
+            s = s.substring(0, start) + replace + s.substring(end);
+
+            //Reset the matcher in case of more matches
+            specialMatcher.reset(s);
+        }
+
+        return s;
     }
 }

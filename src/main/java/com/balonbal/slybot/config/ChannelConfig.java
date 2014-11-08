@@ -1,32 +1,40 @@
 package com.balonbal.slybot.config;
 
-import com.balonbal.slybot.core.SlyConfiguration;
 import com.balonbal.slybot.lib.Strings;
 import org.pircbotx.Channel;
 
+import java.io.File;
 import java.util.HashMap;
 
-public class ChannelConfig extends SlyConfiguration{
+public class ChannelConfig implements Config{
 
-    private Channel channel;
-    String[] blackListedCommands;
-    HashMap<String, String> aliasCommands;
-
-    public ChannelConfig(Channel channel) {
-        super(channel.getName());
-        this.channel = channel;
-        blackListedCommands = new String[] { };
+    @Override
+    public void updateSetting(String key, Object value) {
 
     }
 
     @Override
-    public void updateSettings() {
+    public void appendSetting(String key, Object value) {
 
     }
 
     @Override
-    public void createSettings() {
-        addSetting(Strings.CHANNEL_SETTING_BLACKLISTED_COMMANDS, "");
-        addSetting(Strings.CHANNEL_SETTING_ALIASES, "");
+    public void removeSetting(String key, Object value) {
+
+    }
+
+    @Override
+    public HashMap<String, Object> getSaveValues() {
+        return null;
+    }
+
+    @Override
+    public void setSaveLocation(File file) {
+
+    }
+
+    @Override
+    public File getSaveLocation() {
+        return null;
     }
 }

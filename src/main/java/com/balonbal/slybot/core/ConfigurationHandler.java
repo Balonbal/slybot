@@ -1,7 +1,7 @@
 package com.balonbal.slybot.core;
 
 import com.balonbal.slybot.config.Config;
-import com.balonbal.slybot.lib.Reference;
+import com.balonbal.slybot.lib.Settings;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
@@ -26,12 +26,23 @@ public class ConfigurationHandler {
 
         timer = new Timer();
         //Schedule autosave
-        timer.scheduleAtFixedRate(task, 500000, Reference.CONFIG_AUTOSAVE_FREQUENCY);
+        timer.scheduleAtFixedRate(task, 500000, Settings.configAutosaveFrequency);
 
     }
 
     public void stopAutoSave() {
         timer.cancel();
+    }
+
+    public void updateSaveFrequency(long newFrequency) {
+        stopAutoSave();
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                saveAll();
+            }
+        }, newFrequency, newFrequency);
     }
 
     public void addConfiguration(File file, String id, Config config) {
