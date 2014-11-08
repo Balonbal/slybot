@@ -6,32 +6,56 @@ import com.balonbal.slybot.util.Youtube;
 import org.pircbotx.PircBotX;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.Listener;
+import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.events.PrivateMessageEvent;
+import org.pircbotx.hooks.types.GenericMessageEvent;
 
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 
-public class LinkListener implements Listener<SlyBot> {
+public class LinkListener extends ListenerAdapter<SlyBot> {
 
-    public static final Logger logger = Logger.getLogger(LinkListener.class.getName());
+    private Youtube youtube = new Youtube();
 
     @Override
-    public void onEvent(Event<SlyBot> pircBotXEvent) throws Exception {
-        if (pircBotXEvent instanceof MessageEvent) {
+    public void onMessage(MessageEvent<SlyBot> pircBotXEvent) {
+        //Extract the message
+        String message = pircBotXEvent.getMessage();
 
-            MessageEvent<SlyBot> messageEvent = (MessageEvent<SlyBot>) pircBotXEvent;
-            //Extract the message
-            String message = messageEvent.getMessage();
+        Matcher youtubes = Strings.youtube.matcher(message);
 
-            for (String s : Strings.youtubes) {
-                if (message.toLowerCase().contains(s.toLowerCase())) {
-                    System.out.println(String.format("Found matching link for domain %s in message from user %s, starting search", s, messageEvent.getUser().getNick()));
-                    //Extract the youtube link
-                    Youtube y = new Youtube(message.substring(message.toLowerCase().indexOf(s)));
-                    //Print the information and delete the file
-                    y.printInfo(messageEvent.getChannel());
-                    y.deleteFile();
-                }
+        while (youtubes.find()) {
+            //Split start of url to
+            String url = message.substring(youtubes.end());
+            if (url.contains(" ")) url = url.substring(0, url.indexOf(" "));
+
+            try {
+                youtube.parseVideoInfo(url, pircBotXEvent);
+            } catch (IllegalArgumentException e) {
+                url = message.substring(youtubes.start());
+                if (url.contains(" ")) url = url.substring(0, url.indexOf(" "));
+                pircBotXEvent.getBot().reply(pircBotXEvent, "Sorry, your youtube URL (" + url + ") gave me no results");
             }
         }
     }
+
+    public void onPrivateMessage(PrivateMessageEvent<SlyBot> pircBotXEvent) {
+        //Extract the message
+        String message = pircBotXEvent.getMessage();
+
+        Matcher youtubes = Strings.youtube.matcher(message);
+
+        while (youtubes.find()) {
+            //Split start of url to
+            String url = message.substring(youtubes.end(), message.indexOf(" ", youtubes.start()));
+
+            try {
+                youtube.parseVideoInfo(url, pircBotXEvent);
+            } catch (IllegalArgumentException e) {
+                pircBotXEvent.getBot().reply(pircBotXEvent, "Sorry, your youtube URL gave me no results");
+            }
+        }
+    }
+
 }
