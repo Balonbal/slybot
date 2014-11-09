@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class Youtube {
 
     File f;
-    private static final Pattern videoCode = Pattern.compile("(?<=(v=|/))[\\w\\d]{11}");
+    private static final Pattern videoCode = Pattern.compile("(?<=(v=|/))(?<!user/)[\w\d\-_]{11}");
 
 	public Youtube() {
 
