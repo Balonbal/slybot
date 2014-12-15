@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 public class AliasListener extends ListenerAdapter<SlyBot> {
 
-    private static final Pattern pattern = Pattern.compile("(?<!\\\\)\\$(USER|CHANNEL|@|\\d|IF\\((.*?),(.*?),(.*)\\)|EXEC\\((.*)\\))");
+    private static final Pattern pattern = Pattern.compile("(?<!\\\\)\\$(USER|CHANNEL|@|\\d|#|IF\\((.*?),(.*?),(.*)\\)|EXEC\\((.*)\\))");
     private static final Pattern specialPattern = Pattern.compile("(?<!\\\\)\\$(IF|EXEC)\\((.*)\\)");
 
     @Override
@@ -43,13 +43,16 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
             //Search and replace
             while(matcher.find()) {
                 matcher.appendReplacement(buffer, getReplacement(matcher.group(), event, params));
+                System.out.println(buffer.toString());
             }
 
             matcher.appendTail(buffer);
 
+            String result = buffer.toString().replaceAll("\\\\", "");
+
             //Run output in both listeners
-            if (Settings.aliases.containsKey(buffer.toString().split("\\s+")[0])) return runAlias(buffer.toString().split("\\s+"), event);
-            return Main.getCommandListener().getCommandHandler().processCommand(buffer.toString(), event);
+            if (Settings.aliases.containsKey(result.split("\\s+")[0])) return runAlias(result.split("\\s+"), event);
+            return Main.getCommandListener().getCommandHandler().processCommand(result, event);
         }
         return "false";
     }
@@ -72,6 +75,8 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
             //Check if the parameter exists
             if (param < 0 || param >= params.length) return "";
             return params[param];
+        } else if (s.equals("$#")) {
+            return String.valueOf(params.length - 1);
         } else if (s.matches("\\$IF\\((.*?),(.*?),(.*)\\)")) {
             s = getOuterParentheses(s);
 
@@ -91,9 +96,8 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
             String[] assessment = s.split("(?<!\\\\),");
 
             //Return first parameter on successful assess, else return second
-            if (assess(assessment[0].split("(?<!\\\\)(?=(==|!=|c=|<=|>=|<|>))|(?<=(==|!=|c=|<=|>=|<|>))(?<!\\\\(==|!=|c=|<=|>=|<|>))"))) return assessment[1].replaceAll("\\\\,", ",");
-            else return Matcher.quoteReplacement(assessment[2].replaceAll("\\\\,", ","));
-
+            if (assess(assessment[0].split("(?<!\\\\)(?=(==|!=|c=|<=|>=|<|>))|(?<=(==|!=|c=|<=|>=|<|>))(?<!\\\\(==|!=|c=|<=|>=|<|>))"))) return assessment[1];
+            else return (assessment.length > 2 ? Matcher.quoteReplacement(assessment[2]) : "");
 
         } else if (s.matches("\\$EXEC\\((.*?)\\)")) {
             s = getOuterParentheses(s);
@@ -132,6 +136,7 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
         String input = check[0].trim();
 
         if (input.equals("true")) return true;
+        if (input.equals(" ") && check.length == 2) return check[2].equals("==");
         if (input.equals("false")) return false;
         if (check.length < 3) return false;
         String compare = check[2].trim();
@@ -139,13 +144,13 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
 
         try {
             if (check[1].equals("==")) return input.equals(compare);
-            if (check[1].equals("!=")) return input.equals(compare);
+            if (check[1].equals("!=")) return !input.equals(compare);
             if (check[1].equals("c=")) return input.contains(compare);
 
             //Do digits
             if (input.matches("\\d+") && compare.matches("\\d+")) {
                 double numberA = Double.parseDouble(input);
-                double numberB = Double.parseDouble(input);
+                double numberB = Double.parseDouble(compare);
 
                 //Parse assessment
                 if (check[1].equals("<=")) return numberA <= numberB;
@@ -157,7 +162,6 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
             System.out.println("Something went wrong while parsing input: " + e.toString());
             return false;
         }
-
         return false;
     }
 

@@ -43,11 +43,13 @@ public class CommandVersion implements Command {
         event.getBot().reply(event, "Currently running slybot version: " + Colors.BLUE + localVersion);
 
         //Get upstream build version
-        String remoteBuild = VersionUtil.getRemoteSHA("Balonbal", "slybot").substring(0, localBuild.length());
+        String SHA =  VersionUtil.getRemoteSHA("Balonbal", "slybot");
+        String remoteBuild = SHA.substring(0, localBuild.length());
 
         if (!localBuild.equals(remoteBuild)) {
             //Send a friendly reminder that a newer version exists
             event.getBot().reply(event, "Newer version " + Colors.RED + remoteBuild + Colors.NORMAL + " was found, consider updating.");
+            event.getBot().reply(event, "Newest commit: " + Colors.DARK_BLUE + VersionUtil.getCommit("Balonbal", "slybot", SHA));
         }
 
         return localVersion;
