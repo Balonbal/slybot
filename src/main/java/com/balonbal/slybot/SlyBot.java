@@ -3,6 +3,7 @@ package com.balonbal.slybot;
 import com.balonbal.slybot.config.BotConfig;
 import com.balonbal.slybot.config.Config;
 import com.balonbal.slybot.lib.Settings;
+import com.balonbal.slybot.util.LoggerUtil;
 import org.pircbotx.Channel;
 import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
@@ -11,7 +12,7 @@ import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 
-import java.util.logging.Logger;
+import java.util.Date;
 
 public class SlyBot extends PircBotX {
 
@@ -45,6 +46,7 @@ public class SlyBot extends PircBotX {
                 if (s.equalsIgnoreCase(c.getName())) return;
             }
             c.send().message(message);
+            LoggerUtil.log(Settings.network, c.getName().toLowerCase(), new Date(), getUserBot(), message);
         }
     }
 

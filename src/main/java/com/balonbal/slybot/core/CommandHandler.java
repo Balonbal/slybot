@@ -1,13 +1,10 @@
 package com.balonbal.slybot.core;
 
-import com.balonbal.slybot.Main;
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.commands.Command;
 import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
-import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.Channel;
-import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -21,6 +18,10 @@ public class CommandHandler {
 
     private ArrayList<Command> commands;
 
+    public static boolean isChannelOP(User u, Channel c) {
+        return c.getOps().contains(u);
+    }
+
     public void addCommands() {
         commands = new ArrayList<Command>();
         Reflections r = new Reflections("");
@@ -28,7 +29,7 @@ public class CommandHandler {
         Set<Class<? extends Command>> classes = r.getSubTypesOf(Command.class);
 
         //loop through found classes and add them as commands
-        for (Class<? extends Command> c: classes) {
+        for (Class<? extends Command> c : classes) {
             try {
                 Command cmd = c.newInstance();
                 System.out.println("Loaded command: " + c.getName());
@@ -55,7 +56,7 @@ public class CommandHandler {
             return "false";
         //Check permissions
         if (!hasPermission(e, cmd.requiresOP())) {
-            e.respond("You do not have the required permissions to do that");
+            e.getBot().reply(e, (e instanceof MessageEvent ? ((MessageEvent) e).getUser().getNick() : ((PrivateMessageEvent) e).getUser().getNick()) + ": You do not have the required permissions to do that");
             return "false";
         }
 
@@ -64,10 +65,6 @@ public class CommandHandler {
         //runAlias(user, channel, cmd, params);
 
     }
-
-    public static boolean isChannelOP(User u, Channel c) {
-       return c.getOps().contains(u);
-   }
 
     public boolean hasPermission(Event<SlyBot> e, int level) {
         MessageEvent messageEvent = null;

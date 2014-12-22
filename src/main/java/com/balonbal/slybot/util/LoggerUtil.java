@@ -14,33 +14,41 @@ public class LoggerUtil {
 
     public static void log(Event<SlyBot> event) {
         if (event instanceof MessageEvent) {
-            String logPath = Reference.LOG_CHANNEL_FILE;
-
             //Get variables
             Date date = new Date();
             date.setTime(event.getTimestamp());
             User user = ((MessageEvent) event).getUser();
             String message = ((MessageEvent) event).getMessage();
 
-            //Resolve actual path
-            logPath = logPath.replaceAll("\\$NETWORK", Settings.network);
-            logPath = logPath.replaceAll("\\$CHANNEL", ((MessageEvent) event).getChannel().getName().toLowerCase());
+            log(Settings.network, ((MessageEvent) event).getChannel().getName().toLowerCase(), date, user, message);
+        }
+    }
 
-            //Check and create file
-            File logFile = new File(logPath);
-            if (!logFile.getParentFile().exists()) logFile.getParentFile().mkdirs();
-            try {
-                if (!logFile.exists()) logFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public static void log(String network, String channel, Date date, User user, String message) {
+        String logPath = Reference.LOG_CHANNEL_FILE;
 
-            //Open a writer and write message to file
-            try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(logFile, true)))) {
-                writer.println(String.format("[%s] <%s> %s", date.toString(), user.getNick(), message));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        //Resolve actual path
+        logPath = logPath.replaceAll("\\$NETWORK", network);
+        logPath = logPath.replaceAll("\\$CHANNEL", channel);
+
+        log(new File(logPath), date, user, message);
+    }
+
+    public static void log(File logFile, Date date, User user, String message) {
+        //Check for or create file recursively
+        if (!logFile.getParentFile().exists()) logFile.getParentFile().mkdirs();
+
+        try {
+            if (!logFile.exists()) logFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //Open a writer and write message to file
+        try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(logFile, true)))) {
+            writer.println(String.format("[%s] <%s> %s", date.toString(), user.getNick(), message));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
