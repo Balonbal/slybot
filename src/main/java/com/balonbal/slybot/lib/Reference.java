@@ -24,6 +24,12 @@ public class Reference {
     public static final int REQUIRES_OP_BOTH = 3;
 
     /* CONFIGURATION CONSTANTS */
+    public static final String CONFIG_BASE_DIR = "config/";
+    public static final String CONFIG_CHANNEL_FILE = CONFIG_BASE_DIR + "$NETWORK/$CHANNEL.yaml";
+
+    public static final String LOG_BASE_DIR = "logs/";
+    public static final String LOG_CHANNEL_FILE = LOG_BASE_DIR + "$NETWORK/$CHANNEL.log";
+
     public static final String CONFIG_ALIASES = "aliases";
     public static final String CONFIG_AUTOSAVE = "autosaveFrequency";
     public static final String CONFIG_BOTNICK = "botnick";
