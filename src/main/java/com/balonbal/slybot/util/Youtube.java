@@ -16,6 +16,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -118,6 +122,7 @@ public class Youtube {
 		String title = items.get("title");
 		String views = items.get("views");
 		String duration = items.get("duration");
+        String date = items.get("date");
 		
 		//Format the view counter to separate each thousand
         String viewCount = String.format("%,d", Long.parseLong(views));
@@ -131,12 +136,22 @@ public class Youtube {
 			seconds %= 3600;
 		}
 		duration += ((seconds / 60 > 9) ? (seconds / 60) : "0" + (seconds/60)) + ":" + ((seconds % 60 > 9) ? (seconds % 60) : "0" + (seconds % 60));
-		
-		//Send the results for the video back to the channel/user
+
+        date = date.replaceAll("(\\d{4})\\-(\\d{2})\\-(\\d{2})T((\\d{2}):(\\d{2}):(\\d{2}))(.*)", "$4 $3. $2 $1");
+        DateFormat format = new SimpleDateFormat("kk:mm:ss dd. MM yyyy");
+
+        try {
+            date = format.parse(date).toString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        //Send the results for the video back to the channel/user
         event.getBot().reply(event, "[http://youtu.be/" + Colors.PURPLE + id + Colors.NORMAL + "] - " +
                 Colors.BOLD + Colors.BLUE + creator + Colors.NORMAL + ": " + Colors.DARK_GREEN + title + Colors.NORMAL +
                 " [ " + Colors.BOLD + duration + Colors.NORMAL + " ]" +
-                " [ v: " + Colors.BOLD + viewCount + Colors.NORMAL + " ]");
+                " [ v: " + Colors.BOLD + viewCount + Colors.NORMAL + " ]" +
+                " [ UL: " + Colors.BOLD + date + Colors.NORMAL + " ]");
 
         if (playlist) {
             event.getBot().reply(event, "[Playlist] - " +
@@ -195,6 +210,7 @@ public class Youtube {
                     items.put("views", eElement.getElementsByTagName("yt:statistics").item(0).getAttributes().getNamedItem("viewCount").getNodeValue());
                     items.put("creator", eElement.getElementsByTagName("author").item(0).getChildNodes().item(0).getChildNodes().item(0).getNodeValue());
                     items.put("duration", eElement.getElementsByTagName("yt:duration").item(0).getAttributes().item(0).getNodeValue());
+                    items.put("date", eElement.getElementsByTagName("published").item(0).getChildNodes().item(0).getNodeValue());
                 }catch (Exception e) {
                     //Should something go wrong, populate the empty fields
                     for (String s: new String[] { "title", "views", "creator", "duration" } ) {
