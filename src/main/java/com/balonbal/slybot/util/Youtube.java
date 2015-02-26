@@ -50,35 +50,40 @@ public class Youtube {
 
 		Random r = new Random();
 
-        //Create a new temp file
-		f = new File("tmp_" + r.nextInt(10000));
-        File playlistFile = new File("tmp_" + r.nextInt(10000));
         try {
-			f.createNewFile();
-            if (playlist != null) playlistFile.createNewFile();
-        } catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+            //Create a new temp file
+            f = new File("tmp_" + r.nextInt(10000));
+            File playlistFile = new File("tmp_" + r.nextInt(10000));
+            try {
+                f.createNewFile();
+                if (playlist != null) playlistFile.createNewFile();
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
 
-        try {
-            downloadToFile(new URL(Strings.YOUTUBE_VIDEO + url), f);
-            if (playlist != null) downloadToFile(new URL(Strings.YOUTUBE_PLAYLIST + playlist), playlistFile);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+            try {
+                //Download the files, use version 2 of the api
+                downloadToFile(new URL(Strings.YOUTUBE_VIDEO + url + "?v=2"), f);
+                if (playlist != null) downloadToFile(new URL(Strings.YOUTUBE_PLAYLIST + playlist), playlistFile);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            HashMap<String, String> map = parseXmlFile(f);
+            map.put("id", url);
+            if (playlist != null) {
+                //Add playlist info (if any)
+                map.put("playlist_id", playlist);
+                appendPlaylistInfo(map, playlistFile);
+                playlistFile.delete();
+            }
+
+            printInfo(event, map, playlist != null);
+        } finally {
+            //Always delete the file
+            f.delete();
         }
-
-        HashMap<String, String> map = parseXmlFile(f);
-        map.put("id", url);
-        if (playlist != null) {
-            map.put("playlist_id", playlist);
-            appendPlaylistInfo(map, playlistFile);
-            playlistFile.delete();
-        }
-
-        printInfo(event, map, playlist != null);
-
-        f.delete();
 	}
 
     private void downloadToFile(URL url, File file) {
@@ -123,9 +128,13 @@ public class Youtube {
 		String views = items.get("views");
 		String duration = items.get("duration");
         String date = items.get("date");
+        String likes = items.get("likeCount");
+        String disLikes = items.get("dislikeCount");
 		
 		//Format the view counter to separate each thousand
         String viewCount = String.format("%,d", Long.parseLong(views));
+        likes = String.format("%,d", Long.parseLong(likes));
+        disLikes = String.format("%,d", Long.parseLong(disLikes));
 
 
         int seconds = Integer.parseInt(duration);
@@ -137,6 +146,7 @@ public class Youtube {
 		}
 		duration += ((seconds / 60 > 9) ? (seconds / 60) : "0" + (seconds/60)) + ":" + ((seconds % 60 > 9) ? (seconds % 60) : "0" + (seconds % 60));
 
+        //Convert date to a displayable format depending on locale
         date = date.replaceAll("(\\d{4})\\-(\\d{2})\\-(\\d{2})T((\\d{2}):(\\d{2}):(\\d{2}))(.*)", "$4 $3. $2 $1");
         DateFormat format = new SimpleDateFormat("kk:mm:ss dd. MM yyyy");
 
@@ -151,6 +161,7 @@ public class Youtube {
                 Colors.BOLD + Colors.BLUE + creator + Colors.NORMAL + ": " + Colors.DARK_GREEN + title + Colors.NORMAL +
                 " [ " + Colors.BOLD + duration + Colors.NORMAL + " ]" +
                 " [ v: " + Colors.BOLD + viewCount + Colors.NORMAL + " ]" +
+                " [ U: " + Colors.GREEN + Colors.BOLD + likes + Colors.NORMAL + " | D: " + Colors.RED + Colors.BOLD + disLikes + Colors.NORMAL + " ]" +
                 " [ UL: " + Colors.BOLD + date + Colors.NORMAL + " ]");
 
         if (playlist) {
@@ -173,11 +184,7 @@ public class Youtube {
             map.put("playlist_owner", list.getElementsByTagName("author").item(0).getChildNodes().item(0).getChildNodes().item(0).getNodeValue());
             map.put("playlist_title", list.getElementsByTagName("title").item(0).getChildNodes().item(0).getNodeValue());
             map.put("playlist_size", list.getElementsByTagName("openSearch:totalResults").item(0).getChildNodes().item(0).getNodeValue());
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -211,6 +218,8 @@ public class Youtube {
                     items.put("creator", eElement.getElementsByTagName("author").item(0).getChildNodes().item(0).getChildNodes().item(0).getNodeValue());
                     items.put("duration", eElement.getElementsByTagName("yt:duration").item(0).getAttributes().item(0).getNodeValue());
                     items.put("date", eElement.getElementsByTagName("published").item(0).getChildNodes().item(0).getNodeValue());
+                    items.put("likeCount", eElement.getElementsByTagName("yt:rating").item(0).getAttributes().getNamedItem("numLikes").getNodeValue());
+                    items.put("dislikeCount", eElement.getElementsByTagName("yt:rating").item(0).getAttributes().getNamedItem("numDislikes").getNodeValue());
                 }catch (Exception e) {
                     //Should something go wrong, populate the empty fields
                     for (String s: new String[] { "title", "views", "creator", "duration" } ) {

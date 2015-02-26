@@ -33,7 +33,6 @@ public class Main {
         BotConfig botConfig = new BotConfig();
         configurationHandler = new ConfigurationHandler();
         configurationHandler.addConfiguration(new File("configuration.yaml"), Reference.CONFIG_BOTCONFIG_ID, botConfig);
-        initLoggers();
         commandHandler = new CommandHandler();
         commandListener = new CommandListener(commandHandler);
         linkListener = new LinkListener();
@@ -157,10 +156,6 @@ public class Main {
 		}
 
 	}
-
-    private static void initLoggers() {
-        //TODO add loggers that dosen't spend hours
-    }
 
     public static CommandListener getCommandListener() {
         return commandListener;
