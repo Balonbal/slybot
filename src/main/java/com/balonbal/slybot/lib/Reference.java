@@ -39,6 +39,9 @@ public class Reference {
     public static final String CONFIG_CHANNELS = "channels";
     public static final String CONFIG_MUTED_CHANNELS = "mutedChannels";
     public static final String CONFIG_NETWORK = "network";
+    public static final String CONFIG_PORT = "port";
+    public static final String CONFIG_SERVERPASS = "serverpass";
+    public static final String CONFIG_SSL = "ssl";
     public static final String CONFIG_NICKPASS = "nickpass";
     public static final String CONFIG_OWNER = "owner";
 

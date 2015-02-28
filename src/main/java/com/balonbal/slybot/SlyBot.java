@@ -103,7 +103,6 @@ public class SlyBot extends PircBotX {
     }
 
     public RSSManager getRssManager() {
-        System.out.println(rssManager == null);
         return rssManager;
     }
 }

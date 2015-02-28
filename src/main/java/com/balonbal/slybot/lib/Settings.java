@@ -10,6 +10,9 @@ public class Settings {
     public static String botnick = "";
     public static String nickpass = "";
     public static String network = "";
+    public static int port = 6667;
+    public static boolean ssl = false;
+    public static String serverPass = "";
     public static ArrayList<String> channels = new ArrayList<String>();
     public static String operatorpass = "";
     public static ArrayList<String> loggedChannels = new ArrayList<String>();

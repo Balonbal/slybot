@@ -11,6 +11,7 @@ import org.pircbotx.Configuration;
 import org.pircbotx.Configuration.Builder;
 import org.pircbotx.exception.IrcException;
 
+import javax.net.ssl.SSLSocketFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class Main {
     static ConfigurationHandler configurationHandler;
 	static ChallengeManager cm;
 	static SlyBot slybot;
-	static String nick;
+	static String nick = "slybot";
 
 	public static void main(String[] args) {
 
@@ -39,9 +40,12 @@ public class Main {
         cm = new ChallengeManager();
 		
 		//Set up local variables for network and channel
-		String network = null;
+		String network = "";
+        int port = 6667;
 		ArrayList<String> channels = new ArrayList<String>();
-		String nickPass = null;
+		String nickPass = "";
+        String serverpass = "";
+        boolean ssl = false;
 
 		//Check if default values are set
 		if (!Settings.botnick.equals("")) {
@@ -56,80 +60,62 @@ public class Main {
 		if (!Settings.nickpass.equals("")) {
 			nickPass = Settings.nickpass;
 		}
-		
-		if (nick == null || network == null || channels == null) {
-			//Check if VM-arguments are enough to connect
-			switch (args.length) {
-			case 4:
-				nickPass = args[3];
-			case 3:
-				nick = args[2];
-			case 2:
-				channels.add(args[1]);
-			case 1:
-				network = args[0];
-				
-			}
-			//if not, ask for user input on the missing variables
-			Scanner s = new Scanner(System.in);
-				
-			
-			switch (args.length) {
-			case 0:
-				System.out.print("Please select a network: ");
-				network = s.nextLine();
-			case 1:
-				System.out.print("Please select a channel to join: ");
-				channels.add(s.nextLine());
-			case 2:
-				System.out.print("Enter a nick for the bot: ");
-				nick = s.nextLine();
-			case 3:
-				System.out.print("Enter the password for nickserv (leave blank for none): ");
-				nickPass = s.nextLine();
-			}
-				
-			if (Settings.botnick.equals("")) {
-				System.out.print("Do you want to use \"" + nick + "\" as the default nick? (yes/no): ");
-				if (s.nextLine().equalsIgnoreCase("yes")) {
-					botConfig.updateSetting(Reference.CONFIG_BOTNICK, nick);
-				}
-			}
-			if (Settings.nickpass.equals("") && !Settings.botnick.equals("")) {
-				System.out.print("Do you want to add \"" + nickPass + "\" as the default nickserv password? (yes/no): ");
-				if (s.nextLine().equalsIgnoreCase("yes")) {
-					botConfig.updateSetting(Reference.CONFIG_BOTPASS, nickPass);
-				}
-			}
-			if (Settings.network.equals("")) {
-				System.out.print("Do you want to add \"" + network + "\" as the default network? (yes/no): ");
-				if (s.nextLine().equalsIgnoreCase("yes")) {
-					botConfig.updateSetting(Reference.CONFIG_NETWORK, network);
-				}
-			}
-			if (Settings.channels.isEmpty()) {
-				System.out.print("Do you want to add \"" + channels.get(0) + "\" to the default channels? (yes/no): ");
-				if (s.nextLine().equalsIgnoreCase("yes")) {
-					botConfig.updateSetting(Reference.CONFIG_CHANNELS, channels);
-				}
-			}
-			
-			s.close(); //close the input
+        if (!Settings.serverPass.equals("")) {
+            serverpass = Settings.serverPass;
+        }
+
+        if (nick.equals("") || network.equals("")) {
+            System.out.println("No suitable configuration found, creating new...");
+            //if not, ask for user input on the missing variables
+            Scanner s = new Scanner(System.in);
+
+            System.out.print("Please select a network []: ");
+            network = s.nextLine();
+            System.out.print("Select a port [6667]: ");
+            String p = s.nextLine();
+            if (p.matches("\\d+")) {
+                port = Integer.parseInt(p);
+            }
+            System.out.print("Server Password []:");
+            serverpass = s.nextLine();
+            System.out.print("Use SSL [No]: ");
+            ssl = s.nextLine().toLowerCase().matches("y(|e|es)");
+            System.out.print("Please select a channel to join []: ");
+            channels.add(s.nextLine());
+            System.out.print("Enter a nick for the bot [slybot]: ");
+            nick = s.nextLine();
+            System.out.print("Enter the password for nickserv []: ");
+            nickPass = s.nextLine();
+
+            s.close(); //close the input
+
+            if (Settings.network.equals("")) Settings.network = network;
+            Settings.port = port;
+            if (Settings.serverPass.equals("")) Settings.serverPass = serverpass;
+            Settings.ssl = ssl;
+            if (Settings.channels.size() == 0) Settings.channels = channels;
+            if (Settings.botnick.equals("")) Settings.botnick = (nick.equals("") ? "slybot" : nick);
+            if (Settings.nickpass.equals("")) Settings.nickpass = nickPass;
+
             configurationHandler.saveAll();
-		}
-		
+        }
+
 		Builder<SlyBot> config = new Builder<SlyBot>()
 			.setName(nick) //Set the nick of the bot.
             .setRealName("SlyBot v" + Main.class.getPackage().getImplementationVersion())
 			.setAutoNickChange(true) //Automatically change nick when the current one is in use
 			.setCapEnabled(true) //Enable CAP features
-                .addListener(commandListener) //This class is a commandListener, so add it to the bots known listeners
+                .addListener(commandListener)
                 .addListener(linkListener)
                 .addListener(new ChallengeListener())
                 .addListener(new LoggerListener())
                 .addListener(new AliasListener())
-            .setServerHostname(network);
-		
+            .setServerHostname(network)
+            .setServerPort(Settings.port);
+
+        if (Settings.ssl) {
+            config.setSocketFactory(SSLSocketFactory.getDefault());
+        }
 		if (nickPass != null && !nickPass.equals("")) {
 			config.setNickservPassword(nickPass);
 		}
@@ -137,7 +123,11 @@ public class Main {
 		for (String chan: channels) {
 			config.addAutoJoinChannel(chan);
 		}
-		
+
+        if (!Settings.serverPass.equals("")) {
+            config.setLogin(nick);
+            config.setServerPassword(Settings.serverPass);
+        }
 
 		Configuration<SlyBot> configuration = config.buildConfiguration();
 		//create the bot with the defined config
