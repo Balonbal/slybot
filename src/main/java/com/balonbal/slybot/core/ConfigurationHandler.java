@@ -15,7 +15,7 @@ public class ConfigurationHandler {
     private Timer timer;
 
     public ConfigurationHandler() {
-        configurations = new HashMap<String, Config>();
+        configurations = new HashMap<>();
 
         TimerTask task = new TimerTask() {
             @Override
@@ -24,7 +24,7 @@ public class ConfigurationHandler {
             }
         };
 
-        timer = new Timer();
+        timer = new Timer(true);
         //Schedule autosave
         timer.scheduleAtFixedRate(task, 500000, Settings.configAutosaveFrequency);
 
@@ -36,7 +36,7 @@ public class ConfigurationHandler {
 
     public void updateSaveFrequency(long newFrequency) {
         stopAutoSave();
-        timer = new Timer();
+        timer = new Timer(true);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -49,7 +49,6 @@ public class ConfigurationHandler {
         if (file.exists()) {
             try {
                 //Try to load configuration from file
-
                 loadFromFile(file, config);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -112,6 +111,13 @@ public class ConfigurationHandler {
         }
 
         System.out.println("Save completed.");
+    }
+
+    public void removeAndDelteConfiguration(String id) {
+        if (!configurations.containsKey(id)) return;
+        Config toDelete = configurations.get(id);
+        toDelete.getSaveLocation().delete();
+        configurations.remove(id);
     }
 
 }

@@ -32,6 +32,7 @@ public class Reference {
 
     public static final String CONFIG_ALIASES = "aliases";
     public static final String CONFIG_AUTOSAVE = "autosaveFrequency";
+    public static final String CONFIG_RSS_UPDATE = "rssUpdateFrequency";
     public static final String CONFIG_BOTNICK = "botnick";
     public static final String CONFIG_BOTOPS = "botops";
     public static final String CONFIG_BOTPASS = "operatorPass";

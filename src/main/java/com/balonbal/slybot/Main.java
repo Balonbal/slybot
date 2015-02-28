@@ -142,7 +142,6 @@ public class Main {
 		Configuration<SlyBot> configuration = config.buildConfiguration();
 		//create the bot with the defined config
 		slybot = new SlyBot(configuration, (BotConfig) configurationHandler.getConfig(Reference.CONFIG_BOTCONFIG_ID));
-		
 		System.out.println("This bot is owned by " + Settings.owner);
 		try {
 			//Start the bot

@@ -4,6 +4,7 @@ import com.balonbal.slybot.config.BotConfig;
 import com.balonbal.slybot.config.Config;
 import com.balonbal.slybot.lib.Settings;
 import com.balonbal.slybot.util.LoggerUtil;
+import com.balonbal.slybot.util.rss.RSSManager;
 import org.pircbotx.Channel;
 import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
@@ -18,12 +19,21 @@ public class SlyBot extends PircBotX {
 
     protected Config config;
     protected String version = Main.class.getPackage().getImplementationVersion();
+    protected RSSManager rssManager;
 
 	public SlyBot(Configuration<? extends PircBotX> configuration, BotConfig botConfig) {
 		super(configuration);
         config = botConfig;
         if (version == null) version = "development build";
 	}
+
+    public void onConnected() {
+        try {
+            rssManager = new RSSManager();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 	public void quit() {
 		this.sendRaw().rawLine("part");
@@ -58,6 +68,18 @@ public class SlyBot extends PircBotX {
         }
     }
 
+    public void sendMessage(String destination, String message) {
+        //Channels
+        if (destination.startsWith("#")) {
+            Channel channel = getUserChannelDao().getChannel(destination);
+            reply(channel, null, message);
+        //Users
+        } else {
+            User user = getUserChannelDao().getUser(destination);
+            reply(null, user, message);
+        }
+    }
+
 
     public boolean isBotOP(User user) {
         //Only include users verified by the nickserv
@@ -78,5 +100,10 @@ public class SlyBot extends PircBotX {
 
     public String getVersion() {
         return  version;
+    }
+
+    public RSSManager getRssManager() {
+        System.out.println(rssManager == null);
+        return rssManager;
     }
 }

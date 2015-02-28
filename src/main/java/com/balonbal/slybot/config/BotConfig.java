@@ -28,10 +28,16 @@ public class BotConfig implements Config {
             else if (key.equals(Reference.CONFIG_NETWORK)) Settings.network = String.valueOf(value);
             else if (key.equals(Reference.CONFIG_NICKPASS)) Settings.nickpass = String.valueOf(value);
             else if (key.equals(Reference.CONFIG_OWNER)) Settings.owner = String.valueOf(value);
+            else if (key.equals(Reference.CONFIG_RSS_UPDATE)) {
+                Settings.rssUpdateFrequency = Long.parseLong(String.valueOf(value));
+                Main.getBot().getRssManager().startTimer(Long.parseLong(String.valueOf(value)), Long.parseLong(String.valueOf(value)));
+            }
             else System.out.println("Unknown config key: " + key);
         } catch (ClassCastException e) {
             //
             System.out.println("Received value of illegal type.");
+        } catch (NullPointerException e) {
+            //Do nothing?
         }
     }
 
@@ -72,6 +78,7 @@ public class BotConfig implements Config {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(Reference.CONFIG_ALIASES, Settings.aliases);
         map.put(Reference.CONFIG_AUTOSAVE, Settings.configAutosaveFrequency);
+        map.put(Reference.CONFIG_RSS_UPDATE, Settings.rssUpdateFrequency);
         map.put(Reference.CONFIG_BOTNICK, Settings.botnick);
         map.put(Reference.CONFIG_BOTOPS, Settings.botops);
         map.put(Reference.CONFIG_CHANNELS, Settings.channels);
