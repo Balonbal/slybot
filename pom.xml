@@ -84,7 +84,7 @@
     <dependency>
       <groupId>com.rometools</groupId>
       <artifactId>rome</artifactId>
-        v
+
     </dependency>
   </dependencies>
 </project>
