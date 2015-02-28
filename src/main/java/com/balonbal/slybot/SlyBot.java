@@ -44,7 +44,8 @@ public class SlyBot extends PircBotX {
         Main.getConfig().saveAll();
         Main.getConfig().stopAutoSave();
         this.stopBotReconnect();
-		this.sendRaw().rawLine("quit");
+        this.shutdown(true);
+		//this.sendRaw().rawLine("quit");
 	}
 
     public void reply(Channel c, User u, String message) {
