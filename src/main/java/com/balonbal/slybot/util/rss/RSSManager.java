@@ -67,7 +67,7 @@ public class RSSManager {
         for (RSSSubscription subscription: feeds) {
             if (subscription.getID().equalsIgnoreCase(id)) {
                 //Delete the file
-                Main.getConfig().removeAndDelteConfiguration(subscription.getID());
+                Main.getConfig().removeAndDeleteConfiguration(subscription.getID());
                 //Remove the feed from updating
                 feeds.remove(subscription);
                 return true;
