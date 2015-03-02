@@ -27,6 +27,11 @@ public class Reference {
     public static final String CONFIG_BASE_DIR = "config/";
     public static final String CONFIG_CHANNEL_FILE = CONFIG_BASE_DIR + "$NETWORK/$CHANNEL.yaml";
 
+    public static final String CONFIG_CHANNEL_NAME = "channelName";
+    public static final String CONFIG_CHANNEL_PERMISSIONS = "channelPermissions";
+    public static final String CONFIG_CHANNEL_STRINGS = "channelStrings";
+    public static final String CONFIG_CHANNEL_TRIGGERS = "channelTriggers";
+
     public static final String LOG_BASE_DIR = "logs/";
     public static final String LOG_CHANNEL_FILE = LOG_BASE_DIR + "$NETWORK/$CHANNEL.log";
 
