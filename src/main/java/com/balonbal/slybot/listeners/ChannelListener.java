@@ -33,6 +33,8 @@ public class ChannelListener extends ListenerAdapter<SlyBot> {
         //When the bot leaves a channel
         if (event.getUser().equals(event.getBot().getUserBot())) {
             System.out.println("Left channel: " + event.getChannel().getName());
+            Main.getConfig().save("config" + event.getChannel().getName());
+            Main.getConfig().removeAndDeleteConfiguration("config" + event.getChannel().getName());
         }
     }
 }

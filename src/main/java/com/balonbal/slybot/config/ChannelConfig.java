@@ -1,5 +1,7 @@
 package com.balonbal.slybot.config;
 
+import com.balonbal.slybot.Main;
+import com.balonbal.slybot.commands.Command;
 import com.balonbal.slybot.lib.Reference;
 
 import java.io.File;
@@ -21,6 +23,8 @@ public class ChannelConfig implements Config{
         triggers = new ArrayList<>();
         permissionsMap = new HashMap<>();
         strings = new HashMap<>();
+
+        buildDefaults();
     }
 
     @Override
@@ -41,6 +45,8 @@ public class ChannelConfig implements Config{
         } catch (ClassCastException e) {
             System.out.println("Loaded illegal value for key " + key + ": " + e.toString());
         }
+
+        buildDefaults();
     }
 
     @Override
@@ -78,6 +84,17 @@ public class ChannelConfig implements Config{
         return file;
     }
 
+    public void buildDefaults() {
+        //Build permission defaults
+        for (Command c: Main.getCommandListener().getCommandHandler().getCommands()) {
+            if (!permissionsMap.containsKey(c.getTrigger())) {
+                permissionsMap.put(c.getTrigger(), c.requiresOP());
+            }
+        }
+        //Build trigger defaults
+        //TODO
+    }
+
     public String getChannelName() {
         return channelName;
     }
@@ -95,6 +112,10 @@ public class ChannelConfig implements Config{
         return permissionsMap.containsKey(command) ? permissionsMap.get(command) : -1;
     }
 
+    public HashMap<String, Integer> getPermissionsMap() {
+        return permissionsMap;
+    }
+
     public void updateString(String string, String value) {
         strings.put(string, value);
     }
@@ -109,5 +130,9 @@ public class ChannelConfig implements Config{
 
     public void removeTrigger(String trigger) {
         triggers.remove(trigger);
+    }
+
+    public ArrayList<String> getTriggers() {
+        return triggers;
     }
 }

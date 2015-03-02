@@ -117,6 +117,11 @@ public class ConfigurationHandler {
         System.out.println("Save completed.");
     }
 
+    public void removeConfiguration(String id) {
+        if (!configurations.containsKey(id)) return;
+        configurations.remove(id);
+    }
+
     public void removeAndDeleteConfiguration(String id) {
         if (!configurations.containsKey(id)) return;
         Config toDelete = configurations.get(id);
