@@ -15,6 +15,14 @@ public class ChannelConfig implements Config{
     HashMap<String, Integer> permissionsMap;
     HashMap<String, String> strings;
 
+    public ChannelConfig(String channel) {
+        channelName = channel;
+
+        triggers = new ArrayList<>();
+        permissionsMap = new HashMap<>();
+        strings = new HashMap<>();
+    }
+
     @Override
     public void updateSetting(String key, Object value) {
         try {

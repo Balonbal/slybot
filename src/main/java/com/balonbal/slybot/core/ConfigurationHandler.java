@@ -95,6 +95,10 @@ public class ConfigurationHandler {
     }
 
     private void save(File f, Object o) {
+        if (f.getParent() != null && !f.getParentFile().exists()) {
+            f.getParentFile().mkdirs();
+        }
+
         Yaml yaml = new Yaml();
         try {
             yaml.dump(o, new FileWriter(f));
