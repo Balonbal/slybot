@@ -12,6 +12,7 @@ public class Reference {
 		BOTNICK + ", ",
 		"."
 	};
+    public static final String PREFIX_REGEX = "($BOTNICK(, |: | )|.)";
 	
 	public static final int ACCEPT_TIMEOUT = 60;
 	public static final int TTT_NEXT_TURN_TIMEOUT = 180;

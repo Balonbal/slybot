@@ -30,6 +30,7 @@ public class SlyBot extends PircBotX {
     public void onConnected() {
         try {
             rssManager = new RSSManager();
+            Main.getCommandListener().setTrigger();
         } catch (Exception e) {
             e.printStackTrace();
         }
