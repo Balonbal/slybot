@@ -5,22 +5,24 @@ import com.balonbal.slybot.commands.Command;
 import com.balonbal.slybot.lib.Reference;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 public class ChannelConfig implements Config{
 
     File file;
 
     String channelName;
-    ArrayList<String> triggers;
+    String trigger;
+    Pattern triggerRegex;
+
     HashMap<String, Integer> permissionsMap;
     HashMap<String, String> strings;
 
     public ChannelConfig(String channel) {
         channelName = channel;
 
-        triggers = new ArrayList<>();
+        trigger = "";
         permissionsMap = new HashMap<>();
         strings = new HashMap<>();
 
@@ -40,7 +42,10 @@ public class ChannelConfig implements Config{
                 case Reference.CONFIG_CHANNEL_STRINGS:
                     strings = (HashMap<String, String>) value;
                     break;
-                case Reference.CONFIG_CHANNEL_TRIGGERS: triggers = (ArrayList<String>) value; break;
+                case Reference.CONFIG_CHANNEL_TRIGGERS:
+                    trigger = String.valueOf(value);
+                    triggerRegex = Pattern.compile(trigger.replaceAll("\\$BOTNICK", Main.getBot().getNick()));
+                    break;
             }
         } catch (ClassCastException e) {
             System.out.println("Loaded illegal value for key " + key + ": " + e.toString());
@@ -51,16 +56,12 @@ public class ChannelConfig implements Config{
 
     @Override
     public void appendSetting(String key, Object value) {
-        switch (key) {
-            case Reference.CONFIG_CHANNEL_TRIGGERS: triggers.add(String.valueOf(value)); break;
-        }
+
     }
 
     @Override
     public void removeSetting(String key, Object value) {
-        switch (key) {
-            case Reference.CONFIG_CHANNEL_TRIGGERS: triggers.remove(String.valueOf(value)); break;
-        }
+
     }
 
     @Override
@@ -68,6 +69,7 @@ public class ChannelConfig implements Config{
         HashMap<String, Object> map = new HashMap<>();
 
         map.put(Reference.CONFIG_CHANNEL_NAME, channelName);
+        map.put(Reference.CONFIG_CHANNEL_TRIGGERS, trigger);
         map.put(Reference.CONFIG_CHANNEL_PERMISSIONS, permissionsMap);
         map.put(Reference.CONFIG_CHANNEL_STRINGS, strings);
 
@@ -92,7 +94,13 @@ public class ChannelConfig implements Config{
             }
         }
         //Build trigger defaults
-        //TODO
+        if (trigger.equals("")) {
+            trigger = Reference.PREFIX_REGEX;
+        }
+
+        if (triggerRegex == null) {
+            triggerRegex = Pattern.compile(trigger);
+        }
     }
 
     public String getChannelName() {
@@ -124,15 +132,18 @@ public class ChannelConfig implements Config{
         return strings.containsKey(string) ? strings.get(string) : "";
     }
 
-    public void addTrigger(String trigger) {
-        triggers.add(trigger);
+    public Pattern getTrigger() {
+        return triggerRegex;
     }
 
-    public void removeTrigger(String trigger) {
-        triggers.remove(trigger);
+    public String getTriggerString() {
+        return trigger;
     }
 
-    public ArrayList<String> getTriggers() {
-        return triggers;
+    public void setTrigger(String trigger) {
+        System.out.println("Building trigger for nick: " + Main.getBot().getNick());
+        this.trigger = trigger;
+        triggerRegex = Pattern.compile(trigger.replaceAll("\\$BOTNICK", Main.getBot().getNick()));
     }
+
 }

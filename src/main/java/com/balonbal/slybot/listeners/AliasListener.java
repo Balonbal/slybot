@@ -20,16 +20,8 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
     @Override
     public void onMessage(MessageEvent<SlyBot> event) throws Exception {
 
-        Matcher matcher = Main.getCommandListener().getTrigger().matcher(event.getMessage());
-        StringBuffer buffer = new StringBuffer();
-
-        if (matcher.find()) {
-            if (matcher.start() == 0) {
-                matcher.appendReplacement(buffer, "");
-                String[] command = matcher.appendTail(buffer).toString().split("\\s+");
-                runAlias(command, event);
-            }
-        }
+        String command = Main.getCommandListener().getCommand(event);
+        runAlias(command.split("\\s+"), event);
     }
 
     private String runAlias(String[] params, Event<SlyBot> event) {

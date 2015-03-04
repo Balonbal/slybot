@@ -85,15 +85,13 @@ public class CommandConfig implements Command {
                         }
                     }
 
-                    for (String trigger: channelConfig.getTriggers()) {
-                        triggers += (triggers.equals("") ? "" : ", ") + Colors.BOLD + Colors.OLIVE + trigger + Colors.NORMAL;
-                    }
-
+                    triggers = channelConfig.getTriggerString();
                     event.getBot().reply(event, "Configuration for " + Colors.BOLD + Colors.BLUE + channelConfig.getChannelName() + Colors.NORMAL + ":");
                     event.getBot().reply(event, "Channel triggers: " + triggers);
                     event.getBot().reply(event, "User commands: " + noPermissions);
                     event.getBot().reply(event, "Channel OP commands: " + channelOPpermissions);
                     event.getBot().reply(event, "Bot OP commands: " + botOPpermissions);
+                    event.getBot().reply(event, "Any OP commands: " + anyOPpermissions);
                     event.getBot().reply(event, "Channel+bot OP commands: " + bothOPpermissions);
                 }
             }
@@ -151,7 +149,7 @@ public class CommandConfig implements Command {
 
                         event.getBot().getConfig().updateSetting(key, newValue);
                         //Change the bot's nickname
-                        if (key.equals(Reference.CONFIG_BOTNICK)) event.getBot().sendRaw().rawLine("nick " + newValue);
+                        if (key.equals(Reference.CONFIG_BOTNICK)) event.getBot().updateNick(String.valueOf(newValue));
                         event.getBot().reply(event, "Successfully updated key: " + key);
                         return "true";
                     } else {
