@@ -88,11 +88,58 @@ public class CommandConfig implements Command {
                     triggers = channelConfig.getTriggerString();
                     event.getBot().reply(event, "Configuration for " + Colors.BOLD + Colors.BLUE + channelConfig.getChannelName() + Colors.NORMAL + ":");
                     event.getBot().reply(event, "Channel triggers: " + Colors.RED + triggers);
-                    event.getBot().reply(event, "User commands: " + noPermissions);
-                    event.getBot().reply(event, "Channel OP commands: " + channelOPpermissions);
-                    event.getBot().reply(event, "Bot OP commands: " + botOPpermissions);
-                    event.getBot().reply(event, "Any OP commands: " + anyOPpermissions);
-                    event.getBot().reply(event, "Channel+bot OP commands: " + bothOPpermissions);
+                    event.getBot().reply(event, "User commands (level " + Colors.BOLD + "none" + Colors.NORMAL + "): " + noPermissions);
+                    event.getBot().reply(event, "Channel OP commands (level " + Colors.BOLD + "channel" + Colors.NORMAL + "): " + channelOPpermissions);
+                    event.getBot().reply(event, "Bot OP commands (level " + Colors.BOLD + "bot" + Colors.NORMAL + "): " + botOPpermissions);
+                    event.getBot().reply(event, "Any OP commands (level " +  Colors.BOLD + "any" + Colors.NORMAL + "): " + anyOPpermissions);
+                    event.getBot().reply(event, "Channel+bot OP commands (level " + Colors.BOLD + "all" + Colors.NORMAL + "): " + bothOPpermissions);
+                } else {
+                    switch (parameters[2].toLowerCase()) {
+                        case "triggers": channelConfig.setTrigger(StringUtils.join(parameters, " ", 3, parameters.length)); break;
+                        default:
+                            Command c = Main.getCommandListener().getCommandHandler().getCommand(parameters[2]);
+                            if (c != null) {
+
+                                int level = -1;
+
+                                try {
+                                    level = Integer.parseInt(parameters[3]);
+                                    //Not a number
+                                } catch (NumberFormatException e) {
+                                    //Try to get the number from a string
+                                    switch (parameters[3].toLowerCase()) {
+                                        case "none": level = Reference.REQUIRES_OP_NONE; break;
+                                        case "channel": level = Reference.REQUIRES_OP_CHANNEL; break;
+                                        case "bot": level = Reference.REQUIRES_OP_BOT; break;
+                                        case "any": level = Reference.REQUIRES_OP_ANY; break;
+                                        case "all": level = Reference.REQUIRES_OP_BOTH; break;
+                                        default:
+                                            //No valid input
+                                            event.getBot().reply(event, "Invalid permissions level, try NONE (-1), ANY (0), CHANNEL (1), BOT (2) or ALL (3)");
+                                            return "";
+                                    }
+                                }
+
+                                //Invalid level
+                                if (level < -1 || level > 3) {
+                                    event.getBot().reply(event, "Invalid permissions level, try NONE (-1), ANY (0), CHANNEL (1), BOT (2) or ALL (3)");
+                                    return "";
+                                }
+
+                                //Verify that the user has permission to use the command both before and after updating
+                                if (!(Main.getCommandListener().getCommandHandler().hasPermission(event, c.requiresOP()) && Main.getCommandListener().getCommandHandler().hasPermission(event, level))) {
+                                    event.getBot().reply(event, ((MessageEvent) event).getUser().getNick() + ": You do not have permissions to do that.");
+                                }
+
+                                //Update permission
+                                channelConfig.setPermission(c.getTrigger(), level);
+                            } else {
+                                event.getBot().reply(event, "Error, invalid key.");
+                                return "";
+                            }
+                    }
+                    event.getBot().reply(event, "Updated setting");
+                    return "";
                 }
             }
         } else if (event instanceof PrivateMessageEvent) {

@@ -81,9 +81,8 @@ public class CommandHandler {
             case Reference.REQUIRES_OP_CHANNEL: return (e instanceof MessageEvent && isChannelOP(messageEvent.getUser(), messageEvent.getChannel()));
             case Reference.REQUIRES_OP_ANY: return hasPermission(e, Reference.REQUIRES_OP_BOT) || hasPermission(e, Reference.REQUIRES_OP_CHANNEL);
             case Reference.REQUIRES_OP_BOTH: return hasPermission(e, Reference.REQUIRES_OP_BOT) && hasPermission(e, Reference.REQUIRES_OP_CHANNEL);
+            default: return false;
         }
-
-        return false;
     }
 
 	public Command getCommand(String cmd) {

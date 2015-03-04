@@ -141,4 +141,8 @@ public class ChannelConfig implements Config{
         triggerRegex = Pattern.compile(trigger.replaceAll("\\$BOTNICK", Main.getBot().getNick()));
     }
 
+    public void setPermission(String trigger, int level) {
+        //Also overrides any previous value, be careful
+        permissionsMap.put(trigger, level);
+    }
 }
