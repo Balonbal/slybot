@@ -50,8 +50,6 @@ public class ChannelConfig implements Config{
         } catch (ClassCastException e) {
             System.out.println("Loaded illegal value for key " + key + ": " + e.toString());
         }
-
-        buildDefaults();
     }
 
     @Override
@@ -96,10 +94,7 @@ public class ChannelConfig implements Config{
         //Build trigger defaults
         if (trigger.equals("")) {
             trigger = Reference.PREFIX_REGEX;
-        }
-
-        if (triggerRegex == null) {
-            triggerRegex = Pattern.compile(trigger);
+            triggerRegex = Pattern.compile(trigger.replaceAll("\\$BOTNICK", Main.getBot().getNick()));
         }
     }
 
