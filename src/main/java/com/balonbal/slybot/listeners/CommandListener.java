@@ -57,4 +57,8 @@ public class CommandListener extends ListenerAdapter<SlyBot> {
         trigger = Pattern.compile(regex);
     }
 
+    public Pattern getTrigger() {
+        return trigger;
+    }
+
 }
