@@ -68,26 +68,26 @@ public class CommandConfig implements Command {
                     for (String command: channelConfig.getPermissionsMap().keySet()) {
                         switch (channelConfig.getPermission(command)) {
                             case Reference.REQUIRES_OP_NONE:
-                                noPermissions += (noPermissions.equals("") ? "" : ", ") + command;
+                                noPermissions += (noPermissions.equals("") ? "" : ", ") + Colors.GREEN + command + Colors.NORMAL;
                                 break;
                             case Reference.REQUIRES_OP_ANY:
-                                anyOPpermissions += (anyOPpermissions.equals("") ? "" : ", ") + command;
+                                anyOPpermissions += (anyOPpermissions.equals("") ? "" : ", ") + Colors.BLUE + command + Colors.NORMAL;
                                 break;
                             case Reference.REQUIRES_OP_CHANNEL:
-                                channelOPpermissions += (channelOPpermissions.equals("") ? "" : ", ") + command;
+                                channelOPpermissions += (channelOPpermissions.equals("") ? "" : ", ") + Colors.OLIVE + command + Colors.NORMAL;
                                 break;
                             case Reference.REQUIRES_OP_BOT:
-                                botOPpermissions +=(botOPpermissions.equals("") ? "" : ", ") + command;
+                                botOPpermissions +=(botOPpermissions.equals("") ? "" : ", ") + Colors.DARK_BLUE + command +Colors.NORMAL;
                                 break;
                             case Reference.REQUIRES_OP_BOTH:
-                                bothOPpermissions += (bothOPpermissions.equals("") ? "" : ", ") + command;
+                                bothOPpermissions += (bothOPpermissions.equals("") ? "" : ", ") + Colors.MAGENTA + command + Colors.NORMAL;
                                 break;
                         }
                     }
 
                     triggers = channelConfig.getTriggerString();
                     event.getBot().reply(event, "Configuration for " + Colors.BOLD + Colors.BLUE + channelConfig.getChannelName() + Colors.NORMAL + ":");
-                    event.getBot().reply(event, "Channel triggers: " + triggers);
+                    event.getBot().reply(event, "Channel triggers: " + Colors.RED + triggers);
                     event.getBot().reply(event, "User commands: " + noPermissions);
                     event.getBot().reply(event, "Channel OP commands: " + channelOPpermissions);
                     event.getBot().reply(event, "Bot OP commands: " + botOPpermissions);
@@ -103,22 +103,29 @@ public class CommandConfig implements Command {
             HashMap<String, Object> map = event.getBot().getConfig().getSaveValues();
 
             if (command.equalsIgnoreCase("set")) {
+
+                //If no key has been specified, return keys and values
                 if (parameters.length < 3) {
                     for (String key : map.keySet()) {
                         String value = "";
-                        if (key.equalsIgnoreCase(Reference.CONFIG_ALIASES)) {
-                            //No need to print this
-                            continue;
-                        } else if (key.equalsIgnoreCase(Reference.CONFIG_BOTPASS) || key.equalsIgnoreCase(Reference.CONFIG_NICKPASS) && map.containsKey(key)) {
-                            //Do not send passwords
-                            value = (map.get(key).equals("")) ? "Not set" : "Set";
-                        } else if (map.containsKey(key) && map.get(key) instanceof ArrayList) {
-                            ArrayList<String> list = (ArrayList<String>) map.get(key);
+                        switch (key.toLowerCase()) {
+                            case Reference.CONFIG_ALIASES: break; //This is a lot of output, so hide it
+                            case Reference.CONFIG_BOTPASS:
+                            case Reference.CONFIG_NICKPASS:
+                                //Hide passwords
+                                value = (map.get(key).equals("") ? "Not set" : "Set");
+                                break;
+                            default:
+                                if (map.get(key) instanceof ArrayList) {
+                                    ArrayList<String> list = (ArrayList<String>) map.get(key);
 
-                            value = StringUtils.join(list.toArray(new String[list.size()]), ", ");
-                        } else {
-                            value = map.containsKey(key) ? String.valueOf(map.get(key)) : "Not recognized";
+                                    value = StringUtils.join(list.toArray(new String[list.size()]), ", ");
+                                } else {
+                                    value = map.containsKey(key) ? String.valueOf(map.get(key)) : "Not recognized";
+                                }
                         }
+
+                        //Send the key and value
                         event.getBot().reply(event, String.format(" - %s: %s", key, (value.equals("") ? "Not set" : value)));
                     }
                     return "true";
