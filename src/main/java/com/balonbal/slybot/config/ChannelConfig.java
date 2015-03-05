@@ -44,7 +44,7 @@ public class ChannelConfig implements Config{
                     break;
                 case Reference.CONFIG_CHANNEL_TRIGGERS:
                     trigger = String.valueOf(value);
-                    triggerRegex = Pattern.compile(trigger.replaceAll("\\$BOTNICK", Main.getBot().getNick()));
+                    triggerRegex = Pattern.compile(trigger.replaceAll("\\$BOTNICK", Main.getBot().getNick()), Pattern.CASE_INSENSITIVE);
                     break;
             }
         } catch (ClassCastException e) {
@@ -94,7 +94,7 @@ public class ChannelConfig implements Config{
         //Build trigger defaults
         if (trigger.equals("")) {
             trigger = Reference.PREFIX_REGEX;
-            triggerRegex = Pattern.compile(trigger.replaceAll("\\$BOTNICK", Main.getBot().getNick()));
+            triggerRegex = Pattern.compile(trigger.replaceAll("\\$BOTNICK", Main.getBot().getNick()), Pattern.CASE_INSENSITIVE);
         }
     }
 
@@ -138,7 +138,7 @@ public class ChannelConfig implements Config{
     public void setTrigger(String trigger) {
         System.out.println("Building trigger for nick: " + Main.getBot().getNick());
         this.trigger = trigger;
-        triggerRegex = Pattern.compile(trigger.replaceAll("\\$BOTNICK", Main.getBot().getNick()));
+        triggerRegex = Pattern.compile(trigger.replaceAll("\\$BOTNICK", Main.getBot().getNick()), Pattern.CASE_INSENSITIVE);
     }
 
     public void setPermission(String trigger, int level) {

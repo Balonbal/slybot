@@ -41,10 +41,10 @@ public class CommandConfig implements Command {
     @Override
     public String[] help() {
         return new String[] {
-                "Used to set, unset and reset configuration values",
+                "Used to set configuration values",
                 "SYNTAX: " + Colors.BOLD + getTrigger() + " <set|load|save> [key] [value]",
                 "Set with no key will return a list of keys + values",
-                "Can only be used over PM"
+                "Keys for channel configuration: " + Colors.BOLD + "triggers" + Colors.NORMAL + " (the regex to look for in front of commands) and <command> (see help for a list). Commands can be restricted to different access levels (none, channel, bot, any or all)."
         };
     }
 
