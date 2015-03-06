@@ -1,7 +1,9 @@
 package com.balonbal.slybot.core;
 
+import com.balonbal.slybot.Main;
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.commands.Command;
+import com.balonbal.slybot.config.ChannelConfig;
 import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
 import org.pircbotx.Channel;
@@ -46,16 +48,26 @@ public class CommandHandler {
 
     public String processCommand(String command, Event<SlyBot> e) {
 
+        //get the command object from the command
         Command cmd = getCommand(command.contains(" ") ? command.substring(0, command.indexOf(" ")) : command);
-        System.out.println("Running command: " + command);
 
         //Verify that the command exists
         if (cmd == null) return "false";
         //Check that it is used in a valid place
         if (!(cmd.channelCommand() && e instanceof MessageEvent) && !(cmd.pmCommand() && e instanceof PrivateMessageEvent))
             return "false";
+
+        int level = cmd.requiresOP();
+
+        //Get channel configured permission level
+        if (e instanceof MessageEvent) {
+            ChannelConfig channelConfig = (ChannelConfig) Main.getConfig().getConfig("config" + ((MessageEvent) e).getChannel().getName());
+
+            level = channelConfig.getPermissionsMap().get(cmd.getTrigger());
+        }
+
         //Check permissions
-        if (!hasPermission(e, cmd.requiresOP())) {
+        if (!hasPermission(e, level)) {
             e.getBot().reply(e, (e instanceof MessageEvent ? ((MessageEvent) e).getUser().getNick() : ((PrivateMessageEvent) e).getUser().getNick()) + ": You do not have the required permissions to do that");
             return "false";
         }
