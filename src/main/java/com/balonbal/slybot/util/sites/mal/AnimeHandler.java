@@ -14,6 +14,10 @@ public class AnimeHandler extends DefaultHandler {
     private String temp;
     private ArrayList<Anime> animeList;
 
+    AnimeHandler() {
+        animeList = new ArrayList<>();
+    }
+
     @Override
     public void characters(char[] buffer, int start, int length) {
         temp = new String(buffer, start, length);
@@ -83,4 +87,7 @@ public class AnimeHandler extends DefaultHandler {
         }
     }
 
+    public ArrayList<Anime> getList() {
+        return animeList;
+    }
 }

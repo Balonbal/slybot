@@ -2,19 +2,22 @@ package com.balonbal.slybot.util.sites.mal;
 
 import com.balonbal.slybot.lib.Reference;
 import com.sun.xml.internal.fastinfoset.Encoder;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.xml.sax.SAXException;
 import sun.misc.BASE64Encoder;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 public class MyAnimeList {
 
@@ -70,31 +73,64 @@ public class MyAnimeList {
         return false;
     }
 
-    public static HashMap<String, String> searchAnime(String search, String username, String password) {
+    public static ArrayList<Anime> searchAnime(String search, String username, String password) {
         HashMap<String, String> map = new HashMap<>();
-        Random random = new Random();
 
-        HttpGet request = buildRequest(Reference.MAL_ANIME_SEARCH_BASE + search, getEncodedPassphrase(username, password));
-        File tempFile = new File("tmp_" + random.nextInt(10000));
-
-        HttpResponse response = null;
-        CloseableHttpClient client = null;
+        CloseableHttpResponse response = null;
+        File tempFile = new File("tmp_malSearch" + System.currentTimeMillis());
 
         try {
             HttpClientContext context = new HttpClientContext();
             BasicCookieStore store = new BasicCookieStore(); //We need cookies to log in..
 
             context.setCookieStore(store);
-            client = HttpClients.custom().build();
+            CloseableHttpClient client = HttpClients.custom().build();
+            HttpGet request = buildRequest(Reference.MAL_ANIME_SEARCH_BASE + URLEncoder.encode(search, Encoder.UTF_8), getEncodedPassphrase(username, password));
 
             response = client.execute(request, context);
 
-            //TODO Handle response
-        } catch (IOException e) {
+            InputStreamReader inputStreamReader = new InputStreamReader(response.getEntity().getContent());
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+            String s;
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+            while ((s = reader.readLine()) != null) {
+                //Write out
+                writer.write(s + "\n");
+
+                //Inject doctype to fix their xml
+                if (s.matches("<\\?xml version=\"\\d\\.\\d\" encoding=\"[\\w\\d\\-]+\"\\?>")) {
+                    writer.write("<!DOCTYPE stylesheet [\n<!ENTITY ndash \"&#x2013;\" >\n<!ENTITY mdash \"&#x2014;\">\n]>\n");
+                }
+            }
+            writer.close();
+            reader.close();
+
+            //Parse content
+            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+            SAXParser parser = saxParserFactory.newSAXParser();
+            AnimeHandler handler = new AnimeHandler();
+
+            parser.parse(tempFile, handler);
+
+            return handler.getList();
+        } catch (IOException | ParserConfigurationException | SAXException e) {
             e.printStackTrace();
+        } finally {
+
+            //Clean up
+
+            tempFile.delete();
+            try {
+                if (response != null) response.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
 
-        return map;
+        return new ArrayList<>();
     }
 
     private static String getEncodedPassphrase(String username, String password) {
@@ -104,11 +140,6 @@ public class MyAnimeList {
     }
 
     private static HttpGet buildRequest(String url, String encodedPassword) {
-        try {
-            url = URLEncoder.encode(url, Encoder.UTF_8);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
         HttpGet request = new HttpGet(url);
 
         //Build headers manually (as it does not seem to work otherwise

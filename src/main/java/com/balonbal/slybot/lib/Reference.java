@@ -23,7 +23,7 @@ public class Reference {
 
     //XML tags
     public static final String MAL_ANIME_ID = "id";
-    public static final String MAL_ANIME_NAME = "name";
+    public static final String MAL_ANIME_NAME = "title";
     public static final String MAL_ANIME_ENGLISH_NAME = "english";
     public static final String MAL_ANIME_SYNONYMS = "synonyms";
     public static final String MAL_ANIME_NUM_EPISODES = "episodes";
