@@ -17,7 +17,6 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 public class MyAnimeList {
@@ -101,6 +100,7 @@ public class MyAnimeList {
             while ((s = reader.readLine()) != null) {
                 s = s.replaceAll("&lt;br /&gt;", "");
                 s = s.replaceAll("&amp;quot;", "\"");
+                s = s.replaceAll("&amp;#039;", "'");
                 //Write out
                 writer.write(s + "\n");
 
@@ -121,8 +121,6 @@ public class MyAnimeList {
 
             ArrayList<Anime> result = handler.getList();
 
-            Collections.reverse(result);
-
             return result;
         } catch (IOException | ParserConfigurationException | SAXException e) {
             e.printStackTrace();
@@ -130,7 +128,7 @@ public class MyAnimeList {
 
             //Clean up
 
-            //tempFile.delete();
+            tempFile.delete();
             try {
                 if (response != null) response.close();
             } catch (IOException e) {

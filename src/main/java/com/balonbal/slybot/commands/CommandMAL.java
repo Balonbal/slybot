@@ -67,7 +67,13 @@ public class CommandMAL implements Command {
             }
         }
 
-        ArrayList<Anime> result = MyAnimeList.searchAnime(StringUtils.join(parameters, " ", start, parameters.length), Settings.accounts.get("mal").get("username"), Settings.accounts.get("mal").get("password"));
+        ArrayList<Anime> result = new ArrayList<>();
+
+        try {
+            result = MyAnimeList.searchAnime(StringUtils.join(parameters, " ", start, parameters.length), Settings.accounts.get("mal").get("username"), Settings.accounts.get("mal").get("password"));
+        } catch (Exception e) {
+            event.getBot().reply(event, "Error, unable to get results for your query.");
+        }
 
         int i = 0;
 
