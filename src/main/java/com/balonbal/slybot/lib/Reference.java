@@ -27,12 +27,28 @@ public class Reference {
     public static final String MAL_ANIME_ENGLISH_NAME = "english";
     public static final String MAL_ANIME_SYNONYMS = "synonyms";
     public static final String MAL_ANIME_NUM_EPISODES = "episodes";
+    public static final String MAL_ANIME_SCORE = "score";
     public static final String MAL_ANIME_TYPE = "type";
     public static final String MAL_ANIME_STATUS = "status";
     public static final String MAL_ANIME_START_DATE = "start_date";
     public static final String MAL_ANIME_END_DATE = "end_date";
     public static final String MAL_ANIME_SYNOPSIS = "synopsis";
     public static final String MAL_ANIME_IMAGE = "image";
+
+    public static final String[] MAL_ANIME_TAGS = {
+            MAL_ANIME_ID,
+            MAL_ANIME_NAME,
+            MAL_ANIME_ENGLISH_NAME,
+            MAL_ANIME_SYNONYMS,
+            MAL_ANIME_NUM_EPISODES,
+            MAL_ANIME_SCORE,
+            MAL_ANIME_TYPE,
+            MAL_ANIME_STATUS,
+            MAL_ANIME_START_DATE,
+            MAL_ANIME_END_DATE,
+            MAL_ANIME_SYNOPSIS,
+            MAL_ANIME_IMAGE
+    };
 
 
     /* CONFIGURATION CONSTANTS */
