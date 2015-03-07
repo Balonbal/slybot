@@ -2,16 +2,13 @@ package com.balonbal.slybot.listeners;
 
 import com.balonbal.slybot.Main;
 import com.balonbal.slybot.SlyBot;
-import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import org.apache.commons.lang3.StringUtils;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,13 +19,9 @@ public class AliasListener extends ListenerAdapter<SlyBot> {
 
     @Override
     public void onMessage(MessageEvent<SlyBot> event) throws Exception {
-        String message = event.getMessage();
-        for (String s: Reference.PREFIXES) {
-            if (message.toLowerCase().startsWith(s.toLowerCase())) {
-                message = message.substring(s.length());
-                runAlias(message.split("\\s+"), event);
-            }
-        }
+
+        String command = Main.getCommandListener().getCommand(event);
+        runAlias(command.split("\\s+"), event);
     }
 
     private String runAlias(String[] params, Event<SlyBot> event) {

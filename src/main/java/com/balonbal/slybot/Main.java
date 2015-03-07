@@ -110,6 +110,7 @@ public class Main {
                 .addListener(new ChallengeListener())
                 .addListener(new LoggerListener())
                 .addListener(new AliasListener())
+                .addListener(new ChannelListener())
             .setServerHostname(network)
             .setServerPort(Settings.port);
 
@@ -136,15 +137,11 @@ public class Main {
 		try {
 			//Start the bot
 			slybot.startBot();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IrcException e) {
-			// TODO Auto-generated catch block
+		} catch (IOException | IrcException e) {
 			e.printStackTrace();
 		}
 
-	}
+    }
 
     public static CommandListener getCommandListener() {
         return commandListener;

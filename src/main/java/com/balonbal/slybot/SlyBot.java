@@ -1,6 +1,7 @@
 package com.balonbal.slybot;
 
 import com.balonbal.slybot.config.BotConfig;
+import com.balonbal.slybot.config.ChannelConfig;
 import com.balonbal.slybot.config.Config;
 import com.balonbal.slybot.lib.Settings;
 import com.balonbal.slybot.util.LoggerUtil;
@@ -105,5 +106,20 @@ public class SlyBot extends PircBotX {
 
     public RSSManager getRssManager() {
         return rssManager;
+    }
+
+    public void updateNick(String newValue) {
+        //Update nick
+        this.sendRaw().rawLine("nick " + newValue);
+        this.setNick(newValue);
+
+        //Update config in all connected channels
+        System.out.println("Rebuilding triggers for " + this.getUserChannelDao().getAllChannels().size() + " channels.");
+        for (Channel c: this.getUserChannelDao().getAllChannels()) {
+            ChannelConfig channelConfig = (ChannelConfig) Main.getConfig().getConfig("config" + c.getName());
+
+            //Rebuild the triggger
+            channelConfig.setTrigger(channelConfig.getTriggerString());
+        }
     }
 }

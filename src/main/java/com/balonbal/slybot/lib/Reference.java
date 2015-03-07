@@ -1,17 +1,9 @@
 package com.balonbal.slybot.lib;
 
-import com.balonbal.slybot.Main;
-
 public class Reference {
 
     /* BOT CONSTANTS */
-	public static final String BOTNICK = Main.getBot().getNick();
-	public static final String[] PREFIXES = {
-		BOTNICK + ": ",
-		BOTNICK + " ",
-		BOTNICK + ", ",
-		"."
-	};
+    public static final String PREFIX_REGEX = "($BOTNICK(, |: | )|\\.)";
 	
 	public static final int ACCEPT_TIMEOUT = 60;
 	public static final int TTT_NEXT_TURN_TIMEOUT = 180;
@@ -26,6 +18,11 @@ public class Reference {
     /* CONFIGURATION CONSTANTS */
     public static final String CONFIG_BASE_DIR = "config/";
     public static final String CONFIG_CHANNEL_FILE = CONFIG_BASE_DIR + "$NETWORK/$CHANNEL.yaml";
+
+    public static final String CONFIG_CHANNEL_NAME = "channelName";
+    public static final String CONFIG_CHANNEL_PERMISSIONS = "channelPermissions";
+    public static final String CONFIG_CHANNEL_STRINGS = "channelStrings";
+    public static final String CONFIG_CHANNEL_TRIGGERS = "channelTriggers";
 
     public static final String LOG_BASE_DIR = "logs/";
     public static final String LOG_CHANNEL_FILE = LOG_BASE_DIR + "$NETWORK/$CHANNEL.log";

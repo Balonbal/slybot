@@ -95,6 +95,10 @@ public class ConfigurationHandler {
     }
 
     private void save(File f, Object o) {
+        if (f.getParent() != null && !f.getParentFile().exists()) {
+            f.getParentFile().mkdirs();
+        }
+
         Yaml yaml = new Yaml();
         try {
             yaml.dump(o, new FileWriter(f));
@@ -111,6 +115,11 @@ public class ConfigurationHandler {
         }
 
         System.out.println("Save completed.");
+    }
+
+    public void removeConfiguration(String id) {
+        if (!configurations.containsKey(id)) return;
+        configurations.remove(id);
     }
 
     public void removeAndDeleteConfiguration(String id) {
