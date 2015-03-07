@@ -77,6 +77,8 @@ public class Reference {
     public static final String CONFIG_SSL = "ssl";
     public static final String CONFIG_NICKPASS = "nickpass";
     public static final String CONFIG_OWNER = "owner";
+    public static final String CONFIG_ACCOUNTS = "accounts";
 
     public static final String CONFIG_BOTCONFIG_ID = "botConfig";
+
 }
