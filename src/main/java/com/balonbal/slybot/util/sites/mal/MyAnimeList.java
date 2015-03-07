@@ -17,6 +17,7 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class MyAnimeList {
@@ -87,6 +88,8 @@ public class MyAnimeList {
             CloseableHttpClient client = HttpClients.custom().build();
             HttpGet request = buildRequest(Reference.MAL_ANIME_SEARCH_BASE + URLEncoder.encode(search, Encoder.UTF_8), getEncodedPassphrase(username, password));
 
+            System.out.println("Sending request: " + request.getRequestLine());
+
             response = client.execute(request, context);
 
             InputStreamReader inputStreamReader = new InputStreamReader(response.getEntity().getContent());
@@ -96,6 +99,8 @@ public class MyAnimeList {
             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
 
             while ((s = reader.readLine()) != null) {
+                s = s.replaceAll("&lt;br /&gt;", "");
+                s = s.replaceAll("&amp;quot;", "\"");
                 //Write out
                 writer.write(s + "\n");
 
@@ -114,14 +119,18 @@ public class MyAnimeList {
 
             parser.parse(tempFile, handler);
 
-            return handler.getList();
+            ArrayList<Anime> result = handler.getList();
+
+            Collections.reverse(result);
+
+            return result;
         } catch (IOException | ParserConfigurationException | SAXException e) {
             e.printStackTrace();
         } finally {
 
             //Clean up
 
-            tempFile.delete();
+            //tempFile.delete();
             try {
                 if (response != null) response.close();
             } catch (IOException e) {

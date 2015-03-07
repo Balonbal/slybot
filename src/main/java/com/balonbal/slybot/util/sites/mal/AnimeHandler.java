@@ -53,6 +53,9 @@ public class AnimeHandler extends DefaultHandler {
                 case Reference.MAL_ANIME_SYNONYMS:
                     anime.setSynonyms(temp.split(";"));
                     break;
+                case Reference.MAL_ANIME_NUM_EPISODES:
+                    anime.setEpisodes(Integer.valueOf(temp));
+                    break;
                 case Reference.MAL_ANIME_SCORE:
                     anime.setScore(Double.parseDouble(temp));
                     break;

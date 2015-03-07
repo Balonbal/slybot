@@ -4,6 +4,8 @@ public class Reference {
 
     /* BOT CONSTANTS */
     public static final String PREFIX_REGEX = "($BOTNICK(, |: | )|\\.)";
+
+    public static final String MAL_REPLY = "[$BOLDMAL$NORMAL] [$BOLD$BLUE$TYPE$NORMAL] $GREEN$TITLE$NORMAL [Eps: $BOLD$EPISODES$NORMAL] [Score: $OLIVE$SCORE$NORMAL] - $SYNOPSIS\n[$BOLDMAL$NORMAL] URL: $BOLD$TEAL$URL";
 	
 	public static final int ACCEPT_TIMEOUT = 60;
 	public static final int TTT_NEXT_TURN_TIMEOUT = 180;

@@ -37,7 +37,10 @@ public class ChannelConfig implements Config{
                     channelName = String.valueOf(value);
                     break;
                 case Reference.CONFIG_CHANNEL_PERMISSIONS:
-                    permissionsMap = (HashMap<String, Integer>) value;
+                    HashMap<String, Integer> map = (HashMap<String, Integer>) value;
+                    for (String k: map.keySet()) {
+                        permissionsMap.put(k, map.get(k));
+                    }
                     break;
                 case Reference.CONFIG_CHANNEL_STRINGS:
                     strings = (HashMap<String, String>) value;
