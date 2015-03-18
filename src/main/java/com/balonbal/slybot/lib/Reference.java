@@ -22,7 +22,8 @@ public class Reference {
     public static final String MAL_VERIFY_CREDENTIALS = "http://myanimelist.net/api/account/verify_credentials.xml";
     public static final String MAL_ANIME_SEARCH_BASE = "http://myanimelist.net/api/anime/search.xml?q=";
 
-    public static final String TWITCH_STREAM_QUERY = "https://api.twitch.tv/kraken/streams?channel=";
+    public static final String TWITCH_CLIENT_ID = "o13637x52xk4zooxxd28em843lxuoya";
+    public static final String TWITCH_STREAM_QUERY = "https://api.twitch.tv/kraken/streams?" + TWITCH_CLIENT_ID + "&channel=";
 
     /* MAL API CONSTANTS */
     //XML tags
