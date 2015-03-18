@@ -70,4 +70,15 @@ public class TwitchSubscription {
         this.subscribers = subscribers;
     }
 
+    public boolean isSubscribed(String name) {
+        return subscribers.contains(name);
+    }
+
+    public void unsubscribe(String name) {
+        subscribers.remove(name);
+    }
+
+    public void subscribe(String subscriber) {
+        subscribers.add(subscriber);
+    }
 }

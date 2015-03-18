@@ -89,15 +89,16 @@ public class Twitch implements Config {
 
                         //Set the stream to active so we don't duplicate subscriptions
                         subscription.setActive(true);
-                        active.add((String) channel.get("name"));
                     }
+
+                    active.add(((String) channel.get("name")).toLowerCase());
                 }
             }
         }
 
         //Update offline streams
         for (TwitchSubscription subscription: subscriptions) {
-            if (!active.contains(subscription.getChannel())) {
+            if (!active.contains(subscription.getChannel().toLowerCase()) ) {
                 subscription.setActive(false);
             }
         }
@@ -146,5 +147,23 @@ public class Twitch implements Config {
     @Override
     public File getSaveLocation() {
         return file;
+    }
+
+    public TwitchSubscription getSubscription(String name) {
+        for (TwitchSubscription subscription: subscriptions) {
+            if (subscription.getName().equalsIgnoreCase(name)) {
+                return subscription;
+            }
+        }
+
+        return null;
+    }
+
+    public void addSubscription(String channel, String name, ArrayList<String> subscribers) {
+        subscriptions.add(new TwitchSubscription(name, channel, subscribers));
+    }
+
+    public ArrayList<TwitchSubscription> getSubscriptions() {
+        return subscriptions;
     }
 }
