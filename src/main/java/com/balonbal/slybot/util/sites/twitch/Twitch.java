@@ -89,6 +89,7 @@ public class Twitch implements Config {
 
                         //Set the stream to active so we don't duplicate subscriptions
                         subscription.setActive(true);
+                        subscription.setStreamData(map);
                     }
 
                     active.add(((String) channel.get("name")).toLowerCase());
@@ -109,7 +110,7 @@ public class Twitch implements Config {
         switch (key) {
             case "subscriptions":
                 for (HashMap<String, Object> map: (ArrayList<HashMap<String, Object>>) value) {
-                    subscriptions.add(new TwitchSubscription((String) map.get("name"), (String) map.get("channel"), (ArrayList<String>) map.get("subscriptions")));
+                    subscriptions.add(new TwitchSubscription((String) map.get("name"), (String) map.get("channel"), (ArrayList<String>) map.get("subscribers")));
                 }
                 break;
         }

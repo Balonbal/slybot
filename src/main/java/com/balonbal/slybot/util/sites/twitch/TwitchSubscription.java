@@ -10,6 +10,8 @@ public class TwitchSubscription {
     ArrayList<String> subscribers;
     String channel;
 
+    protected HashMap<String, Object> streamData;
+
     public TwitchSubscription(String name, String channel, String ... subscribers) {
         this.name = name;
         this.channel = channel;
@@ -33,7 +35,7 @@ public class TwitchSubscription {
 
         map.put("name", name);
         map.put("subscribers", subscribers);
-        map.put("channel", subscribers);
+        map.put("channel", channel);
 
         return map;
     }
@@ -68,6 +70,14 @@ public class TwitchSubscription {
 
     public void setSubscribers(ArrayList<String> subscribers) {
         this.subscribers = subscribers;
+    }
+
+    public HashMap<String, Object> getStreamData() {
+        return streamData;
+    }
+
+    public void setStreamData(HashMap<String, Object> streamData) {
+        this.streamData = streamData;
     }
 
     public boolean isSubscribed(String name) {
