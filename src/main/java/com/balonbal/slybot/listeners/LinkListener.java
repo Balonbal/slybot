@@ -2,16 +2,11 @@ package com.balonbal.slybot.listeners;
 
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.lib.Strings;
-import com.balonbal.slybot.util.Youtube;
-import org.pircbotx.PircBotX;
-import org.pircbotx.hooks.Event;
-import org.pircbotx.hooks.Listener;
+import com.balonbal.slybot.util.sites.Youtube;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
-import org.pircbotx.hooks.types.GenericMessageEvent;
 
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 public class LinkListener extends ListenerAdapter<SlyBot> {

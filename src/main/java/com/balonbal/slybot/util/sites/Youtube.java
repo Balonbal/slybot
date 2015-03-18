@@ -1,4 +1,4 @@
-package com.balonbal.slybot.util;
+package com.balonbal.slybot.util.sites;
 
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.lib.Strings;
@@ -16,7 +16,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -36,7 +36,7 @@ public class BotConfig implements Config {
                 if (Main.getBot() != null) {
                     Main.getBot().getRssManager().startTimer(Long.parseLong(String.valueOf(value)), Long.parseLong(String.valueOf(value)));
                 }
-            }
+            } else if (key.equals(Reference.CONFIG_ACCOUNTS)) Settings.accounts = (HashMap<String, HashMap<String, String>>) value;
             else System.out.println("Unknown config key: " + key);
         } catch (ClassCastException e) {
             //Missmatching classes
@@ -95,6 +95,7 @@ public class BotConfig implements Config {
         map.put(Reference.CONFIG_OWNER, Settings.owner);
         map.put(Reference.CONFIG_BOTPASS, Settings.operatorpass);
         map.put(Reference.CONFIG_NICKPASS, Settings.nickpass);
+        map.put(Reference.CONFIG_ACCOUNTS, Settings.accounts);
         return map;
     }
 

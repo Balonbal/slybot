@@ -19,6 +19,7 @@ public class Settings {
     public static ArrayList<String> mutedChannels = new ArrayList<String>();
     public static HashMap<String, String> aliases = new HashMap<String, String>();
     public static HashMap<String, HashMap<String, String>> userEvents = new HashMap<String, HashMap<String, String>>();
+    public static HashMap<String, HashMap<String, String>> accounts = new HashMap<>();
     public static long configAutosaveFrequency = 2*60*60*1000; //Every two hours
     public static long rssUpdateFrequency = 30*60*1000; //Every 30 minutes
 
