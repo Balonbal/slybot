@@ -97,9 +97,15 @@ public class MyAnimeList {
             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
 
             while ((s = reader.readLine()) != null) {
+                if (s.equals("") || s.equals("\n")) continue;
                 s = s.replaceAll("&lt;br /&gt;", "");
-                s = s.replaceAll("&amp;quot;", "\"");
-                s = s.replaceAll("&amp;#039;", "'");
+                s = s.replaceAll("(&amp;)?&?(quot;|ldquo;)", "\"");
+                s = s.replaceAll("(&amp;)?&?(#039|rsquo);", "'");
+                s = s.replaceAll("(&amp;)?&?eacute;", "é");
+                s = s.replaceAll("(&amp;)?&?(m|n)dash;", "-");
+                s = s.replaceAll("(&amp;)?&?hellip;", "…");
+                s = s.replaceAll("(&amp;)?&?rsquo;", "'");
+                s = s.replaceAll("(&amp;)?&?ecirc;", "ê");
                 //Write out
                 writer.write(s + "\n");
 
