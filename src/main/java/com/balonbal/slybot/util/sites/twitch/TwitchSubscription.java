@@ -1,6 +1,7 @@
 package com.balonbal.slybot.util.sites.twitch;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TwitchSubscription {
 
@@ -9,16 +10,32 @@ public class TwitchSubscription {
     ArrayList<String> subscribers;
     String channel;
 
-    public TwitchSubscription(String name, String channel, boolean active, String ... subscribers) {
+    public TwitchSubscription(String name, String channel, String ... subscribers) {
         this.name = name;
         this.channel = channel;
-        this.active = active;
+        active = false;
 
         this.subscribers = new ArrayList<>();
 
         for (String sub: subscribers) {
             this.subscribers.add(sub);
         }
+    }
+
+    public TwitchSubscription(String name, String channel, ArrayList<String> subscribers) {
+        this.name = name;
+        this.channel = channel;
+        this.subscribers = subscribers;
+    }
+
+    public HashMap<String, Object> createMap() {
+        HashMap<String, Object> map = new HashMap<>();
+
+        map.put("name", name);
+        map.put("subscribers", subscribers);
+        map.put("channel", subscribers);
+
+        return map;
     }
 
     public String getName() {

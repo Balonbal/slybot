@@ -1,6 +1,7 @@
 package com.balonbal.slybot.util.sites.twitch;
 
 import com.balonbal.slybot.Main;
+import com.balonbal.slybot.config.Config;
 import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
 import com.google.gson.Gson;
@@ -9,6 +10,7 @@ import com.google.gson.internal.LinkedTreeMap;
 import org.pircbotx.Colors;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -17,9 +19,10 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Twitch {
+public class Twitch implements Config {
 
     private ArrayList<TwitchSubscription> subscriptions;
+    private File file;
 
     public Twitch() {
         subscriptions = new ArrayList<>();
@@ -31,6 +34,8 @@ public class Twitch {
                 notifySubscribers();
             }
         }, Settings.twitchUpdateFrequency, Settings.twitchUpdateFrequency);
+
+        file = new File("TwitchSubscriptions.yaml");
     }
 
     public ArrayList<HashMap<String, Object>> checkSubscriptions() {
@@ -98,4 +103,48 @@ public class Twitch {
         }
     }
 
+    @Override
+    public void updateSetting(String key, Object value) {
+        switch (key) {
+            case "subscriptions":
+                for (HashMap<String, Object> map: (ArrayList<HashMap<String, Object>>) value) {
+                    subscriptions.add(new TwitchSubscription((String) map.get("name"), (String) map.get("channel"), (ArrayList<String>) map.get("subscriptions")));
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void appendSetting(String key, Object value) {
+        //Do nothing
+    }
+
+    @Override
+    public void removeSetting(String key, Object value) {
+        //Do nothing
+    }
+
+    @Override
+    public HashMap<String, Object> getSaveValues() {
+        HashMap<String, Object> map = new HashMap<>();
+
+        //Build a map for the subscriptions
+        ArrayList<HashMap<String, Object>> feeds = new ArrayList<>();
+        for (TwitchSubscription subscription: subscriptions) {
+            feeds.add(subscription.createMap());
+        }
+        map.put("subscriptions", feeds);
+
+        return map;
+    }
+
+    @Override
+    public void setSaveLocation(File file) {
+        this.file = file;
+    }
+
+    @Override
+    public File getSaveLocation() {
+        return file;
+    }
 }
