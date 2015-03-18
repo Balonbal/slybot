@@ -1,7 +1,6 @@
 package com.balonbal.slybot.util.sites.mal;
 
 import com.balonbal.slybot.lib.Reference;
-import com.sun.xml.internal.fastinfoset.Encoder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -85,7 +84,7 @@ public class MyAnimeList {
 
             context.setCookieStore(store);
             CloseableHttpClient client = HttpClients.custom().build();
-            HttpGet request = buildRequest(Reference.MAL_ANIME_SEARCH_BASE + URLEncoder.encode(search, Encoder.UTF_8), getEncodedPassphrase(username, password));
+            HttpGet request = buildRequest(Reference.MAL_ANIME_SEARCH_BASE + URLEncoder.encode(search, "UTF-8"), getEncodedPassphrase(username, password));
 
             System.out.println("Sending request: " + request.getRequestLine());
 
