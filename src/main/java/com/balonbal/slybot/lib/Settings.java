@@ -22,6 +22,7 @@ public class Settings {
     public static HashMap<String, HashMap<String, String>> accounts = new HashMap<>();
     public static long configAutosaveFrequency = 2*60*60*1000; //Every two hours
     public static long rssUpdateFrequency = 30*60*1000; //Every 30 minutes
+    public static long twitchUpdateFrequency = 10*60*1000; //Every 10 minutes
 
     public static boolean suppressOutput = false;
 }

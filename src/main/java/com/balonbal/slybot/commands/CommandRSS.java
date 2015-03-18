@@ -45,7 +45,6 @@ public class CommandRSS implements Command {
 
     @Override
     public String run(String[] parameters, Event<SlyBot> event) {
-        System.out.println(parameters.length + "; " + parameters[1]);
         if (parameters.length == 3) {
             if (parameters[1].equalsIgnoreCase("update")) {
 

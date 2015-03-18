@@ -17,12 +17,15 @@ public class Reference {
     public static final int REQUIRES_OP_BOT = 2;
     public static final int REQUIRES_OP_BOTH = 3;
 
-    /* MAL API CONSTANTS */
+    /* URL CONSTANTS */
 
-    //URLs
     public static final String MAL_VERIFY_CREDENTIALS = "http://myanimelist.net/api/account/verify_credentials.xml";
     public static final String MAL_ANIME_SEARCH_BASE = "http://myanimelist.net/api/anime/search.xml?q=";
 
+    public static final String TWITCH_CLIENT_ID = "o13637x52xk4zooxxd28em843lxuoya";
+    public static final String TWITCH_STREAM_QUERY = "https://api.twitch.tv/kraken/streams?" + TWITCH_CLIENT_ID + "&channel=";
+
+    /* MAL API CONSTANTS */
     //XML tags
     public static final String MAL_ANIME_ID = "id";
     public static final String MAL_ANIME_NAME = "title";
