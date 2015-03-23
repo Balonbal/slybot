@@ -153,7 +153,7 @@ public class CommandTwitch implements Command {
 
             String channel = parameters[3];
 
-            if (channel.matches("https?://twitch\\.tv/.*")) {
+            if (channel.matches("https?://(www\\.)?twitch\\.tv/.*")) {
                 channel = channel.substring(channel.lastIndexOf("/"));
             }
 
