@@ -55,18 +55,6 @@ public class CommandTwitch implements Command {
                 event.getBot().getTwitch().notifySubscribers();
                 event.getBot().reply(event, "All channels updated.");
                 return "";
-            } else if (parameters[1].equalsIgnoreCase("subscribe")) {
-                String subscriber = (event instanceof MessageEvent ? ((MessageEvent) event).getChannel().getName() : ((PrivateMessageEvent) event).getUser().getNick());
-
-                TwitchSubscription subscription = event.getBot().getTwitch().getSubscription(parameters[2]);
-                if (subscription != null && !subscription.isSubscribed(subscriber)) {
-                    subscription.subscribe(subscriber);
-                    event.getBot().reply(event, "Now subscribed.");
-                    return "";
-                } else {
-                    event.getBot().reply(event, "No such feed or aldready subscribed");
-                    return "";
-                }
             } else if (parameters[1].equalsIgnoreCase("list")) {
                 try {
                     ArrayList<TwitchSubscription> subscriptions = event.getBot().getTwitch().getSubscriptions();
@@ -84,6 +72,18 @@ public class CommandTwitch implements Command {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+        } else if (parameters[1].equalsIgnoreCase("subscribe") && parameters.length == 3) {
+            String subscriber = (event instanceof MessageEvent ? ((MessageEvent) event).getChannel().getName() : ((PrivateMessageEvent) event).getUser().getNick());
+
+            TwitchSubscription subscription = event.getBot().getTwitch().getSubscription(parameters[2]);
+            if (subscription != null && !subscription.isSubscribed(subscriber)) {
+                subscription.subscribe(subscriber);
+                event.getBot().reply(event, "Now subscribed.");
+                return "";
+            } else {
+                event.getBot().reply(event, "No such feed or aldready subscribed");
+                return "";
             }
         } else if (parameters[1].equalsIgnoreCase("unsubscribe")) {
 
@@ -176,7 +176,7 @@ public class CommandTwitch implements Command {
 
                     HashMap<String, Object> map = subscription.getStreamData();
                     LinkedTreeMap<String, Object> channel;
-                    if (map != null) channel = (LinkedTreeMap<String, Object>) map.get("channel");
+                    if (map != null && subscription.isActive()) channel = (LinkedTreeMap<String, Object>) map.get("channel");
                     else {
                         event.getBot().reply(event, "[" + Colors.PURPLE + "TWITCH" + Colors.NORMAL + "] " + Colors.BLUE + subscription.getChannel() + Colors.NORMAL + " - " + Colors.RED + "OFFLINE");
                         continue;

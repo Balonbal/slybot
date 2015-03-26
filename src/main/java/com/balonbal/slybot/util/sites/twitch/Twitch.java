@@ -83,16 +83,15 @@ public class Twitch implements Config {
                             Main.getBot().sendMessage(dest, "[" + Colors.BOLD + Colors.PURPLE + "TWITCH" + Colors.NORMAL + "] " +
                                     "User " + Colors.BLUE + channel.get("display_name") + Colors.NORMAL + " Just went live! " +
                                     "[ Playing: " + Colors.GREEN + map.get("game") + Colors.NORMAL + " ] " +
-                                    ((boolean) channel.get("mature") ? "[ " + Colors.RED + "MATURE" + Colors.NORMAL + " ] " : "") +
+                                    ((channel.get("mature") != null && (boolean) channel.get("mature")) ? "[ " + Colors.RED + "MATURE" + Colors.NORMAL + " ] " : "") +
                                     "(" + Colors.OLIVE + channel.get("url") + Colors.NORMAL + ")");
                         }
 
                         //Set the stream to active so we don't duplicate subscriptions
                         subscription.setActive(true);
                         subscription.setStreamData(map);
+                        active.add(String.valueOf(channel.get("name")).toLowerCase());
                     }
-
-                    active.add(((String) channel.get("name")).toLowerCase());
                 }
             }
         }
@@ -101,6 +100,8 @@ public class Twitch implements Config {
         for (TwitchSubscription subscription: subscriptions) {
             if (!active.contains(subscription.getChannel().toLowerCase()) ) {
                 subscription.setActive(false);
+                //Remove stream info
+                subscription.setStreamData(null);
             }
         }
     }

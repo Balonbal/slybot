@@ -7,7 +7,6 @@ import com.balonbal.slybot.core.ConfigurationHandler;
 import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
 import com.balonbal.slybot.listeners.*;
-import com.balonbal.slybot.util.sites.twitch.Twitch;
 import org.pircbotx.Configuration;
 import org.pircbotx.Configuration.Builder;
 import org.pircbotx.exception.IrcException;
@@ -29,8 +28,6 @@ public class Main {
 	static String nick = "slybot";
 
 	public static void main(String[] args) {
-
-        Twitch twitch = new Twitch();
 
         System.out.println("Starting slybot, this is version " + Main.class.getPackage().getImplementationVersion());
 
