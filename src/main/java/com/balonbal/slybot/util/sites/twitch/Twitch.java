@@ -90,8 +90,9 @@ public class Twitch implements Config {
                         //Set the stream to active so we don't duplicate subscriptions
                         subscription.setActive(true);
                         subscription.setStreamData(map);
-                        active.add(String.valueOf(channel.get("name")).toLowerCase());
                     }
+
+                    active.add(String.valueOf(channel.get("name")).toLowerCase());
                 }
             }
         }
