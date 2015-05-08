@@ -18,6 +18,10 @@ public class Reference {
     public static final int REQUIRES_OP_BOTH = 3;
 
     /* URL CONSTANTS */
+    public static final String YOUTUBE_API_KEY = "AIzaSyCWKwRwa16hGkSYWZij_0QjraZ4evm4xvM";
+    public static final String YOUTUBE_VIDEO_URL = "https://www.googleapis.com/youtube/v3/videos?part=snippet%2Cstatistics%2CcontentDetails&id=$ID&key=$KEY";
+
+    /* MAL API CONSTANTS */
 
     public static final String MAL_VERIFY_CREDENTIALS = "http://myanimelist.net/api/account/verify_credentials.xml";
     public static final String MAL_ANIME_SEARCH_BASE = "http://myanimelist.net/api/anime/search.xml?q=";

@@ -1,7 +1,12 @@
 package com.balonbal.slybot.util.sites;
 
 import com.balonbal.slybot.SlyBot;
+import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Strings;
+import com.balonbal.slybot.util.sites.youtube.YoutubeInfo;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.internal.LinkedTreeMap;
 import org.pircbotx.Colors;
 import org.pircbotx.hooks.Event;
 import org.w3c.dom.Document;
@@ -63,13 +68,13 @@ public class Youtube {
 
             try {
                 //Download the files, use version 2 of the api
-                downloadToFile(new URL(Strings.YOUTUBE_VIDEO + url + "?v=2"), f);
+                downloadToFile(new URL(Reference.YOUTUBE_VIDEO_URL.replaceAll("\\$KEY", Reference.YOUTUBE_API_KEY).replaceAll("\\$ID", url)), f);
                 if (playlist != null) downloadToFile(new URL(Strings.YOUTUBE_PLAYLIST + playlist), playlistFile);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
 
-            HashMap<String, String> map = parseXmlFile(f);
+            HashMap<String, String> map = parseJsonFile(f);
             map.put("id", url);
             if (playlist != null) {
                 //Add playlist info (if any)
@@ -135,15 +140,27 @@ public class Youtube {
         likes = String.format("%,d", Long.parseLong(likes));
         disLikes = String.format("%,d", Long.parseLong(disLikes));
 
+        StringBuilder time = new StringBuilder();
 
-        int seconds = Integer.parseInt(duration);
-		duration = "";
-		//If the time exceeds one hour
-		if (seconds > 3600) {
-			duration = seconds / 3600 + ":";
-			seconds %= 3600;
-		}
-		duration += ((seconds / 60 > 9) ? (seconds / 60) : "0" + (seconds/60)) + ":" + ((seconds % 60 > 9) ? (seconds % 60) : "0" + (seconds % 60));
+        //Build time string
+        int hour = 0, minute = 0, seconds = 0;
+        if (duration.contains("H")) {
+            hour = Integer.parseInt(duration.substring(2, duration.indexOf("H")));
+            time.append(hour);
+            time.append(":");
+        }
+        if (duration.contains("M")) {
+            minute = Integer.parseInt(duration.substring(duration.contains("H") ? duration.indexOf("H") + 1 : 2, duration.indexOf("M")));
+        }
+        if (duration.contains("S")) {
+            seconds = Integer.parseInt(duration.substring(duration.contains("M") ? duration.indexOf("M") + 1 : duration.contains("H") ? duration.indexOf("H") + 1: 2, duration.indexOf("S")));
+        }
+
+        if (minute < 10) time.append("0");
+        time.append(minute);
+        time.append(":");
+        if (seconds  < 10) time.append("0");
+        time.append(seconds);
 
         //Convert date to a displayable format depending on locale
         date = date.replaceAll("(\\d{4})\\-(\\d{2})\\-(\\d{2})T((\\d{2}):(\\d{2}):(\\d{2}))(.*)", "$4 $3. $2 $1");
@@ -158,7 +175,7 @@ public class Youtube {
         //Send the results for the video back to the channel/user
         event.getBot().reply(event, "[http://youtu.be/" + Colors.PURPLE + id + Colors.NORMAL + "] - " +
                 Colors.BOLD + Colors.BLUE + creator + Colors.NORMAL + ": " + Colors.DARK_GREEN + title + Colors.NORMAL +
-                " [ " + Colors.BOLD + duration + Colors.NORMAL + " ]" +
+                " [ " + Colors.BOLD + time.toString() + Colors.NORMAL + " ]" +
                 " [ v: " + Colors.BOLD + viewCount + Colors.NORMAL + " ]" +
                 " [ U: " + Colors.GREEN + Colors.BOLD + likes + Colors.NORMAL + " | D: " + Colors.RED + Colors.BOLD + disLikes + Colors.NORMAL + " ]" +
                 " [ UL: " + Colors.BOLD + date + Colors.NORMAL + " ]");
@@ -188,6 +205,33 @@ public class Youtube {
         }
     }
 
+    private HashMap<String, String> parseJsonFile(File f) {
+        HashMap<String, String> items = new HashMap<>();
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(f));
+
+            Gson gson = new GsonBuilder().create();
+
+            YoutubeInfo ytinfo = gson.fromJson(reader, YoutubeInfo.class);
+
+            LinkedTreeMap<String, Object> info = ytinfo.getItems().get(0);
+            
+            items.put("title", (String) ((LinkedTreeMap<String, Object>) info.get("snippet")).get("title"));
+            items.put("views", (String) ((LinkedTreeMap<String, Object>) info.get("statistics")).get("viewCount"));
+            items.put("creator", (String) ((LinkedTreeMap<String, Object>) info.get("snippet")).get("channelTitle"));
+            items.put("duration", (String) ((LinkedTreeMap<String, Object>) info.get("contentDetails")).get("duration"));
+            items.put("date", (String) ((LinkedTreeMap<String, Object>) info.get("snippet")).get("publishedAt"));
+            items.put("likeCount", (String) ((LinkedTreeMap<String, Object>) info.get("statistics")).get("likeCount"));
+            items.put("dislikeCount", (String) ((LinkedTreeMap<String, Object>) info.get("statistics")).get("dislikeCount"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return items;
+    }
+
+    @Deprecated
     private HashMap<String, String> parseXmlFile(File f){
 		
 		//Store the found values in a hashmap
