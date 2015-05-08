@@ -17,6 +17,9 @@ public class Reference {
     public static final int REQUIRES_OP_BOT = 2;
     public static final int REQUIRES_OP_BOTH = 3;
 
+    public static final String YOUTUBE_API_KEY = "AIzaSyCWKwRwa16hGkSYWZij_0QjraZ4evm4xvM";
+    public static final String YOUTUBE_VIDEO_URL = "https://www.googleapis.com/youtube/v3/videos?part=snippet%2Cstatistics%2CcontentDetails&id=$ID&key=$KEY";
+
     /* MAL API CONSTANTS */
 
     //URLs
