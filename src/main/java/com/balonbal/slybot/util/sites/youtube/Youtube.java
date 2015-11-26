@@ -1,9 +1,7 @@
-package com.balonbal.slybot.util.sites;
+package com.balonbal.slybot.util.sites.youtube;
 
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.lib.Reference;
-import com.balonbal.slybot.lib.Strings;
-import com.balonbal.slybot.util.sites.youtube.YoutubeInfo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
@@ -13,11 +11,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,7 +21,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +28,7 @@ public class Youtube {
 
     private static final Pattern videoCode = Pattern.compile("(?<=(v=|/))(?<!user/)[\\w\\d\\-_]{11}");
     private static final Pattern playlistCode = Pattern.compile("(?<=(list=))[\\w\\d\\-_]+");
-    File f;
+    File video, playlist;
 
 	public Youtube() {
 
@@ -43,57 +38,52 @@ public class Youtube {
 	    //Remove any extra parameters
         Matcher matcher = videoCode.matcher(url);
         Matcher playlistMatcher = playlistCode.matcher(url);
-        String playlist = null;
+        String playlistId = null;
+        String videoId = null;
 
         if (playlistMatcher.find()) {
-            playlist = playlistMatcher.group();
+            playlistId = playlistMatcher.group();
         }
 
-        if (!matcher.find()) throw new IllegalArgumentException("Argument did not contain a valid video code");
-        url = url.substring(matcher.start(), matcher.end());
-
-		Random r = new Random();
+        if (matcher.find()) {
+            videoId = url.substring(matcher.start(), matcher.end());
+        }
 
         try {
             //Create a new temp file
-            f = new File("tmp_" + r.nextInt(10000));
-            File playlistFile = new File("tmp_" + r.nextInt(10000));
-            try {
-                f.createNewFile();
-                if (playlist != null) playlistFile.createNewFile();
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
+            video = File.createTempFile("yt_video", null);
+            playlist = File.createTempFile("yt_playlist", null);
 
             try {
-                //Download the files, use version 2 of the api
-                downloadToFile(new URL(Reference.YOUTUBE_VIDEO_URL.replaceAll("\\$KEY", Reference.YOUTUBE_API_KEY).replaceAll("\\$ID", url)), f);
-                if (playlist != null) downloadToFile(new URL(Strings.YOUTUBE_PLAYLIST + playlist), playlistFile);
+                //Download the files
+                if (videoId != null) downloadToFile(new URL(Reference.YOUTUBE_VIDEO_URL.replaceAll("\\$KEY", Reference.YOUTUBE_API_KEY).replaceAll("\\$ID", videoId)), video);
+                if (playlistId != null) downloadToFile(new URL(Reference.YOUTUBE_PLAYLIST_URL.replaceAll("\\$KEY", Reference.YOUTUBE_API_KEY).replaceAll("\\$PLAYLIST_ID", playlistId)), playlist);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
 
-            HashMap<String, String> map = parseJsonFile(f);
-            map.put("id", url);
-            if (playlist != null) {
+            HashMap<String, String> map = (videoId == null ? new HashMap<String, String>() : parseJsonFile(video));
+            if (videoId != null) map.put("id", videoId);
+            if (playlistId != null) {
                 //Add playlist info (if any)
-                map.put("playlist_id", playlist);
-                appendPlaylistInfo(map, playlistFile);
-                playlistFile.delete();
+                map.put("playlist_id", playlistId);
+                appendPlaylistInfo(map, playlist);
             }
 
-            printInfo(event, map, playlist != null);
+            printInfo(event, map, videoId != null, playlistId != null);
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
             //Always delete the file
-            f.delete();
+            video.delete();
+            playlist.delete();
         }
 	}
 
     private void downloadToFile(URL url, File file) {
 
         long then = System.currentTimeMillis();
-        System.out.println("Fetching file from: " + url.getHost() + url.getPath());
+        System.out.println("Fetching file from: " + url.getHost() + url.getPath() + url.getFile());
 
         try {
             //Open the remote file for reading
@@ -124,83 +114,83 @@ public class Youtube {
         System.out.println("Fetched file in " + (now - then) + "ms");
     }
 
-    public void printInfo(Event<SlyBot> event, HashMap<String, String> items, boolean playlist) {
+    public void printInfo(Event<SlyBot> event, HashMap<String, String> items, boolean video, boolean playlist) {
 
-        String id = items.get("id");
-		String creator = items.get("creator");
-		String title = items.get("title");
-		String views = items.get("views");
-		String duration = items.get("duration");
-        String date = items.get("date");
-        String likes = items.get("likeCount");
-        String disLikes = items.get("dislikeCount");
-		
-		//Format the view counter to separate each thousand
-        String viewCount = String.format("%,d", Long.parseLong(views));
-        likes = String.format("%,d", Long.parseLong(likes));
-        disLikes = String.format("%,d", Long.parseLong(disLikes));
+        if (video) {
+            String id = items.get("id");
+            String creator = items.get("creator");
+            String title = items.get("title");
+            String views = items.get("views");
+            String duration = items.get("duration");
+            String date = items.get("date");
+            String likes = items.get("likeCount");
+            String disLikes = items.get("dislikeCount");
 
-        StringBuilder time = new StringBuilder();
+            //Format the view counter to separate each thousand
+            String viewCount = String.format("%,d", Long.parseLong(views));
+            likes = String.format("%,d", Long.parseLong(likes));
+            disLikes = String.format("%,d", Long.parseLong(disLikes));
 
-        //Build time string
-        int hour = 0, minute = 0, seconds = 0;
-        if (duration.contains("H")) {
-            hour = Integer.parseInt(duration.substring(2, duration.indexOf("H")));
-            time.append(hour);
+            StringBuilder time = new StringBuilder();
+
+            //Build time string
+            int hour = 0, minute = 0, seconds = 0;
+            if (duration.contains("H")) {
+                hour = Integer.parseInt(duration.substring(2, duration.indexOf("H")));
+                time.append(hour);
+                time.append(":");
+            }
+            if (duration.contains("M")) {
+                minute = Integer.parseInt(duration.substring(duration.contains("H") ? duration.indexOf("H") + 1 : 2, duration.indexOf("M")));
+            }
+            if (duration.contains("S")) {
+                seconds = Integer.parseInt(duration.substring(duration.contains("M") ? duration.indexOf("M") + 1 : duration.contains("H") ? duration.indexOf("H") + 1 : 2, duration.indexOf("S")));
+            }
+
+            if (minute < 10) time.append("0");
+            time.append(minute);
             time.append(":");
+            if (seconds < 10) time.append("0");
+            time.append(seconds);
+
+            //Convert date to a displayable format depending on locale
+            date = date.replaceAll("(\\d{4})\\-(\\d{2})\\-(\\d{2})T((\\d{2}):(\\d{2}):(\\d{2}))(.*)", "$4 $3. $2 $1");
+            DateFormat format = new SimpleDateFormat("kk:mm:ss dd. MM yyyy");
+
+            try {
+                date = format.parse(date).toString();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            //Send the results for the video back to the channel/user
+            event.getBot().reply(event, "[http://youtu.be/" + Colors.PURPLE + id + Colors.NORMAL + "] - " +
+                    Colors.BOLD + Colors.BLUE + creator + Colors.NORMAL + ": " + Colors.DARK_GREEN + title + Colors.NORMAL +
+                    " [ " + Colors.BOLD + time.toString() + Colors.NORMAL + " ]" +
+                    " [ v: " + Colors.BOLD + viewCount + Colors.NORMAL + " ]" +
+                    " [ U: " + Colors.GREEN + Colors.BOLD + likes + Colors.NORMAL + " | D: " + Colors.RED + Colors.BOLD + disLikes + Colors.NORMAL + " ]" +
+                    " [ UL: " + Colors.BOLD + date + Colors.NORMAL + " ]");
         }
-        if (duration.contains("M")) {
-            minute = Integer.parseInt(duration.substring(duration.contains("H") ? duration.indexOf("H") + 1 : 2, duration.indexOf("M")));
-        }
-        if (duration.contains("S")) {
-            seconds = Integer.parseInt(duration.substring(duration.contains("M") ? duration.indexOf("M") + 1 : duration.contains("H") ? duration.indexOf("H") + 1: 2, duration.indexOf("S")));
-        }
-
-        if (minute < 10) time.append("0");
-        time.append(minute);
-        time.append(":");
-        if (seconds  < 10) time.append("0");
-        time.append(seconds);
-
-        //Convert date to a displayable format depending on locale
-        date = date.replaceAll("(\\d{4})\\-(\\d{2})\\-(\\d{2})T((\\d{2}):(\\d{2}):(\\d{2}))(.*)", "$4 $3. $2 $1");
-        DateFormat format = new SimpleDateFormat("kk:mm:ss dd. MM yyyy");
-
-        try {
-            date = format.parse(date).toString();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        //Send the results for the video back to the channel/user
-        event.getBot().reply(event, "[http://youtu.be/" + Colors.PURPLE + id + Colors.NORMAL + "] - " +
-                Colors.BOLD + Colors.BLUE + creator + Colors.NORMAL + ": " + Colors.DARK_GREEN + title + Colors.NORMAL +
-                " [ " + Colors.BOLD + time.toString() + Colors.NORMAL + " ]" +
-                " [ v: " + Colors.BOLD + viewCount + Colors.NORMAL + " ]" +
-                " [ U: " + Colors.GREEN + Colors.BOLD + likes + Colors.NORMAL + " | D: " + Colors.RED + Colors.BOLD + disLikes + Colors.NORMAL + " ]" +
-                " [ UL: " + Colors.BOLD + date + Colors.NORMAL + " ]");
-
         if (playlist) {
-            event.getBot().reply(event, "[Playlist] - " +
+            event.getBot().reply(event, "[Playlist - http://youtube.com/playlist?list=" + Colors.PURPLE + items.get("playlist_id") + Colors.NORMAL + "] - " +
                     Colors.BOLD + Colors.BLUE + items.get("playlist_owner") + Colors.NORMAL + ": " + Colors.DARK_GREEN + items.get("playlist_title") + Colors.NORMAL +
-                    " [ size: " + Colors.BOLD + items.get("playlist_size") + Colors.NORMAL + " ]");
+                    " [ size: " + Colors.BOLD + items.get("playlist_size").substring(0, items.get("playlist_size").indexOf(".")) + Colors.NORMAL + " ]");
         }
     }
 
     private void appendPlaylistInfo(HashMap<String, String> map, File file) {
         try {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
-            Document document = builder.parse(file);
+            BufferedReader reader = new BufferedReader(new FileReader(file));
 
-            document.getDocumentElement().normalize();
+            Gson gson = new GsonBuilder().create();
 
-            Element list = (Element) document.getElementsByTagName("feed").item(0);
+            YoutubeInfo ytinfo = gson.fromJson(reader, YoutubeInfo.class);
+            LinkedTreeMap<String, Object> info = ytinfo.getItems().get(0);
 
-            map.put("playlist_owner", list.getElementsByTagName("author").item(0).getChildNodes().item(0).getChildNodes().item(0).getNodeValue());
-            map.put("playlist_title", list.getElementsByTagName("title").item(0).getChildNodes().item(0).getNodeValue());
-            map.put("playlist_size", list.getElementsByTagName("openSearch:totalResults").item(0).getChildNodes().item(0).getNodeValue());
-        } catch (ParserConfigurationException | SAXException | IOException e) {
+            map.put("playlist_owner", ((LinkedTreeMap<String, String>) info.get("snippet")).get("channelTitle"));
+            map.put("playlist_title", ((LinkedTreeMap<String, String>) info.get("snippet")).get("title"));
+            map.put("playlist_size", String.valueOf(((LinkedTreeMap<String, Object>) info.get("contentDetails")).get("itemCount")));
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

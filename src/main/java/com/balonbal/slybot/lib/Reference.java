@@ -20,6 +20,7 @@ public class Reference {
     /* URL CONSTANTS */
     public static final String YOUTUBE_API_KEY = "AIzaSyCWKwRwa16hGkSYWZij_0QjraZ4evm4xvM";
     public static final String YOUTUBE_VIDEO_URL = "https://www.googleapis.com/youtube/v3/videos?part=snippet%2Cstatistics%2CcontentDetails&id=$ID&key=$KEY";
+    public static final String YOUTUBE_PLAYLIST_URL = "https://www.googleapis.com/youtube/v3/playlists?part=snippet%2CcontentDetails&id=$PLAYLIST_ID&key=$KEY";
 
     /* MAL API CONSTANTS */
 
