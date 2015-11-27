@@ -1,19 +1,17 @@
 package com.balonbal.slybot.util.rss;
 
 import com.balonbal.slybot.Main;
-import com.balonbal.slybot.config.Config;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import org.apache.commons.lang3.ArrayUtils;
 import org.pircbotx.Colors;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class RSSSubscription implements Config {
+public class RSSSubscription {
 
     private URL feedURL;
     private ArrayList<String> subscribers;
@@ -28,7 +26,11 @@ public class RSSSubscription implements Config {
         ID = id;
     }
 
-    public RSSSubscription(URL url, String id, ArrayList<String> subscriber) {
+    public RSSSubscription(URL url, String id, ArrayList<String> subscribers) {
+        this(url, id, subscribers, -1, -1);
+    }
+
+    public RSSSubscription(URL url, String id, ArrayList<String> subscriber, long lastDate, long lastCheck) {
         SyndFeed feed = RSSUtil.getElements(url);
 
         if (feed != null) {
@@ -37,8 +39,8 @@ public class RSSSubscription implements Config {
 
             title = feed.getTitle();
             //Assume the first element is the newest and get the date
-            lastDate = feed.getEntries().get(0).getPublishedDate().getTime();
-            lastCheck = System.currentTimeMillis();
+            this.lastDate = lastDate == -1 ? feed.getEntries().get(0).getPublishedDate().getTime() : lastDate;
+            this.lastCheck = lastCheck == -1 ? System.currentTimeMillis() : lastCheck;
 
             subscribers = subscriber;
 
@@ -82,7 +84,7 @@ public class RSSSubscription implements Config {
         }
     }
 
-    @Override
+    /*@Override
     public void updateSetting(String key, Object value) {
         switch (key) {
             case "id": ID = (String) value; break;
@@ -98,23 +100,14 @@ public class RSSSubscription implements Config {
             case "lastDate": lastDate = (long) value; break;
             case "subscribers": subscribers = (ArrayList<String>) value; break;
         }
-    }
+    }*/
 
-    @Override
     public void appendSetting(String key, Object value) {
         if (key.equals("subscribers")) {
             subscribers.add((String) value);
         }
     }
 
-    @Override
-    public void removeSetting(String key, Object value) {
-        if (key.equals("subscribers")) {
-            subscribers.remove(value);
-        }
-    }
-
-    @Override
     public HashMap<String, Object> getSaveValues() {
         HashMap<String, Object> map = new HashMap<>();
 
@@ -126,16 +119,6 @@ public class RSSSubscription implements Config {
         map.put("subscribers", subscribers);
 
         return map;
-    }
-
-    @Override
-    public void setSaveLocation(File file) {
-        savefile = file;
-    }
-
-    @Override
-    public File getSaveLocation() {
-        return savefile;
     }
 
     public String getID() {
