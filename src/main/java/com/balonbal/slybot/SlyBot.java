@@ -6,6 +6,7 @@ import com.balonbal.slybot.config.Config;
 import com.balonbal.slybot.lib.Settings;
 import com.balonbal.slybot.util.LoggerUtil;
 import com.balonbal.slybot.util.rss.RSSManager;
+import com.balonbal.slybot.util.sites.twitch.Twitch;
 import org.pircbotx.Channel;
 import org.pircbotx.Configuration;
 import org.pircbotx.PircBotX;
@@ -21,6 +22,7 @@ public class SlyBot extends PircBotX {
     protected Config config;
     protected String version = Main.class.getPackage().getImplementationVersion();
     protected RSSManager rssManager;
+    protected Twitch twitch;
 
 	public SlyBot(Configuration<? extends PircBotX> configuration, BotConfig botConfig) {
 		super(configuration);
@@ -31,6 +33,10 @@ public class SlyBot extends PircBotX {
     public void onConnected() {
         try {
             rssManager = new RSSManager();
+            twitch = new Twitch();
+
+            Main.getConfig().addConfiguration(twitch.getSaveLocation(), "twitch", twitch);
+            Main.getConfig().addConfiguration(rssManager.getSaveLocation(), "rss", rssManager);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -121,5 +127,9 @@ public class SlyBot extends PircBotX {
             //Rebuild the triggger
             channelConfig.setTrigger(channelConfig.getTriggerString());
         }
+    }
+
+    public Twitch getTwitch() {
+        return twitch;
     }
 }

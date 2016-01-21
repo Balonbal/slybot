@@ -2,7 +2,7 @@ package com.balonbal.slybot.listeners;
 
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.lib.Strings;
-import com.balonbal.slybot.util.sites.Youtube;
+import com.balonbal.slybot.util.sites.youtube.Youtube;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;

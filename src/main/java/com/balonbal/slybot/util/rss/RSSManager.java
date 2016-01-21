@@ -1,54 +1,30 @@
 package com.balonbal.slybot.util.rss;
 
 import com.balonbal.slybot.Main;
+import com.balonbal.slybot.config.Config;
 import com.balonbal.slybot.lib.Settings;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class RSSManager {
+public class RSSManager implements Config {
 
     public ArrayList<RSSSubscription> feeds;
-    public String savelocation = "rss/";
+    public File savelocation = new File("rss.yaml");
     public Timer timer;
 
     public RSSManager() {
         feeds = new ArrayList<>();
-        loadSubscriptions(savelocation);
         startTimer(Settings.rssUpdateFrequency, Settings.rssUpdateFrequency);
-    }
-
-    public void loadSubscriptions(String path) {
-        File dir = new File(path);
-
-        if (!dir.exists()) {
-            dir.mkdir();
-            return;
-        }
-
-        //load files from the savedirectory
-        for (File f: dir.listFiles()) {
-            try {
-                System.out.println("Loading rss subscription from: " + f.getAbsolutePath());
-                RSSSubscription subscription = new RSSSubscription(f.getName());
-                //Load any stored config and add to auto-save
-                Main.getConfig().addConfiguration(f, f.getName(), subscription);
-
-                feeds.add(subscription);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        updateFeeds();
     }
 
     public void addFeed(URL url, String id, ArrayList<String> subscribers) {
         RSSSubscription subscription = new RSSSubscription(url, id, subscribers);
-        Main.getConfig().addConfiguration(new File(savelocation + id), id, subscription);
         feeds.add(subscription);
     }
 
@@ -89,19 +65,13 @@ public class RSSManager {
     }
 
     public void updateFeeds() {
-        ArrayList<String> removals = new ArrayList<>();
         for (RSSSubscription feed: feeds) {
             try {
                 feed.update();
             } catch (NullPointerException e) {
                 //no url
                 e.printStackTrace();
-                removals.add(feed.getID());
             }
-        }
-
-        for (String s: removals) {
-            removeFeed(s);
         }
     }
 
@@ -118,4 +88,58 @@ public class RSSManager {
         return null;
     }
 
+    @Override
+    public void updateSetting(String key, Object value) {
+        switch (key) {
+            case "subscriptions":
+                ArrayList<HashMap<String, Object>> list = (ArrayList<HashMap<String, Object>>) value;
+                for (HashMap<String, Object> map: list) {
+                    try {
+                        feeds.add(new RSSSubscription(new URL((String) map.get("url")), (String) map.get("id"), (ArrayList<String>) map.get("subscribers"), (long) map.get("lastDate"), (long) map.get("lastCheck")));
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                updateFeeds();
+        }
+    }
+
+    @Override
+    public void appendSetting(String key, Object value) {
+        switch (key) {
+            case "subscriptions":
+                HashMap<String, Object> map = (HashMap<String, Object>) value;
+                try {
+                    feeds.add(new RSSSubscription(new URL((String) map.get("url")), (String) map.get("id"), (ArrayList<String>) map.get("subscriptions")));
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+
+    @Override
+    public void removeSetting(String key, Object value) {
+
+    }
+
+    @Override
+    public HashMap<String, Object> getSaveValues() {
+        HashMap<String, Object> map = new HashMap<>();
+        ArrayList<HashMap<String, Object>> feedList = new ArrayList<HashMap<String, Object>>();
+        for (RSSSubscription subscription: feeds) {
+            feedList.add(subscription.getSaveValues());
+        }
+        map.put("subscriptions", feedList);
+        return map;
+    }
+
+    @Override
+    public void setSaveLocation(File file) {
+        savelocation = file;
+    }
+
+    @Override
+    public File getSaveLocation() {
+        return savelocation;
+    }
 }
