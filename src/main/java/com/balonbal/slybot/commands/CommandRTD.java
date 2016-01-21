@@ -1,16 +1,14 @@
 package com.balonbal.slybot.commands;
 
-import java.util.Random;
-
-import com.balonbal.slybot.Main;
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.lib.Reference;
-import org.pircbotx.Channel;
-import org.pircbotx.User;
 import org.pircbotx.Colors;
+import org.pircbotx.User;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
+
+import java.util.Random;
 
 public class CommandRTD implements Command {
 
@@ -26,47 +24,63 @@ public class CommandRTD implements Command {
 
 	@Override
 	public String run(String[] params, Event<SlyBot> event) {
-		long[] numbers = calculateResult(params);
-		broadcastResult(event, (int) numbers[1], (int) numbers[2], numbers[0]);
-        return String.valueOf(numbers[0]);
-	}
-	
-	private long[] calculateResult(String[] params) {
 		int max = 100;
 		int min = 0;
-		long num = 0;
+		long num;
 		Random r = new Random();
-		
-		
-		switch (params.length) {
-		case 2:
-			if (params[1] != null && params[1] != "null") {
-				max = Integer.parseInt(params[1]);
+
+		try {
+			switch (params.length) {
+				case 1:
+					break;
+				case 2:
+					if (params[1] != null && params[1] != "null") {
+						max = Integer.parseInt(params[1]);
+					}
+					break;
+				case 3:
+					if (params[1] != null && params[2] != null) {
+						min = Integer.parseInt(params[1]);
+						max = Integer.parseInt(params[2]);
+					}
+					break;
+				default:
+					return randomizeList(event, params);
 			}
-			break;
-		case 3:
-			if(params[1] != null && params[2] != null) {
-				min = Integer.parseInt(params[1]);
-				max = Integer.parseInt(params[2]);
-			}
-			break;
+		} catch (NumberFormatException e) {
+			return randomizeList(event, params);
+		}
+
+		//Fix wrong order
+		if (max < min) {
+			int tempMax = max;
+			max = min;
+			min = tempMax;
 		}
 		
 
-		if (max > 0) {
-			num = r.nextInt(max - min) + min + 1;
-		}
-		
-		return new long[] { num, min, max };
+		num = r.nextInt(max - min) + min + 1;
+
+		User user = null;
+		if (event instanceof MessageEvent) user = ((MessageEvent) event).getUser();
+		if (event instanceof PrivateMessageEvent) user = ((PrivateMessageEvent) event).getUser();
+
+		event.getBot().reply(event, user.getNick() + " rolls the dice (" + (max - min) + " side" + (max - min == 1 ? "" : "s") + ") and got... " + num + "!");
+
+		return  num + "";
 	}
-		
-	public void broadcastResult(Event<SlyBot> event, int min, int max, long num) {
-        User user = null;
-        if (event instanceof MessageEvent) user = ((MessageEvent) event).getUser();
-        if (event instanceof PrivateMessageEvent) user = ((PrivateMessageEvent) event).getUser();
 
-        event.getBot().reply(event, user.getNick() + " rolls the dice (" + (max - min) + " sides) and got... " + num + "!");
-		
+	public String randomizeList(Event<SlyBot> event, String[] params) {
+		Random r = new Random();
+
+		String result = params[r.nextInt(params.length -1) + 1];
+
+		User user = null;
+		if (event instanceof MessageEvent) user = ((MessageEvent) event).getUser();
+		if (event instanceof PrivateMessageEvent) user = ((PrivateMessageEvent) event).getUser();
+
+		event.getBot().reply(event, user.getNick() + " rolls a very special dice.. It shows \"" + result + "\"");
+		return result;
 	}
 
 	@Override
@@ -86,7 +100,7 @@ public class CommandRTD implements Command {
 
 	@Override
 	public boolean pmCommand() {
-		return false;
+		return true;
 	}
 
 }
