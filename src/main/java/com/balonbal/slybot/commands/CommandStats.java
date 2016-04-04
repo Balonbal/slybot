@@ -75,7 +75,7 @@ public class CommandStats implements Command {
             builder.append(TimeDateUtil.stringify(uptime, timePattern));
             builder.append(" (");
             builder.append(Colors.PURPLE);
-            builder.append(uptime * 100 / cacher.offlineTime);
+            builder.append(uptime * 100 / (cacher.offlineTime + cacher.onlineTime));
             builder.append(Colors.NORMAL);
             builder.append("%)\n");
         }
@@ -138,6 +138,8 @@ public class CommandStats implements Command {
                 }
                 builder.append("\n");
             }
+
+            //TODO Add game stats
         }
 
         event.getBot().replyLots(event, builder.toString());

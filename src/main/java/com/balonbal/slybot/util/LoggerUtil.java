@@ -1,5 +1,6 @@
 package com.balonbal.slybot.util;
 
+import com.balonbal.slybot.Main;
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;

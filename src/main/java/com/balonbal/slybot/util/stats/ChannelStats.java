@@ -5,6 +5,7 @@ import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
 import org.pircbotx.hooks.Event;
+import org.pircbotx.hooks.events.MessageEvent;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -102,4 +103,15 @@ public class ChannelStats {
         return list;
     }
 
+    public void addMessage(MessageEvent<SlyBot> message) {
+        messageCount.put(message.getUser().getNick(), messageCount.get(message.getUser().getNick()) == null ? 1 : messageCount.get(message.getUser().getNick()) + 1);
+
+        //Check for command
+        String cmd = Main.getCommandListener().getCommand(message.getMessage().substring(message.getMessage().indexOf(">") + 2), message.getChannel().getName());
+        if (!cmd.equals("") && !cmd.isEmpty() ) {
+            commandCount.put(cmd, commandCount.get(cmd) == null ? 1 : commandCount.get(cmd) + 1);
+        }
+
+        messages++;
+    }
 }
