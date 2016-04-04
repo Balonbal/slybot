@@ -37,6 +37,7 @@ public class SlyBot extends PircBotX {
 
             Main.getConfig().addConfiguration(twitch.getSaveLocation(), "twitch", twitch);
             Main.getConfig().addConfiguration(rssManager.getSaveLocation(), "rss", rssManager);
+            Main.getConfig().addConfiguration(Main.getStatsCacher().getSaveLocation(), "stats", Main.getStatsCacher());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,6 +1,10 @@
 package com.balonbal.slybot.util;
 
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
+
 import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TimeDateUtil {
 
@@ -71,5 +75,45 @@ public class TimeDateUtil {
 
     public static int getSecond(Calendar calendar) {
         return calendar.get(Calendar.SECOND);
+    }
+
+    public static String stringify(long mills, String format) {
+        Pattern pattern = Pattern.compile("\\$(d|h|m|s|M)");
+
+        int days = (int) Math.floor(mills / (24 * 60 * 60 * 1000));
+        mills %= 24*60*60*1000;
+        int hours = (int) Math.floor(mills / (60 * 60 * 1000));
+        mills %= 60*60*1000;
+        int minutes = (int) Math.floor(mills / (60 * 1000));
+        mills %= 60*1000;
+        int secs = (int) Math.floor(mills / 1000);
+
+        Matcher m = pattern.matcher(format);
+        StringBuffer buffer = new StringBuffer();
+        while (m.find()) {
+            int r = 0;
+            switch (m.group().substring(1)) {
+                case "d":
+                    r = days;
+                    break;
+                case "h":
+                    r = hours;
+                    break;
+                case "m":
+                    r = minutes;
+                    break;
+                case "s":
+                    r = secs;
+                    break;
+                case "M":
+                    r = (int) (mills % 1000);
+                    break;
+            }
+
+            m.appendReplacement(buffer, ((r < 10 && !m.group().substring(1).equals("d")) ? "0" : "") + r);
+        }
+
+        m.appendTail(buffer);
+        return buffer.toString();
     }
 }
