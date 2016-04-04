@@ -45,12 +45,16 @@ public class CommandListener extends ListenerAdapter<SlyBot> {
     }
 
     public String getCommand(MessageEvent e) {
-        ChannelConfig config = (ChannelConfig) Main.getConfig().getConfig("config" + e.getChannel().getName());
+        return getCommand(e.getMessage(), e.getChannel().getName());
+    }
+
+    public String getCommand(String message, String channel) {
+        ChannelConfig config = (ChannelConfig) Main.getConfig().getConfig("config" + channel);
 
         //Get the regex for the channel
         Pattern trigger = config.getTrigger();
 
-        Matcher matcher = trigger.matcher(e.getMessage());
+        Matcher matcher = trigger.matcher(message);
         StringBuffer buffer = new StringBuffer();
 
         if (matcher.find()) {
