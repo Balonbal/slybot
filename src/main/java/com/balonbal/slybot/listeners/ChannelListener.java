@@ -25,6 +25,7 @@ public class ChannelListener extends ListenerAdapter<SlyBot> {
             location = location.replaceAll("\\$CHANNEL", event.getChannel().getName());
 
             Main.getConfig().addConfiguration(new File(location), "config" + event.getChannel().getName(), new ChannelConfig(event.getChannel().getName()));
+            Main.getStatsCacher().buildCache(event.getChannel().getName());
         }
     }
 

@@ -1,5 +1,6 @@
 package com.balonbal.slybot.util;
 
+import com.balonbal.slybot.Main;
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
@@ -49,6 +50,27 @@ public class LoggerUtil {
             writer.println(String.format("[%s] <%s> %s", date.toString(), user.getNick(), message));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static int countLines(String filename) throws IOException {
+        InputStream is = new BufferedInputStream(new FileInputStream(filename));
+        try {
+            byte[] c = new byte[1024];
+            int count = 0;
+            int readChars = 0;
+            boolean empty = true;
+            while ((readChars = is.read(c)) != -1) {
+                empty = false;
+                for (int i = 0; i < readChars; ++i) {
+                    if (c[i] == '\n') {
+                        ++count;
+                    }
+                }
+            }
+            return (count == 0 && !empty) ? 1 : count;
+        } finally {
+            is.close();
         }
     }
 

@@ -37,6 +37,7 @@ public class SlyBot extends PircBotX {
 
             Main.getConfig().addConfiguration(twitch.getSaveLocation(), "twitch", twitch);
             Main.getConfig().addConfiguration(rssManager.getSaveLocation(), "rss", rssManager);
+            Main.getConfig().addConfiguration(Main.getStatsCacher().getSaveLocation(), "stats", Main.getStatsCacher());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,7 +61,7 @@ public class SlyBot extends PircBotX {
         if (c == null) {
             u.send().message(message);
         } else {
-            for (String s: Settings.mutedChannels) {
+            for (String s : Settings.mutedChannels) {
                 if (s.equalsIgnoreCase(c.getName())) return;
             }
             c.send().message(message);
@@ -73,6 +74,17 @@ public class SlyBot extends PircBotX {
             reply(((MessageEvent) e).getChannel(), ((MessageEvent) e).getUser(), message);
         } else if (e instanceof PrivateMessageEvent) {
             e.respond(message);
+        }
+    }
+
+    public void replyLots(Event e, String ... message) {
+        for (String s: message) {
+            //Send lines as separate messages
+            if (s.contains("\n")) {
+                replyLots(e, s.split("\\n"));
+            } else {
+                reply(e, s);
+            }
         }
     }
 

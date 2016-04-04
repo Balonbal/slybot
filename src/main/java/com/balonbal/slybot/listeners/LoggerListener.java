@@ -1,5 +1,6 @@
 package com.balonbal.slybot.listeners;
 
+import com.balonbal.slybot.Main;
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.util.LoggerUtil;
 import org.pircbotx.hooks.ListenerAdapter;
@@ -12,6 +13,8 @@ public class LoggerListener extends ListenerAdapter<SlyBot> {
     public void onMessage(MessageEvent<SlyBot> event) throws Exception {
         System.out.printf("%s -> %s: %s\n", event.getUser().getNick(), event.getChannel().getName(), event.getMessage());
         LoggerUtil.log(event);
+        //Add line to stats
+        Main.getStatsCacher().getStats(event.getChannel().getName()).addMessage(event);
     }
 
     @Override

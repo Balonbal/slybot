@@ -4,6 +4,7 @@ import com.balonbal.slybot.config.BotConfig;
 import com.balonbal.slybot.core.ChallengeManager;
 import com.balonbal.slybot.core.CommandHandler;
 import com.balonbal.slybot.core.ConfigurationHandler;
+import com.balonbal.slybot.core.StatsCacher;
 import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
 import com.balonbal.slybot.listeners.*;
@@ -24,6 +25,7 @@ public class Main {
     static LinkListener linkListener;
     static ConfigurationHandler configurationHandler;
 	static ChallengeManager cm;
+    static StatsCacher statsCacher;
 	static SlyBot slybot;
 	static String nick = "slybot";
 
@@ -38,6 +40,7 @@ public class Main {
         commandListener = new CommandListener(commandHandler);
         linkListener = new LinkListener();
         cm = new ChallengeManager();
+        statsCacher = new StatsCacher();
 		
 		//Set up local variables for network and channel
 		String network = "";
@@ -158,5 +161,7 @@ public class Main {
 	public static ChallengeManager getChallengeManager() {
 		return cm;
 	}
+
+    public static StatsCacher getStatsCacher() { return statsCacher; }
 
 }
