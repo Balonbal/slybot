@@ -1,9 +1,11 @@
 package com.balonbal.slybot.commands;
 
+import com.balonbal.slybot.Main;
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.lib.Reference;
 import com.balonbal.slybot.lib.Settings;
 import com.balonbal.slybot.util.LoggerUtil;
+import com.balonbal.slybot.util.stats.ChannelStats;
 import org.pircbotx.Colors;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.events.MessageEvent;
@@ -50,22 +52,42 @@ public class CommandStats implements Command {
         if (channelCommand) {
             MessageEvent e = (MessageEvent) event;
 
-            //Get channel log
-            String path = Reference.CONFIG_CHANNEL_FILE;
-            path = path.replaceAll("\\$NETWORK", Settings.network);
-            path = path.replaceAll("\\$CHANNEL", e.getChannel().getName());
+            ChannelStats stats = Main.getStatsCacher().getStats(e.getChannel().getName());
 
-
+            //Messages
             builder.append("Recorded messages from this channel: ");
             builder.append(Colors.BLUE);
-            try {
-                builder.append(LoggerUtil.countLines(path));
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-
+            builder.append(stats.getMessages());
             builder.append("\n");
 
+            //Active user
+            builder.append("Most active user: ");
+            builder.append(Colors.BLUE);
+            builder.append(stats.getMostActiveUser());
+            builder.append(Colors.NORMAL);
+            builder.append(" (");
+            builder.append(Colors.GREEN + Colors.BOLD);
+            builder.append(stats.getMessageCount().get(stats.getMostActiveUser()));
+            builder.append(Colors.NORMAL);
+            builder.append(" messages | ");
+            builder.append(Colors.PURPLE);
+            builder.append(Math.round(stats.getMessageCount().get(stats.getMostActiveUser()) * 100 / stats.getMessages()));
+            builder.append(Colors.NORMAL);
+            builder.append("%)\n");
+
+            //Commands
+            builder.append("Most used commands: ");
+            for (String c: stats.getMostCommands(5)) {
+                builder.append(Colors.BLUE);
+                builder.append(c);
+                builder.append(Colors.NORMAL);
+                builder.append(" (");
+                builder.append(Colors.GREEN);
+                builder.append(stats.getCommandCount().get(c));
+                builder.append(Colors.NORMAL);
+                builder.append(") ");
+            }
+            builder.append("\n");
         }
 
         event.getBot().replyLots(event, builder.toString());
