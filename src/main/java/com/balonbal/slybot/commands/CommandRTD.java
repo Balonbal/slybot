@@ -2,12 +2,15 @@ package com.balonbal.slybot.commands;
 
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.lib.Reference;
+import oracle.jrockit.jfr.StringConstantPool;
+import org.apache.commons.lang3.ArrayUtils;
 import org.pircbotx.Colors;
 import org.pircbotx.User;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class CommandRTD implements Command {
@@ -70,10 +73,38 @@ public class CommandRTD implements Command {
 		return  num + "";
 	}
 
+	public String[] constructArray(String[] params) {
+		ArrayList<String> elements = new ArrayList<>();
+
+		StringBuilder builder = null;
+		for (String s: params) {
+			System.out.println(s);
+			if (s.startsWith("\"")) {
+				builder = new StringBuilder();
+				builder.append(s.substring(1));
+				continue;
+			}
+			if (builder != null) {
+				builder.append(" ");
+				if (s.endsWith("\"")) {
+					builder.append(s.substring(0, s.length() - 1));
+					elements.add(builder.toString());
+				} else {
+					builder.append(s);
+				}
+			}
+		}
+
+		return (elements.isEmpty() ? params : elements.toArray(new String[elements.size()]));
+	}
+
 	public String randomizeList(Event<SlyBot> event, String[] params) {
 		Random r = new Random();
+		String[] list = new String[params.length - 1];
+		System.arraycopy(params, 1, list, 0, list.length);
+		list = constructArray(list);
 
-		String result = params[r.nextInt(params.length -1) + 1];
+		String result = list[r.nextInt(list.length)];
 
 		User user = null;
 		if (event instanceof MessageEvent) user = ((MessageEvent) event).getUser();
