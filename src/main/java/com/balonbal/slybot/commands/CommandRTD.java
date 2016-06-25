@@ -2,8 +2,6 @@ package com.balonbal.slybot.commands;
 
 import com.balonbal.slybot.SlyBot;
 import com.balonbal.slybot.lib.Reference;
-import oracle.jrockit.jfr.StringConstantPool;
-import org.apache.commons.lang3.ArrayUtils;
 import org.pircbotx.Colors;
 import org.pircbotx.User;
 import org.pircbotx.hooks.Event;
