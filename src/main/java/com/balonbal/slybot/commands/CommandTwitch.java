@@ -63,7 +63,7 @@ public class CommandTwitch implements Command {
                     String subscriber = (event instanceof MessageEvent ? ((MessageEvent) event).getChannel().getName() : ((PrivateMessageEvent) event).getUser().getNick());
 
                     for (TwitchSubscription subscription : subscriptions) {
-                        reply += "[" + Colors.BOLD + (subscription.isSubscribed(subscriber) ? Colors.DARK_GREEN : Colors.OLIVE) + subscription.getName() + Colors.NORMAL + "] ";
+                        reply += "[" + Colors.BOLD + (subscription.isSubscribed(subscriber) ? Colors.DARK_GREEN : Colors.OLIVE) + subscription.getName() + Colors.NORMAL + " - " + subscription.getChannel() + "] ";
                     }
 
                     event.getBot().reply(event, reply);
@@ -154,7 +154,7 @@ public class CommandTwitch implements Command {
             String channel = parameters[3];
 
             if (channel.matches("https?://(www\\.)?twitch\\.tv/.*")) {
-                channel = channel.substring(channel.lastIndexOf("/"));
+                channel = channel.substring(channel.lastIndexOf("/")+1);
             }
 
             event.getBot().getTwitch().addSubscription(channel, parameters[2], list);
