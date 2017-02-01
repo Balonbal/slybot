@@ -7,6 +7,10 @@ import com.balonbal.slybot.lib.Settings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.pircbotx.Colors;
 
 import java.io.BufferedReader;
@@ -41,20 +45,29 @@ public class Twitch implements Config {
     public ArrayList<HashMap<String, Object>> checkSubscriptions() {
         //Build a single request (so we only have to send one)
         String request = Reference.TWITCH_STREAM_QUERY;
-
         for (int i = 0; i < subscriptions.size(); i++) {
             //Add a , between each stream
             request += subscriptions.get(i).getChannel() + (i == subscriptions.size() - 1 ? "" : ",");
         }
 
         try {
-            URL requestURL = new URL(request);
-            InputStreamReader inputStreamReader = new InputStreamReader(requestURL.openStream());
+            /** We need to add a header so this is the hard way **/
+            CloseableHttpClient client = HttpClients.custom().build();
+
+            HttpGet get = new HttpGet(request);
+            get.addHeader("Client-ID", Reference.TWITCH_CLIENT_ID);
+
+            //Send request
+            CloseableHttpResponse response = client.execute(get);
+
+            //Read response
+            InputStreamReader inputStreamReader = new InputStreamReader(response.getEntity().getContent());
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
             Gson gson = new GsonBuilder().create();
             TwitchStreams streams = gson.fromJson(bufferedReader, TwitchStreams.class);
 
+            System.out.println(streams.getStreams().size());
             return streams.streams;
 
         } catch (IOException e) {
